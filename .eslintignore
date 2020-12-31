@@ -1,0 +1,4 @@
+/dist/**
+
+**/*.vue.js
+store.js

@@ -8,6 +8,7 @@ const userSchema = new Schema(
     firstname: { type: String, lowercase: true },
     lastname: { type: String, lowercase: true },
     phonenumber: String,
+    email: { type: String },
     password: String,
     shop: { type: Schema.Types.ObjectId, ref: 'Shop', default: null },
     isAdmin: {

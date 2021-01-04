@@ -1,0 +1,3 @@
+<% layout('layouts/default.eta') %>
+
+<h4>ERROR! Sorry, go back home :/</h4>

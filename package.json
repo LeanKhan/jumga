@@ -7,6 +7,7 @@
     "dev": "set NODE_ENV=dev && nodemon src/server.js"
   },
   "dependencies": {
+    "bent": "^7.3.12",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",

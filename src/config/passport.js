@@ -10,12 +10,14 @@ passport.serializeUser((user, done) => {
     lastname: user.lastname,
     isAdmin: user.isAdmin,
     hasShop: user.hasShop,
+    shop: user.shop,
   };
   done(null, sessionUser);
 });
 
 passport.deserializeUser((sessionUser, done) => {
   done(null, sessionUser);
+  // maybe update user when some time has passed
   // User.findById(id, (err, user) => {
   //   done(err, user);
   // });
@@ -31,7 +33,7 @@ passport.use(
         return done(err);
       }
       if (!user) {
-        return done(null, false, { msg: `Email ${email} not found.` });
+        return done(null, false, { msg: `User does not exist :/` });
       }
       if (!user.password) {
         return done(null, false, {
@@ -46,14 +48,14 @@ passport.use(
         if (isMatch) {
           return done(null, user);
         }
-        return done(null, false, { msg: 'Invalid email or password.' });
+        return done(null, false, { msg: 'Password is most likely wrong :/' });
       });
     });
   })
 );
 
 /**
- * Login Required middleware.
+ * Check if user is authenticated
  */
 exports.isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {

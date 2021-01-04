@@ -9,8 +9,6 @@ const shopSchema = new Schema(
     name: String,
     slug: String,
     description: String,
-    phone_number: String,
-    password: String,
     category: String,
     account_number: String,
     bank: String,
@@ -18,6 +16,14 @@ const shopSchema = new Schema(
     country: String,
     preferred_payment_method: String,
     isApproved: {
+      type: Boolean,
+      default: false,
+    },
+    isLive: {
+      type: Boolean,
+      default: false,
+    },
+    hasPaidFee: {
       type: Boolean,
       default: false,
     },

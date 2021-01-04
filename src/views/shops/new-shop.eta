@@ -1,0 +1,31 @@
+<% layout('layouts/default.eta') %>
+
+<form action="/shops/new" method="POST">
+  <label for="shopName">Shop Name</label>
+  <br />
+  <input name="shopName" type="text" placeholder="Shop Name" required />
+
+  <label for="description">Description</label>
+  <br />
+
+  <textarea
+    name="description"
+    type="text"
+    placeholder="Description of your shop"
+    required
+  ></textarea>
+
+  <label for="category">Category</label>
+  <select name="category">
+    <option>Food</option>
+    <option>Tech</option>
+    <option>Trash</option>
+  </select>
+
+  <input
+    class="mt-3"
+    style="margin-top: 1rem"
+    type="submit"
+    value="Create Shop"
+  />
+</form>

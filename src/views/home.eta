@@ -1,0 +1,3 @@
+<% layout('layouts/default.eta') %>
+
+<h4>Welcome to Jumga, shop anything!</h4>

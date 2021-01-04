@@ -1,0 +1,5 @@
+<ul>
+  <% messages.forEach(msg => { %>
+  <li><%= msg %></li>
+  <% }) %>
+</ul>

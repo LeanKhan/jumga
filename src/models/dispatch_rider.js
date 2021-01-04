@@ -6,8 +6,15 @@ const { Schema } = mongoose;
 const riderSchema = new Schema(
   {
     riderID: String,
-    name: { type: String, lowercase: true },
+    firstname: { type: String, lowercase: true },
+    lastname: { type: String, lowercase: true },
+    phonenumber: String,
     picture: String,
+    employed: {
+      type: Boolean,
+      default: false,
+    },
+    shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
   },
   { timestamps: true }
 );

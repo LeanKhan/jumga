@@ -1,0 +1,5 @@
+<% layout('layouts/default.eta') %>
+
+<h3><%= shop.name %></h3>
+
+<h4>Welcome to our shop! Thank you Jesus!</h4>

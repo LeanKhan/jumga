@@ -1,7 +1,12 @@
-function renderSignin(req, res) {
-  res.render('signin');
-}
+module.exports = (() => {
+  return {
+    renderSignin(req, res) {
+      console.log('returnTo from sign in => ', req.session.returnTo);
+      res.render('signin');
+    },
 
-module.exports = {
-  renderSignin,
-};
+    renderSignup(req, res) {
+      res.render('signup');
+    },
+  };
+})();

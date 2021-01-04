@@ -1,6 +1,6 @@
 <% layout('layouts/default.eta') %>
 
-<form action="/signup" method="POST">
+<form action="/riders/new" method="POST">
   <label for="firstname">Firstname</label>
   <br />
   <input name="firstname" placeholder="firstname" required />
@@ -15,19 +15,6 @@
 
   <label for="phonenumber">Email</label>
   <br />
-  <input name="email" type="email" placeholder="email" required />
-
-  <label for="password">Password</label>
-  <br />
-  <input name="password" type="password" placeholder="password" required />
-
-  <label for="confirmPassword">Confirm Password</label>
-  <br />
-  <input
-    name="confirmPassword"
-    type="password"
-    placeholder="confirm password"
-  />
 
   <input
     type="submit"
@@ -36,5 +23,3 @@
     value="Create account"
   />
 </form>
-
-<p>Already have an account? <a href="/signup">Sign in</a></p>

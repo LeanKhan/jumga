@@ -1,0 +1,5 @@
+<% layout('layouts/default.eta') %>
+
+<h4>Wow, that was a bad error</h4>
+
+<p>Please contact <em>Emmanuel</em> with this error code</p>

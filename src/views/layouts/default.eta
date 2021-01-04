@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <title><%= title %></title>
+    <meta name="description" content="Classified ads for AUN" />
+    <!-- <link
+          id="favicon"
+          rel="icon"
+          href="https://glitch.com/edit/favicon-app.ico"
+          type="image/x-icon"
+        /> -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic" /> -->
+
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest" />
+
+    <link rel="stylesheet" type="text/css" href="/styles/styles.css" />
+  </head>
+
+  <body>
+    <header class="container" style="font-size: smaller">
+      <nav class="nav">
+        <div class="nav-left">
+          <a href="/">home</a>
+          <a href="/signin">signin</a>
+          <a href="/signup">signup</a>
+          <a href="/signout">signout</a>
+          <a href="/shops/new">setup shop</a>
+        </div>
+        <div class="nav-center">
+          <a class="brand" href="/"> Jumga </a>
+        </div>
+
+        <% if (typeof user != 'undefined') { %>
+        <div class="nav-right">
+          <b>Hi, <%= user.firstname %> &nbsp;</b>
+          <% if (user.isAdmin) { %>
+          <span>ADMIN</span>
+          <% } else if (user.hasShop) { %>
+          <span>MERCHANT</span>
+          <% } else { %>
+          <span>SHOPPER</span>
+          <% } %>
+        </div>
+        <% } else { %> LOGIN or SIGNUP <% } %> <% if (typeof pageCount !=
+        'undefined') { %>
+        <b>viewd page => <%= pageCount %> &nbsp;</b>
+        <% } %>
+      </nav>
+    </header>
+
+    <div class="container">
+      <h2>
+        <a href="/" style="text-decoration: none; color: initial">Jumga </a>
+        <a class="button is-small" href="/new"> add post </a>
+      </h2>
+    </div>
+
+    <% if (alerts.error.length) { %>
+    <ul>
+      <% alerts.error.forEach(msg => { %>
+      <li><%= msg.msg %></li>
+      <% }) %>
+    </ul>
+    <% } %>
+
+    <main class="app-main container"><%~ body %></main>
+
+    <footer style="padding: 1em">
+      <div class="container text-center text-grey">
+        noticeboard :) [experiment]
+      </div>
+    </footer>
+  </body>
+</html>

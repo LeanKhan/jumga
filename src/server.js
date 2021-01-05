@@ -200,8 +200,17 @@ if (process.env.NODE_ENV.trim() === 'dev') {
   });
 }
 
+app.get('*', (req, res) => {
+  res.render('error');
+});
+
 server.listen(port, () => {
   console.log(`Jumga Server listening on Port: ${port}`);
 });
+
+// process
+//   .on("SIGTERM", shutdown("SIGTERM"))
+//   .on("SIGINT", shutdown("SIGINT"))
+//   .on("uncaughtException", shutdown("uncaughtException"));
 
 module.exports = app;

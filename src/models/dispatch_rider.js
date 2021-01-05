@@ -14,6 +14,15 @@ const riderSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    account: {
+      subaccount_id: String,
+      full_name: String,
+      bank: String,
+      account_number: String,
+      account_name: String,
+      country: String,
+      currency: String,
+    },
     shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
   },
   { timestamps: true }

@@ -1,20 +1,6 @@
 <% layout('layouts/default.eta') %>
 
-<h4>Welcome to Jumga ADMIN</h4>
-
-<form action="/riders/new" method="POST">
-  <label for="firstname">Firstname</label>
-  <br />
-  <input name="firstname" placeholder="firstname" required />
-
-  <label for="lastname">Lastname</label>
-  <br />
-  <input name="lastname" type="text" placeholder="lastname" required />
-
-  <label for="phonenumber">Phonenumber</label>
-  <br />
-  <input name="phonenumber" type="text" placeholder="phonenumber" />
-
+<form method="POST">
   <label for="account_number">Account Number</label>
   <br />
   <input name="account_number" type="text" placeholder="account_number" />
@@ -22,6 +8,10 @@
   <label for="account_name">Account Name</label>
   <br />
   <input name="account_name" type="text" placeholder="account_name" />
+
+  <label for="business_email">Business Email</label>
+  <br />
+  <input name="business_email" type="email" placeholder="business_email" />
 
   <label for="bank">Bank</label>
   <br />
@@ -45,14 +35,6 @@
     type="submit"
     class="mt-3"
     style="margin-top: 1rem"
-    value="Add Dispatch Rider"
+    value="Add Shop Account"
   />
 </form>
-
-<% if (dispatch_riders.length) { %>
-<ul>
-  <% dispatch_riders.forEach(r => { %>
-  <li><%= r.firstname %> <%= r.lastname %></li>
-  <% }) %>
-</ul>
-<% } %>

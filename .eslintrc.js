@@ -33,6 +33,7 @@ module.exports = {
     radix: 'off',
     'no-plusplus': 'off',
     'no-console': 'off',
+    'no-underscore-dangle': 'off',
     'consistent-return': 0,
     'implicit-arrow-linebreak': ['off'],
     'prettier/prettier': ['warn'],

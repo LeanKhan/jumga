@@ -6,11 +6,14 @@ module.exports = (() => {
       res.render('shops/new-shop');
     },
 
-    renderShopAdmin(req, res) {
-      const { id } = req.params;
+    renderAddAccount(req, res) {
+      res.render('shops/add-account');
+    },
 
-      if (req.user.shop_id != id)
-        return res.redirect('/error?c=unauthorized&msg=not_shop_owner');
+    renderShopAdmin(req, res) {
+      const id = req.user.shop;
+
+      if (!id) return res.redirect('/error?c=shop_id_missing');
 
       // fetch shop data here...
       Shop.findById(id)

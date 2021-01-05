@@ -29,6 +29,8 @@
           <a href="/signup">signup</a>
           <a href="/signout">signout</a>
           <a href="/shops/new">setup shop</a>
+          <a href="/admin/dashboard">admin</a>
+          <a href="/shops/admin">shop admin</a>
         </div>
         <div class="nav-center">
           <a class="brand" href="/"> Jumga </a>

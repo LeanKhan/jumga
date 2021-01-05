@@ -2,4 +2,14 @@
 
 <h3><%= shop.name %></h3>
 
+<% if (!shop.account.subaccount_id) { %>
+<p>Please add a bank account to start recieving payments</p>
+<p><a href="/shops/admin/add-account">add account</a></p>
+<% } %> <% if (!shop.hasPaidFee) { %>
+<p>Please pay your shop opening fee, or else!</p>
+<p><a href="/shops/admin/pay-fee">pay fee</a></p>
+<% } %> <% if (!shop.isLive) { %>
+<p>Publish your store now</p>
+<% } %>
+
 <h4>Welcome to our shop! Thank you Jesus!</h4>

@@ -8,6 +8,8 @@ passport.serializeUser((user, done) => {
     _id: user._id,
     firstname: user.firstname,
     lastname: user.lastname,
+    phonenumber: user.phonenumber,
+    email: user.email,
     isAdmin: user.isAdmin,
     hasShop: user.hasShop,
     shop: user.shop,
@@ -66,7 +68,7 @@ exports.isAuthenticated = (req, res, next) => {
     return res.send({ authenticated: false, message: 'Not authenticated!' });
   }
 
-  req.flash('errors', { msg: 'Hey, you need to be logged in :)' });
+  req.flash('error', { msg: 'Hey, you need to be logged in :)' });
 
   res.redirect('/signin');
 };

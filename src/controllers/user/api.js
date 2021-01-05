@@ -65,7 +65,7 @@ module.exports = (() => {
 
           req.session.save(async (err) => {
             if (err) {
-              await req.flash('errors', { msg: 'Error creating session!' });
+              await req.flash('error', { msg: 'Error creating session!' });
             } else {
               console.log('qs', req.session.returnTo);
               const { returnTo } = req.session;
@@ -99,7 +99,7 @@ module.exports = (() => {
         validationErrors.push({ msg: 'Passwords do not match' });
 
       if (validationErrors.length) {
-        await req.flash('errors', validationErrors);
+        await req.flash('error', validationErrors);
         return res.redirect('/signup');
       }
       req.body.email = validator.normalizeEmail(req.body.email, {
@@ -122,7 +122,7 @@ module.exports = (() => {
         .exec()
         .then(async (existingUser) => {
           if (existingUser) {
-            await req.flash('errors', {
+            await req.flash('error', {
               msg: 'Account with that phonumber already exists.',
             });
             return res.redirect('/signup');
@@ -146,7 +146,7 @@ module.exports = (() => {
     async saveSession(req, res) {
       req.session.save(async (err) => {
         if (err) {
-          await req.flash('errors', { msg: 'Error creating session!' });
+          await req.flash('error', { msg: 'Error creating session!' });
         } else {
           // Now send welcome email :)
           console.log(req.session.returnTo);

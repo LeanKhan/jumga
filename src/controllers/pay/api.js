@@ -10,15 +10,28 @@ module.exports = () => {
       // verify payment here...
 
       const updateShop = (shop_id, rider) => {
+        console.log('here in updateShop');
         return Shop.findOneAndUpdate(
           { _id: shop_id },
-          { isApproved: true, hasPaidFee: true, rider },
+          { hasPaidFee: true, dispatch_rider: rider },
           { new: true }
         );
       };
 
       const getDispatchRider = () => {
-        return Rider.findOne({ employed: false }).exec();
+        // Rider.findOne({
+        //   employed: false,
+        //   'account.subaccount_id': { $exists: true, $ne: null },
+        // }).exec();
+
+        return Rider.findOneAndUpdate(
+          {
+            employed: false,
+            'account.subaccount_id': { $exists: true, $ne: null },
+          },
+          { employed: true },
+          { new: true }
+        );
       };
 
       const { transaction_id, tx_ref } = req.query;
@@ -47,12 +60,12 @@ module.exports = () => {
 
         getDispatchRider()
           .then((rider) => {
-            return updateShop(response.data.customer.shop_id, rider);
+            return updateShop(response.data.meta.shop_id, rider._id);
           })
           .then((shop) => {
-            console.log(shop);
+            console.log('shop =>', shop);
 
-            res.redirect(`/shops/${shop._id}/admin`);
+            res.redirect(`/shops/admin`);
           })
           .catch((err) => {
             console.log(err);

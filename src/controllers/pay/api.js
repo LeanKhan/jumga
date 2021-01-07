@@ -65,7 +65,7 @@ module.exports = () => {
           .then((shop) => {
             console.log('shop =>', shop);
 
-            res.redirect(`/shops/admin`);
+            res.redirect(`/shops/dashboard`);
           })
           .catch((err) => {
             console.log(err);

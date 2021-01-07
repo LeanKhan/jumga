@@ -1,0 +1,16 @@
+<% if(env=='production') { %>
+<!-- Production mode -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+<% } else { %>
+<!-- Dev mode -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<% } %>
+<!-- Full bundle -->
+<script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
+
+<% if (route_name == 'shop-dashboard') { %>
+<script src="/js/products-table.vue.js"></script>
+<script src="/js/shop-dashboard.vue.js"></script>
+<% } %>
+
+<!-- <script src="/js/app.vue.js"></script> -->

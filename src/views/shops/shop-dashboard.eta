@@ -1,0 +1,89 @@
+<% layout('layouts/default.eta') %>
+
+<div class="container section" id="shop-dashboard">
+  <nav class="navbar is-transparent">
+    <div class="navbar-brand">
+      <h1>
+        <%= shop.name %>
+        <a v-if="isLive" href="/s/<%= shop.slug %>">view</a>
+      </h1>
+    </div>
+
+    <div class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="field is-grouped">
+            <p class="control">
+              <b-switch
+                @input="openShop"
+                v-bind:value="<%= shop.isLive %>"
+                v-model="isLive"
+              >
+                {{ !isLive ? 'Open' : 'Close' }} Shop
+              </b-switch>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <% if (!shop.account.subaccount_id) { %>
+  <p>Please add a bank account to start recieving payments</p>
+  <p><a href="/shops/dashboard/add-account">add account</a></p>
+  <% } %> <% if (!shop.hasPaidFee) { %>
+  <p>Please pay your shop opening fee, or else!</p>
+  <p><a href="/shops/dashboard/pay-fee">pay fee</a></p>
+  <% } %> <% if (!shop.isLive) { %>
+  <p>Publish your store now</p>
+  <% } %>
+
+  <h4>Welcome to our shop! Thank you Jesus!</h4>
+
+  <b-tabs v-model="activeTab">
+    <b-tab-item label="Products">
+      <products-table
+        v-bind:products="<%= JSON.stringify(shop.products) %>"
+      ></products-table>
+    </b-tab-item>
+
+    <b-tab-item label="Add Product">
+      <b-field label="Name">
+        <b-input v-model="product_form.name" required></b-input>
+      </b-field>
+
+      <b-field label="Category">
+        <b-input v-model="product_form.category" required></b-input>
+      </b-field>
+
+      <b-field label="Price">
+        <b-input v-model="product_form.price" required></b-input>
+      </b-field>
+
+      <b-field label="Description">
+        <b-input
+          v-model="product_form.description"
+          maxlength="200"
+          type="textarea"
+          required
+        ></b-input>
+      </b-field>
+
+      <b-field label="Tags">
+        <b-taginput
+          v-model="product_form.tags"
+          ellipsis
+          icon="label"
+          placeholder="Add a tag"
+          aria-close-label="Delete this tag"
+        >
+        </b-taginput>
+      </b-field>
+
+      <!-- submit button -->
+      <button @click="addProduct()">Create</button>
+    </b-tab-item>
+  </b-tabs>
+</div>
+
+<%~ E.includeFile("components/products-table.vue") %>

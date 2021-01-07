@@ -42,7 +42,7 @@ userSchema.methods.comparePassword = function comparePasswords(
 };
 
 // Create the user model
-const UserModel = mongoose.model('user', userSchema);
+const UserModel = mongoose.model('User', userSchema);
 
 // Export the model
 module.exports = UserModel;

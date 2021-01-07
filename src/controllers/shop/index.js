@@ -1,9 +1,10 @@
 const api = require('./api');
 const views = require('./views');
-const router = require('./router');
+const { main_router, shop_router } = require('./router');
 
 module.exports = {
   api,
   views,
-  router,
+  main_router,
+  shop_router,
 };

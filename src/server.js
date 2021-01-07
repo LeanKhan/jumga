@@ -9,6 +9,7 @@ const errorHandler = require('errorhandler');
 const lusca = require('lusca');
 const cors = require('cors');
 const session = require('express-session');
+const compress = require('compression');
 const passport = require('passport');
 const { flash } = require('express-flash-message');
 const cookieParser = require('cookie-parser');
@@ -51,6 +52,7 @@ eta.configure({ views: path.resolve('src/views'), useWith: true });
 app.use(logger('dev'));
 app.use(express.json());
 app.use(cors());
+app.use(compress());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -147,6 +149,10 @@ app.use(async function (req, res, next) {
   res.locals.host = req.headers.host;
 
   res.locals.title = 'Jumga E-Plaza';
+
+  res.locals.route_name = '';
+
+  res.locals.env = process.env.NODE_ENV.trim();
 
   res.locals.alerts = {
     info: await req.consumeFlash('info'),

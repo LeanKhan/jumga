@@ -96,7 +96,8 @@ module.exports = (() => {
         // eslint-disable-next-line no-unused-vars
         .then((user) => {
           //   req.body.shop = s;
-          req.session.returnTo = '/signin?returnTo=%2Fshops%2F12345%2Fadmin';
+          req.session.returnTo =
+            '/signin?returnTo=%2Fshops%2F12345%2Fdashboard';
           return next();
         })
         .catch((err) => {
@@ -165,7 +166,7 @@ module.exports = (() => {
           await req.flash('error', {
             msg: 'You have to be signed in to open a Shop',
           });
-          return res.redirect('/signin?returnTo=%2Fshops%2Fadmin');
+          return res.redirect('/signin?returnTo=%2Fshops%2Fdashboard');
         }
 
         // check if shop exists actually...
@@ -194,7 +195,7 @@ module.exports = (() => {
             await req.flash('error', err);
           });
 
-          return res.redirect('/shops/admin');
+          return res.redirect('/shops/dashboard');
         }
 
         let current_shop;
@@ -265,11 +266,11 @@ module.exports = (() => {
           .then(updateShop)
           .then((shop) => {
             console.log('updated shop =>\n', shop);
-            return res.redirect('/shops/admin');
+            return res.redirect('/shops/dashboard');
           })
           .catch((err) => {
             console.error(err);
-            return res.redirect('/shops/admin?error=rider_addition_failed');
+            return res.redirect('/shops/dashboard?error=rider_addition_failed');
           });
       } catch (error) {
         console.error('Something went wrong :/\n', error);
@@ -279,8 +280,95 @@ module.exports = (() => {
         );
       }
     },
-    renderSignup(req, res) {
-      res.render('signup');
+
+    async getShop(req, res, next) {
+      const shopID = req.user.shop || req.query.shop || req.params.shop_id;
+
+      const validationErrors = [];
+
+      if (!validator.isMongoId(shopID.toString()))
+        validationErrors.push({ msg: 'Invalid Shop ID' });
+
+      if (validationErrors.length) {
+        validationErrors.forEach(async (err) => {
+          await req.flash('error', err);
+        });
+
+        return res.redirect('/');
+      }
+
+      try {
+        const current_shop = await Shop.findOne({ _id: shopID }).exec();
+
+        if (!current_shop) {
+          await req.flash('error', {
+            msg: 'Shop does not exist!',
+          });
+          return res.redirect('/shops/dashboard');
+        }
+
+        req.body.shop = current_shop;
+
+        return next();
+      } catch (err) {
+        return res.redirect('/error?c=shop_not_found');
+      }
+    },
+
+    async openShop(req, res) {
+      try {
+        const shop_id = req.user.shop;
+
+        const toggle = req.query.open;
+
+        if (!shop_id)
+          return res.status(400).send({
+            success: false,
+            msg: 'User shop not found/',
+          });
+
+        if (!toggle)
+          return res.status(400).send({
+            success: false,
+            msg: 'No toggle option sent :/',
+          });
+
+        Shop.findOneAndUpdate(
+          { _id: shop_id },
+          { isLive: toggle },
+          { new: true }
+        )
+          .then((s) => {
+            if (!s)
+              return res.status(400).send({
+                success: false,
+                msg: 'Shop not found!:/',
+              });
+
+            console.log('Shop opened successfully! Thank you Jesus!');
+
+            return res.status(200).send({
+              success: true,
+              msg: `${s.name} opened successfully!`,
+              isLive: s.isLive,
+            });
+          })
+          .catch((err) => {
+            console.error('Error opening shop! => ', err);
+
+            return res.status(400).send({
+              success: false,
+              msg: 'Something went wrong while trying to open Shop :/',
+              data: err,
+            });
+          });
+      } catch (err) {
+        return res.status(400).send({
+          success: false,
+          msg: 'Something went wrong while trying to open Shop :/',
+          data: err,
+        });
+      }
     },
   };
 })();

@@ -1,9 +1,37 @@
 <% layout('layouts/default.eta') %>
 
-<h3>Welcome to my shop! Dashboard and home :)</h3>
-<p>Thank you Jesus!</p>
+<section style="height: 100px" class="hero is-info is-bold">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <h1 class="title is-size-1"><%= shop.name %></h1>
+    </div>
+  </div>
+</section>
 
-<h4>Shop name: <%= shop.name %></h4>
-<p><b>Description:</b><%= shop.description %></p>
+<section class="container section">
+  <h3>This is my shop!</h3>
+  <p>Thank you Jesus!</p>
 
-<p>Don't have an account? <a href="/signup">Sign up</a></p>
+  <h4>Shop name: <%= shop.name %></h4>
+  <p><b>Description:</b><%= shop.description %></p>
+
+  <div>
+    <% shop.products.forEach(product => { %>
+    <div class="card">
+      <div class="card-image">
+        <figure class="image is-4by3">
+          <img
+            src="https://bulma.io/images/placeholders/1280x960.png"
+            alt="Placeholder image"
+          />
+        </figure>
+      </div>
+      <div class="card-content"><%= product.name %></div>
+
+      <div class="card-footer">
+        <button>Buy</button>
+      </div>
+    </div>
+    <% }); %>
+  </div>
+</section>

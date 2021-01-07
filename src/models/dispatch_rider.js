@@ -29,7 +29,7 @@ const riderSchema = new Schema(
 );
 
 // Create the rider model
-const RiderModel = mongoose.model('rider', riderSchema);
+const RiderModel = mongoose.model('Rider', riderSchema);
 
 // Export the model
 module.exports = RiderModel;

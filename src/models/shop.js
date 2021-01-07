@@ -38,7 +38,7 @@ const shopSchema = new Schema(
     },
     transactions: [],
     dispatch_rider: { type: Schema.Types.ObjectId, ref: 'Rider' },
-    products: { type: Schema.Types.ObjectId, ref: 'Product' },
+    products: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
@@ -48,7 +48,7 @@ const shopSchema = new Schema(
 // Before saving a model, run this function
 
 // Create the shop model
-const ShopModel = mongoose.model('shop', shopSchema);
+const ShopModel = mongoose.model('Shop', shopSchema);
 
 // Export the model
 module.exports = ShopModel;

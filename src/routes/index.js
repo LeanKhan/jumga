@@ -2,9 +2,13 @@
 /* eslint-disable func-names */
 const router = require('express').Router();
 const user = require('../controllers/user');
-const shops = require('../controllers/shop').router;
+const {
+  main_router: shops,
+  shop_router: single_shop,
+} = require('../controllers/shop');
 const pay = require('../controllers/pay').router;
 const riders = require('../controllers/rider').router;
+const products = require('../controllers/product').router;
 const Rider = require('../models/dispatch_rider');
 
 /* GET home page. */
@@ -42,9 +46,13 @@ router.post(
 
 router.use('/shops', shops);
 
+router.use('/s', single_shop);
+
 router.use('/pay', pay);
 
 router.use('/riders', riders);
+
+router.use('/products', products);
 
 router.get('/error', function (req, res) {
   res.render('error');

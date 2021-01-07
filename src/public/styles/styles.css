@@ -1,3 +1,27 @@
 a {
   color: #00b7ff;
 }
+
+body {
+  color: #2d3748 !important;
+}
+
+.jumga-top-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #ffcc35;
+}
+
+.navbar-link:not(.is-arrowless)::after {
+  border-color: #ffcc35 !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+  font-weight: 500 !important;
+}

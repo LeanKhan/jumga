@@ -10,13 +10,15 @@ const productSchema = new Schema(
     category: String,
     description: String,
     price: String,
+    tags: [{ type: String }],
     pictures: [{ type: String }],
+    shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
   },
   { timestamps: true }
 );
 
 // Create the product model
-const ProductModel = mongoose.model('product', productSchema);
+const ProductModel = mongoose.model('Product', productSchema);
 
 // Export the model
 module.exports = ProductModel;

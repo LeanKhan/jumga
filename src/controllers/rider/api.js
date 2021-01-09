@@ -158,7 +158,11 @@ module.exports = (() => {
           .then(updateRider)
           .then((rider) => {
             console.log('updated rider =>\n', rider);
-            return res.redirect('/admin/dashboard');
+            return res.status(200).json({
+              success: true,
+              msg: 'Dispatch Rider added successfully!',
+              data: rider,
+            });
           })
           .catch((err) => {
             console.error(err);
@@ -171,6 +175,24 @@ module.exports = (() => {
           '/error?c=something_went_wrong&where=addding_rider_subaccount'
         );
       }
+    },
+
+    getRiders(req, res) {
+      Rider.find({})
+        .then((riders) => {
+          return res.status(200).json({
+            success: true,
+            msg: 'Dispatch Riders Fetched succesffulY!',
+            data: riders,
+          });
+        })
+        .catch((err) => {
+          return res.status(400).json({
+            success: false,
+            msg: 'Could not fetch Dispatch Riders',
+            err,
+          });
+        });
     },
   };
 })();

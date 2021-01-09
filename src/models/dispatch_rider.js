@@ -9,6 +9,7 @@ const riderSchema = new Schema(
     firstname: { type: String, lowercase: true },
     lastname: { type: String, lowercase: true },
     phonenumber: String,
+    bio: { type: String, default: 'A Jumga Dispatch Rider' },
     picture: String,
     employed: {
       type: Boolean,

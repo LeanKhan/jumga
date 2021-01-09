@@ -40,50 +40,19 @@
 
   <h4>Welcome to our shop! Thank you Jesus!</h4>
 
-  <b-tabs v-model="activeTab">
-    <b-tab-item label="Products">
-      <products-table
-        v-bind:products="<%= JSON.stringify(shop.products) %>"
-      ></products-table>
-    </b-tab-item>
+  <div class="tabs">
+    <ul>
+      <router-link
+        active-class="is-active"
+        tag="li"
+        :to="{name: 'Products'}"
+        exact
+        ><a>Products</a></router-link
+      >
+    </ul>
+  </div>
 
-    <b-tab-item label="Add Product">
-      <b-field label="Name">
-        <b-input v-model="product_form.name" required></b-input>
-      </b-field>
-
-      <b-field label="Category">
-        <b-input v-model="product_form.category" required></b-input>
-      </b-field>
-
-      <b-field label="Price">
-        <b-input v-model="product_form.price" required></b-input>
-      </b-field>
-
-      <b-field label="Description">
-        <b-input
-          v-model="product_form.description"
-          maxlength="200"
-          type="textarea"
-          required
-        ></b-input>
-      </b-field>
-
-      <b-field label="Tags">
-        <b-taginput
-          v-model="product_form.tags"
-          ellipsis
-          icon="label"
-          placeholder="Add a tag"
-          aria-close-label="Delete this tag"
-        >
-        </b-taginput>
-      </b-field>
-
-      <!-- submit button -->
-      <button @click="addProduct()">Create</button>
-    </b-tab-item>
-  </b-tabs>
+  <router-view></router-view>
 </div>
 
-<%~ E.includeFile("components/products-table.vue") %>
+<%~ E.includeFile("components/merchant/products.vue") %>

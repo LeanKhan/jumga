@@ -4,11 +4,11 @@ const Product = require('../../models/product');
 module.exports = (() => {
   return {
     renderCreateShop(req, res) {
-      res.render('shops/new-shop');
+      res.render('merchant/new-shop');
     },
 
     renderAddAccount(req, res) {
-      res.render('shops/add-account');
+      res.render('merchant/add-account');
     },
 
     renderShopAdmin(req, res) {
@@ -25,7 +25,7 @@ module.exports = (() => {
         .then((s) => {
           if (!s) return res.redirect('/error?c=404_shop');
 
-          res.render('shops/shop-dashboard', { shop: s });
+          res.render('merchant/shop-dashboard', { shop: s });
         })
         .catch((err) => {
           console.error('error rendering shop dashboard =>\n', err);
@@ -49,7 +49,7 @@ module.exports = (() => {
 
           if (!s.isLive) return res.redirect('/error?c=404_shop');
 
-          res.render('shops/shop', { shop: s });
+          res.render('merchant/shop', { shop: s });
         })
         .catch((err) => {
           console.error('error opening shop =>\n', err);
@@ -76,7 +76,7 @@ module.exports = (() => {
           // use alerts here... thank you Jesus!
           if (!p.shop.isLive) return res.redirect('/error?c=shop_is_not_live');
 
-          res.render('shops/product', { product: p });
+          res.render('merchant/product', { product: p });
         })
         .catch((err) => {
           console.error('error opening product page =>\n', err);

@@ -5,12 +5,20 @@
 <!-- Dev mode -->
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <% } %>
+<!-- Vue Router, thank you Jesus! -->
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 <!-- Full bundle -->
 <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
 
-<% if (route_name == 'shop-dashboard') { %>
-<script src="/js/products-table.vue.js"></script>
-<script src="/js/shop-dashboard.vue.js"></script>
-<% } %>
+<script src="/js/shared.js"></script>
 
+<% if (route_name == 'shop-dashboard') { %>
+<script src="/js/merchant/products.vue.js"></script>
+<script src="/js/merchant/shop-dashboard.vue.js"></script>
+<% } %> <% if (route_name == 'admin-dashboard') { %>
+<script src="/js/admin/categories.vue.js"></script>
+<script src="/js/admin/countries.vue.js"></script>
+<script src="/js/admin/riders.vue.js"></script>
+<script src="/js/admin/admin-dashboard.vue.js"></script>
+<% } %>
 <!-- <script src="/js/app.vue.js"></script> -->

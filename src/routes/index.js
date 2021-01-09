@@ -11,7 +11,6 @@ const riders = require('../controllers/rider').router;
 const products = require('../controllers/product').router;
 const { views } = require('../controllers/views');
 const Rider = require('../models/dispatch_rider');
-const { retryRequest: retry } = require('../tools');
 
 /* Render home page */
 router.get('/', function (req, res, next) {
@@ -22,35 +21,13 @@ router.get('/', function (req, res, next) {
   return next('router');
 });
 
-router.get('/fake', (req, res) => {
-  const status = [200, 408, 500, 200, 503];
-
-  const fail = Math.round(Math.random() * (status.length - 1));
-
-  res.status(status[fail]).json({ msg: 'HAHAHAHAAH!' });
-});
-
-router.get('/retry', async (req, res) => {
-  const options = {
-    method: 'get',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-
-  const finalResponse = await retry('http://localhost:3000/fake', options);
-
-  console.log(finalResponse);
-
-  return res.status(200).send('finish retry');
-});
-
 router.get('/admin/dashboard', function (req, res) {
+  res.locals.route_name = 'admin-dashboard';
+
   Rider.find({})
     .exec()
     .then((rs) => {
-      const dispatch_riders = rs;
-      return res.render('admin/dashboard', { dispatch_riders });
+      return res.render('admin/dashboard', { dispatch_riders: rs });
     })
     .catch((err) => {
       console.error('Error fetching dispatch_riders =>\n', err);

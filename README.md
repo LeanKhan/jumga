@@ -23,8 +23,15 @@ thank you Jesus!
 [ ] Show individual product... well
 [ ] Improve SPEED and RESPONSE TIMES
 [ ] Make very pretty
+[ ] Add homepage, with directions and shop showcase
 
 **stretch goals**
 Features or plans that are not essential, but are cool and more challenging :)
 
 [ ] Use virtual host to make shops like this: 'my-shop.jumga.store' (??? hopefully ???)
+
+---
+
+Disclaimer: On the 9th of January I was curious so I searched the web and Github for 'Jumga' related stuff. I didn't gain much excecpt converting local currencies from USD and I had already gone pretter far by then you can check my commits. Sorry, forgive me.
+
+---

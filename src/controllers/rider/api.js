@@ -15,10 +15,10 @@ module.exports = (() => {
 
         const validationErrors = [];
 
-        if (validator.isEmpty(req.body.firstname))
+        if (validator.isEmpty(req.body.firstname || ''))
           validationErrors.push({ msg: 'First Name cannot be blank.' });
 
-        if (validator.isEmpty(req.body.lastname))
+        if (validator.isEmpty(req.body.lastname || ''))
           validationErrors.push({ msg: 'ast Name cannot be blank' });
 
         if (validationErrors.length) {
@@ -90,10 +90,10 @@ module.exports = (() => {
 
         const validationErrors = [];
 
-        if (validator.isEmpty(req.body.account_name))
+        if (validator.isEmpty(req.body.account_name || ''))
           validationErrors.push({ msg: 'Account Name cannot be blank.' });
 
-        if (validator.isEmpty(req.body.account_number))
+        if (validator.isEmpty(req.body.account_number || ''))
           validationErrors.push({ msg: 'Please provide an Account Number' });
 
         if (validationErrors.length) {

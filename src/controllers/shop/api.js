@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 const validator = require('validator');
 const { nanoid } = require('nanoid');
-const bent = require('bent');
 const fetch = require('node-fetch');
 const Shop = require('../../models/shop');
 const User = require('../../models/user');
@@ -110,47 +109,41 @@ module.exports = (() => {
       // res.redirect('signin');
     },
 
-    async collectShopPayment(req, res) {
-      const data = {
-        tx_ref: `jumga-tx-${nanoid(12)}`,
-        amount: '20',
-        currency: 'USD',
-        redirect_url: `http://${req.headers.host}/pay/verify`,
-        payment_options: 'card',
-        meta: {
-          user_id: req.user._id,
-          shop_id: req.body.shop._id,
-        },
-        customer: {
-          email: 'user@gmail.com',
-          phonenumber: '080****4528',
-          name: 'Yemi Desola',
-          user_id: req.user._id,
-          shop_id: req.body.shop._id,
-        },
-        customizations: {
-          title: 'Jumga Stores',
-          description: 'Pay small token to setup your shop',
-          logo: 'https://assets.',
-        },
-      };
-
-      const post = bent('https://api.flutterwave.com/v3/', 'POST', 'json', 200);
-
-      let response;
+    async prepareShopPayment(req, res, next) {
+      // add validation checks here... thank you Jesus!
 
       try {
-        response = await post('payments', data, {
-          Authorization: `Bearer ${process.env.FW_SECRET_KEY.trim()}`,
-        });
-        console.log(response);
+        const data = {
+          tx_ref: `jumga-tx-${nanoid(12)}`,
+          amount: '20',
+          currency: 'USD',
+          redirect_url: `${req.protocol}://${req.headers.host}/payments/verify`,
+          payment_options: 'card',
+          meta: {
+            user_id: req.user._id,
+            shop_id: req.body.shop._id,
+          },
+          customer: {
+            email: 'user@gmail.com',
+            phonenumber: '080****4528',
+            name: 'Yemi Desola',
+            user_id: req.user._id,
+            shop_id: req.body.shop._id,
+          },
+          customizations: {
+            title: 'Jumga Stores',
+            description: 'Pay small token to setup your shop',
+            logo: 'https://assets.',
+          },
+        };
 
-        if (response.data.link) return res.redirect(response.data.link);
+        req.body.data = data;
 
-        return res.redirect('/?error=payment_failed');
+        req.body.type = 'shop_payment';
+
+        return next();
       } catch (err) {
-        console.log('Error paying for shop\n', err);
-        return res.status(400).send({ msg: 'Error paying for shop :(', err });
+        return next(err);
       }
     },
     async createSubaccount(req, res) {
@@ -173,19 +166,19 @@ module.exports = (() => {
 
         const validationErrors = [];
 
-        if (validator.isEmpty(req.body.account_name))
+        if (validator.isEmpty(req.body.account_name || ''))
           validationErrors.push({ msg: 'Account Name cannot be blank.' });
 
-        if (validator.isEmpty(req.body.account_number))
+        if (validator.isEmpty(req.body.account_number || ''))
           validationErrors.push({ msg: 'Please provide an Account Number' });
 
-        if (!validator.isMongoId(req.user.shop.toString()))
+        if (!validator.isMongoId(req.user.shop.toString() || ''))
           validationErrors.push({ msg: 'Invalid shop id' });
 
-        if (validator.isEmpty(req.body.business_email.trim()))
+        if (validator.isEmpty(req.body.business_email.trim() || ''))
           validationErrors.push({ msg: 'Business Email cannot be blank' });
 
-        if (!validator.isEmail(req.body.business_email.trim()))
+        if (!validator.isEmail(req.body.business_email.trim() || ''))
           validationErrors.push({
             msg: 'Please provide a valid Business Email',
           });

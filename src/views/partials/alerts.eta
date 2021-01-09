@@ -1,7 +1,20 @@
-<% if (alerts.error.length) { %>
+<!-- TODO: show other alert types -->
+<% if (alerts.error.length || alerts.success.length) { %>
 <ul>
-  <% alerts.error.forEach(msg => { %>
-  <li><%= msg.msg %></li>
+  <% alerts.error.forEach(alert => { %>
+  <li>
+    <div class="notification is-danger">
+      <button class="delete"></button>
+      <%= alert.msg %>
+    </div>
+  </li>
+  <% }) %> <% alerts.success.forEach(alert => { %>
+  <li>
+    <div class="notification is-success">
+      <button class="delete"></button>
+      <%= alert.msg %>
+    </div>
+  </li>
   <% }) %>
 </ul>
 <% } %>

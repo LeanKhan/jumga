@@ -3,9 +3,9 @@
 <div class="container section" id="shop-dashboard">
   <nav class="navbar is-transparent">
     <div class="navbar-brand">
-      <h1>
-        <%= shop.name %>
-        <a v-if="isLive" href="/s/<%= shop.slug %>">view</a>
+      <h1 class="is-size-2">
+        <a href="/<%= shop.slug %>"><%= shop.name %></a>
+        <a v-if="isLive" href="/<%= shop.slug %>">view</a>
       </h1>
     </div>
 

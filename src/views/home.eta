@@ -1,3 +1,19 @@
 <% layout('layouts/default.eta') %>
 
 <h4>Welcome to Jumga, shop anything!</h4>
+
+<section class="section">
+  <div class="container">
+    <h4>Shops</h4>
+
+    <% if (shops) { %>
+    <ul>
+      <% shops.forEach(shop => { %>
+      <li class="card rb-card is-rounded has-shadow is-info has-text-info">
+        <a href="/<%= shop.slug %>"> <%= shop.name %> </a>
+      </li>
+      <% }) %>
+    </ul>
+    <% } %>
+  </div>
+</section>

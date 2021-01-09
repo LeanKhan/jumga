@@ -1,0 +1,8 @@
+<footer class="footer has-background-dark has-text-white-ter py-3">
+  <div class="content has-text-centered">
+    <small
+      >Online Shop Powered by
+      <a class="is-dark is-bold" href="/">Jumga</a></small
+    >
+  </div>
+</footer>

@@ -1,0 +1,153 @@
+<% layout('layouts/default.eta') %>
+
+<section class="section pt-0 px-3">
+  <div class="container">
+    <section class="hero is-bold">
+      <div class="hero-body p-3">
+        <div class="container has-text-left">
+          <h1 class="is-size-4 brand-title is-size-5-mobile is-size-1-desktop">
+            <%= product.shop.name %>
+          </h1>
+          <p class="ellipsis is-ellipsis-2"><%= product.shop.description %></p>
+        </div>
+      </div>
+    </section>
+
+    <nav class="navbar is-transparent">
+      <div class="navbar-start">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Categories</a>
+          <div class="navbar-dropdown is-boxed">
+            <a class="navbar-item" href="/signin">signin</a>
+            <a class="navbar-item" href="/signup">signup</a>
+            <a class="navbar-item" href="/signout">signout</a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Info</a>
+          <div class="navbar-dropdown is-boxed">
+            <a class="navbar-item" href="/signin">signin</a>
+            <a class="navbar-item" href="/signup">signup</a>
+            <a class="navbar-item" href="/signout">signout</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="field is-grouped">
+              <input class="input" type="text" placeholder="Search" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <hr class="m-0 mb-3 p-0" />
+
+    <section id="shop" class="section">
+      <div class="container">
+        <h4 class="title brand-title is-size-5"><%= product.name %></h4>
+
+        <div class="container has-text-centered">
+          <div class="columns is-8 is-variable">
+            <div class="column is-two-thirds has-text-left">
+              <h1 class="title is-1">Contact Us</h1>
+              <p class="is-size-4">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla
+                eligendi soluta voluptate facere molestiae consequatur.
+              </p>
+              <div class="social-media">
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  class="button is-light is-large"
+                  ><i class="fa fa-facebook-square" aria-hidden="true"></i
+                ></a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  class="button is-light is-large"
+                  ><i class="fa fa-instagram" aria-hidden="true"></i
+                ></a>
+                <a
+                  href="https://twitter.com"
+                  target="_blank"
+                  class="button is-light is-large"
+                  ><i class="fa fa-twitter" aria-hidden="true"></i
+                ></a>
+              </div>
+            </div>
+            <div class="column is-one-third has-text-left">
+              <form
+                action="/products/pay?returnTo=<%= route.originalUrl %> "
+                method="POST"
+              >
+                <input
+                  hidden
+                  type="hidden"
+                  name="product_name"
+                  value="<%= product.name %>"
+                />
+                <input
+                  hidden
+                  type="hidden"
+                  name="product_id"
+                  value="<%= product._id %>"
+                />
+                <input hidden type="hidden" name="currency" value="USD" />
+
+                <input hidden type="hidden" name="price" value="200" />
+
+                <input
+                  hidden
+                  type="hidden"
+                  name="shop_id"
+                  value="<%= product.shop._id %>"
+                />
+
+                <input hidden type="hidden" name="delivery_fee" value="15" />
+
+                <div class="field">
+                  <label class="label">Quantity</label>
+                  <div class="control">
+                    <input name="quantity" class="input" type="number" />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label">Name</label>
+                  <div class="control">
+                    <input name="name" class="input" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Email</label>
+                  <div class="control">
+                    <input name="email" class="input" type="text" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Phonenumber</label>
+                  <div class="control">
+                    <input name="phonenumber" class="input" type="text" />
+                  </div>
+                </div>
+                <div class="control">
+                  <button
+                    type="submit"
+                    class="button is-link jumga-yellow is-fullwidth has-text-weight-medium"
+                  >
+                    Buy
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>

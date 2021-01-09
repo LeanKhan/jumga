@@ -1,5 +1,6 @@
 // const fetch = require('node-fetch');
 const validator = require('validator').default;
+const { nanoid } = require('nanoid');
 const { slugify } = require('../../tools');
 const Product = require('../../models/product');
 const Shop = require('../../models/shop');
@@ -74,20 +75,21 @@ module.exports = (() => {
           );
         };
 
+        const slug = slugify(req.body.name);
+
         const product = new Product({
           name: req.body.name,
           description: req.body.description,
           price: req.body.price,
+          slug,
           category: req.body.category,
           tags: req.body.tags,
-          shop: req.body.shop_id,
+          shop: req.user.shop,
         });
-
-        const slug = slugify(req.body.name);
 
         return Product.findOne({
           slug,
-          shop: req.body.shop_id,
+          shop: req.user.shop,
         })
           .exec()
           .then(async (existingProduct) => {
@@ -129,6 +131,121 @@ module.exports = (() => {
           msg: 'Something went wrong while trying to add Product :/',
           data: error,
         });
+      }
+    },
+
+    async prepareProductPayment(req, res, next) {
+      // add validation checks here
+      try {
+        const validationErrors = [];
+
+        if (validator.isEmpty(req.body.price || ''))
+          validationErrors.push({ msg: 'Price cannot be blank' });
+
+        if (validator.isEmpty(req.body.currency || ''))
+          validationErrors.push({ msg: 'Please provide a Shop Description' });
+
+        if (validator.isEmpty(req.body.product_id || ''))
+          validationErrors.push({ msg: 'Product ID not found' });
+
+        if (validator.isEmpty(req.body.email || ''))
+          validationErrors.push({ msg: 'Please provide an Email address' });
+
+        if (validator.isEmpty(req.body.phonenumber || ''))
+          validationErrors.push({ msg: 'Please provide a Phonenumber' });
+        if (validator.isEmpty(req.body.name || ''))
+          validationErrors.push({ msg: 'Please provide a Fullname' });
+
+        if (validator.isEmpty(req.body.quantity || ''))
+          validationErrors.push({ msg: 'No Quantity specified' });
+
+        if (validator.isEmpty(req.body.product_name || ''))
+          validationErrors.push({ msg: 'Product Name not found' });
+
+        if (validationErrors.length) {
+          validationErrors.forEach(async (err) => {
+            await req.flash('error', err);
+          });
+
+          const { returnTo } = req.session;
+          delete req.session.returnTo;
+          return res.redirect(returnTo || '/error?error=preparing_payment');
+        }
+
+        const shop = await Shop.findOne({ _id: req.body.shop_id })
+          .populate('dispatch_rider')
+          .exec();
+
+        if (!shop) {
+          await req.flash('error', {
+            msg: 'Shop does not exist!',
+          });
+          const { returnTo } = req.session;
+          delete req.session.returnTo;
+          return res.redirect(returnTo || '/error?error=preparing_payment');
+        }
+
+        const { price, delivery_fee } = req.body;
+
+        const fw_trx_fee = 0.038; // $ tranx fee
+
+        const product_commision = parseInt(price) * 0.025;
+        const delivery_commision = parseInt(delivery_fee) * 0.2;
+        const total_amount =
+          (parseInt(price) + parseInt(delivery_fee)) / (1 - fw_trx_fee);
+
+        console.log(product_commision, ' <- p | d -> ', delivery_commision);
+
+        // here prepare the subaccounts payments...
+
+        // Payment type
+        const type = 'product_payment';
+
+        const data = {
+          tx_ref: `jumga-tx-${nanoid(12)}`,
+          amount: total_amount,
+          currency: req.body.currency,
+          redirect_url: `${req.protocol}://${req.headers.host}/payments/verify?&amount=${total_amount}&currency=${req.body.currency}&type=${type}`,
+          payment_options: 'card',
+          meta: {
+            user_id: req.user._id,
+            product_id: req.body.product_id,
+            shop_id: shop._id,
+            product_price: price,
+            delivery_fee,
+          },
+          customer: {
+            email: req.body.email,
+            phone_number: req.body.phonenumber,
+            name: req.body.name,
+          },
+          subaccounts: [
+            {
+              id: shop.account.subaccount_id, // shop merchant
+              transaction_charge_type: 'flat_subaccount',
+              transaction_charge: `${price - product_commision}`,
+            },
+
+            {
+              id: shop.dispatch_rider.account.subaccount_id, // dispatch rider
+              transaction_charge_type: 'flat_subaccount',
+              transaction_charge: `${delivery_fee - delivery_commision}`,
+            },
+          ],
+          customizations: {
+            title: 'Jumga Stores',
+            description: `Pay for ${req.body.quantity} ${req.body.product_name}`,
+            logo: 'https://assets',
+          },
+        };
+
+        req.body.data = data;
+
+        req.body.type = type;
+
+        return next();
+      } catch (err) {
+        return next(err);
       }
     },
   };

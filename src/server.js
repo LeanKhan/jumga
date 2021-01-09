@@ -74,6 +74,12 @@ store.on('error', (error) => {
   assert.ok(false);
 });
 
+function ignoreFavicon(req, res, next) {
+  if (req.originalUrl.includes('favicon.ico')) return res.sendStatus(204).end();
+
+  return next();
+}
+
 app.use(
   session({
     name: 'jumga.sid',
@@ -96,21 +102,6 @@ app.use(passport.session());
 /** FLASH MESSAGES */
 app.use(flash());
 
-app.get('/flash', async function (req, res) {
-  // Set a flash message by passing the key, followed by the value, to req.flash().
-  await req.flash('info', 'Flash is back!');
-  await req.flash('error', 'Woops@ Is Flash really back?');
-  await req.flash('success', 'Yupp! Flash IS back!');
-  await req.flash('info', 'Flash is back!  [PART 2]');
-  res.redirect('/see-flash');
-});
-
-app.get('/see-flash', async function (req, res) {
-  // Get an array of flash message by passing the key to req.consumeFlash()
-  const messages = await req.consumeFlash('info');
-  res.render('flash', { messages });
-});
-
 /**
  * Set up Passport Sessions :)
  */
@@ -129,6 +120,9 @@ app.get('/see-flash', async function (req, res) {
 //   }
 // });
 
+app.use(ignoreFavicon);
+
+// eslint-disable-next-line func-names
 app.use(async function (req, res, next) {
   if (req.session.passport) {
     res.locals.user = req.session.passport.user;
@@ -163,13 +157,14 @@ app.use(async function (req, res, next) {
   next();
 });
 
-app.get(['/signin', '/signup'], function (req, res, next) {
+// For returnTo's...
+app.use(function (req, res, next) {
   if (req.session.returnTo) {
-    console.log('return To in signin? => ', req.session.returnTo);
+    console.log('returnTo in session => ', req.session.returnTo);
     return next();
   }
   if (req.query.returnTo) {
-    console.log('return to from server.js', req.query.returnTo);
+    console.log('returnTo in url query => ', req.query.returnTo);
     req.session.returnTo = req.query.returnTo;
   }
   // else {

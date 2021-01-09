@@ -1,4 +1,5 @@
 const Shop = require('../../models/shop');
+const Product = require('../../models/product');
 
 module.exports = (() => {
   return {
@@ -33,7 +34,7 @@ module.exports = (() => {
     },
 
     renderShop(req, res) {
-      const { slug } = req.params;
+      const { shop_slug: slug } = req.params;
 
       res.locals.route_name = 'shop';
 
@@ -52,6 +53,33 @@ module.exports = (() => {
         })
         .catch((err) => {
           console.error('error opening shop =>\n', err);
+          return res.redirect('/error');
+        });
+    },
+
+    renderProduct(req, res) {
+      const { product_slug: slug } = req.params;
+
+      console.log('what', slug);
+
+      res.locals.route_name = 'shop';
+
+      if (!slug) return res.redirect('/error?c=product_slug_missing');
+
+      // fetch shop data here...
+      Product.findOne({ slug })
+        .populate('shop')
+        .exec()
+        .then((p) => {
+          if (!p) return res.redirect('/error?c=404_product');
+
+          // use alerts here... thank you Jesus!
+          if (!p.shop.isLive) return res.redirect('/error?c=shop_is_not_live');
+
+          res.render('shops/product', { product: p });
+        })
+        .catch((err) => {
+          console.error('error opening product page =>\n', err);
           return res.redirect('/error');
         });
     },

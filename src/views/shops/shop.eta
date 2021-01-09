@@ -1,37 +1,100 @@
 <% layout('layouts/default.eta') %>
 
-<section style="height: 100px" class="hero is-info is-bold">
-  <div class="hero-body">
-    <div class="container has-text-centered">
-      <h1 class="title is-size-1"><%= shop.name %></h1>
-    </div>
-  </div>
-</section>
-
-<section class="container section">
-  <h3>This is my shop!</h3>
-  <p>Thank you Jesus!</p>
-
-  <h4>Shop name: <%= shop.name %></h4>
-  <p><b>Description:</b><%= shop.description %></p>
-
-  <div>
-    <% shop.products.forEach(product => { %>
-    <div class="card">
-      <div class="card-image">
-        <figure class="image is-4by3">
-          <img
-            src="https://bulma.io/images/placeholders/1280x960.png"
-            alt="Placeholder image"
-          />
-        </figure>
+<section class="section pt-0 px-3">
+  <div class="container">
+    <section class="hero is-bold">
+      <div class="hero-body p-3">
+        <div class="container has-text-left">
+          <h1 class="is-size-4 brand-title is-size-5-mobile is-size-1-desktop">
+            <%= shop.name %>
+          </h1>
+          <p class="ellipsis is-ellipsis-2"><%= shop.description %></p>
+        </div>
       </div>
-      <div class="card-content"><%= product.name %></div>
+    </section>
 
-      <div class="card-footer">
-        <button>Buy</button>
+    <nav class="navbar is-transparent">
+      <div class="navbar-start">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Categories</a>
+          <div class="navbar-dropdown is-boxed">
+            <a class="navbar-item" href="/signin">signin</a>
+            <a class="navbar-item" href="/signup">signup</a>
+            <a class="navbar-item" href="/signout">signout</a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Info</a>
+          <div class="navbar-dropdown is-boxed">
+            <a class="navbar-item" href="/signin">signin</a>
+            <a class="navbar-item" href="/signup">signup</a>
+            <a class="navbar-item" href="/signout">signout</a>
+          </div>
+        </div>
       </div>
-    </div>
-    <% }); %>
+
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="field is-grouped">
+              <input class="input" type="text" placeholder="Search" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <hr class="m-0 mb-3 p-0" />
+
+    <section id="shop" class="section">
+      <div class="container">
+        <h4>Products</h4>
+
+        <div class="columns is-multiline">
+          <% shop.products.forEach(product => { %>
+          <div class="column is-one-third">
+            <div class="card rb-card">
+              <div class="card-image">
+                <figure class="image is-16by9">
+                  <img
+                    src="https://via.placeholder.com/640x360"
+                    alt="Rental Rates and Rental Prices in Phoenix, AZ"
+                  />
+                </figure>
+              </div>
+              <div
+                class="card-content is-flex is-justify-content-space-between"
+              >
+                <div class="has-text-justified">
+                  <h3 class="title is-size-4 ellipsis is-ellipsis-1">
+                    <a class="has-text-dark"> <%= product.name %> </a>
+                  </h3>
+                  <h4 class="subtitle is-size-5 has-text-primary">
+                    $<%= product.price %>
+                  </h4>
+                </div>
+
+                <div>
+                  <a
+                    href="/<%= shop.slug %>/products/<%= product.slug %>"
+                    class="button is-warning is-warning-light has-text-weight-bold"
+                  >
+                    BUY
+                  </a>
+                </div>
+              </div>
+
+              <div class="card-footer has-background-grey p-1">
+                <div class="tags">
+                  <span class="tag is-primary is-light">Primary</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
   </div>
 </section>

@@ -6,10 +6,14 @@ body {
   color: #2d3748 !important;
 }
 
+.brand-title {
+  font-family: 'Calistoga', sans-serif;
+}
+
 .jumga-top-bar {
   width: 100%;
   height: 4px;
-  background-color: #ffcc35;
+  background-color: #ffcc33;
 }
 
 .navbar-link:not(.is-arrowless)::after {
@@ -24,4 +28,8 @@ h5,
 h6 {
   font-size: 100%;
   font-weight: 500 !important;
+}
+
+.jumga-yellow {
+  background-color: #ffcc33 !important;
 }

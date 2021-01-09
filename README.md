@@ -14,11 +14,15 @@ thank you Jesus!
 [x] Allow Merchant add products
 [ ] Allow Merchants to update products
 [ ] Add pictures to products
-[ ] Show products of shop on shop page
+[x] Show products of shop on shop page
 [ ] Create home page (?)
-[ ] Allow user to buy product from Merchant
-[ ] Split payment...
+[x] Allow user to buy product from Merchant
+[x] Split payment...
+[ ] Support other countries with their different currencies and transaction fees (MILESTONE)
 [ ] Sign in to Shop (?)
+[ ] Show individual product... well
+[ ] Improve SPEED and RESPONSE TIMES
+[ ] Make very pretty
 
 **stretch goals**
 Features or plans that are not essential, but are cool and more challenging :)

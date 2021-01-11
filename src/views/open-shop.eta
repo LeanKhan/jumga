@@ -1,0 +1,108 @@
+<% layout('layouts/default.eta') %>
+
+<section class="container mb-6" id="open-shop-app">
+  <div class="columns is-multiline">
+    <div class="column mt-6 is-full register">
+      <div class="columns">
+        <div class="column left">
+          Sign up to
+          <h1 class="title is-1 brand-title">Jumga</h1>
+          <h2 class="subtitle colored is-4">Lorem ipsum dolor sit amet.</h2>
+          <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corporis
+            ex deleniti aliquam tempora libero excepturi vero soluta odio optio
+            sed.
+          </p>
+        </div>
+        <div class="column right has-text-centered">
+          <register-form
+            :current_step="<%= step || 0 %>"
+            :categories="<%= categories %>"
+          ></register-form>
+        </div>
+      </div>
+    </div>
+    <!-- 
+    <div class="column is-centered has-text-centered">
+      <p>Already have an account? <a href="/signup">Sign in</a></p>
+    </div> -->
+  </div>
+</section>
+
+<%~ E.includeFile('components/merchant/register.vue') %>
+
+<style>
+  :root {
+    --brandColor: hsl(45, 100%, 60%);
+    --background: rgb(247, 247, 247);
+    --textDark: hsla(0, 0%, 0%, 0.66);
+    --textLight: hsla(0, 0%, 0%, 0.33);
+  }
+
+  body {
+    height: 100vh;
+    color: var(--textDark);
+  }
+
+  .field:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+
+  .register {
+    background: rgb(247, 247, 247);
+    border-radius: 10px;
+  }
+
+  .left,
+  .right {
+    padding: 3rem;
+  }
+
+  .left {
+    border-right: 5px solid var(--background);
+  }
+
+  .left .title {
+    font-weight: 800;
+    letter-spacing: -2px;
+  }
+
+  .left .colored {
+    color: var(--brandColor);
+    font-weight: 500;
+    margin-top: 1rem !important;
+    letter-spacing: -1px;
+  }
+
+  .left p {
+    color: var(--textLight);
+    font-size: 1.15rem;
+  }
+
+  .right .title {
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+
+  .right .description {
+    margin-top: 1rem;
+    margin-bottom: 1rem !important;
+    color: var(--textLight);
+    font-size: 1.15rem;
+  }
+
+  .right small {
+    color: var(--textLight);
+  }
+
+  input:focus {
+    border-color: var(--brandColor) !important;
+    box-shadow: 0 0 0 1px var(--brandColor) !important;
+  }
+
+  .fab,
+  .fas {
+    color: var(--textLight);
+    margin-right: 1rem;
+  }
+</style>

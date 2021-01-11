@@ -28,7 +28,7 @@
         box-shadow: 0 0 0 1px var(--brandColor) !important;
       }
 
-      .notification {
+      .notification.floating {
         position: fixed; /* Sit on top of the screen */
         z-index: 1000; /* Add a z-index if needed */
         left: 50%; /* Center the snackbar */
@@ -43,7 +43,7 @@
     <header class="container" style="font-size: smaller">
       <nav class="navbar is-transparent">
         <div class="navbar-brand brand-title">
-          <a class="navbar-item" href="/">Jumga</a>
+          <a class="navbar-item is-size-5" href="/">Jumga</a>
           <div
             class="navbar-burger burger"
             data-target="navbarExampleTransparentExample"
@@ -62,6 +62,15 @@
           </div>
 
           <div class="navbar-end">
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link" href="#">OPTIONS</a>
+              <div class="navbar-dropdown is-boxed">
+                <a class="navbar-item" href="/signin">signin</a>
+                <a class="navbar-item" href="/signup">signup</a>
+                <a class="navbar-item" href="/signout">signout</a>
+              </div>
+            </div>
+
             <div class="navbar-item">
               <% if (typeof user != 'undefined') { %>
               <div>
@@ -74,19 +83,15 @@
                 <span>SHOPPER</span>
                 <% } %>
               </div>
-              <% } else { %> LOGIN or SIGNUP <% } %> <% if (typeof pageCount !=
-              'undefined') { %>
+              <% } else { %>
+              <a
+                href="/register"
+                class="button is-warning brand-title jumga-yellow"
+                >Open Shop</a
+              >
+              <% } %> <% if (typeof pageCount != 'undefined') { %>
               <b>viewd page => <%= pageCount %> &nbsp;</b>
               <% } %>
-
-              <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link" href="#">OPTIONS</a>
-                <div class="navbar-dropdown is-boxed">
-                  <a class="navbar-item" href="/signin">signin</a>
-                  <a class="navbar-item" href="/signup">signup</a>
-                  <a class="navbar-item" href="/signout">signout</a>
-                </div>
-              </div>
             </div>
           </div>
         </div>

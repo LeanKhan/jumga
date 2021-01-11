@@ -27,7 +27,7 @@ module.exports = (() => {
         await req.flash('error', {
           msg: 'You have to be signed in to open a Shop',
         });
-        return res.redirect('/signin?returnTo=%2Fshops%2Fnew');
+        return res.redirect(`/signin?returnTo=${req.get('Referer')}`);
       }
 
       const validationErrors = [];
@@ -45,7 +45,9 @@ module.exports = (() => {
           await req.flash('error', err);
         });
 
-        return res.redirect('/shops/new');
+        const { returnTo } = req.session;
+        delete req.session.returnTo;
+        return res.redirect(returnTo || '/shops/new');
       }
 
       const slug = slugify(req.body.shopName);
@@ -73,7 +75,9 @@ module.exports = (() => {
               await req.flash('error', {
                 msg: 'Shop with similar name already exists!',
               });
-              return res.redirect('/shops/new');
+              const { returnTo } = req.session;
+              delete req.session.returnTo;
+              return res.redirect(returnTo || '/shops/new');
             }
             // if not move on!
 

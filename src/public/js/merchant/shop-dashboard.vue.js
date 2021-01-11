@@ -12,7 +12,7 @@ if (document.getElementById('shop-dashboard')) {
     isLive: false,
   };
 
-  // async function postData(url = '', method, data = {}) {
+  // async function doPost(url = '', method, data = {}) {
   //   // Default options are marked with *
   //   const response = await fetch(url, {
   //     method, // *GET, POST, PUT, DELETE, etc.
@@ -34,7 +34,7 @@ if (document.getElementById('shop-dashboard')) {
     openShop: function (ev) {
       console.log('Shop is now open!', ev);
 
-      postData(`/shops/open?open=${ev}`, 'PATCH', { data: true })
+      doPost(`/shops/open?open=${ev}`, 'PATCH', { data: true })
         .then((data) => {
           console.log(data); // JSON data parsed by `data.json()` call
           this.isLive = data.isLive;

@@ -4,6 +4,8 @@ if (document.getElementById('admin-dashboard')) {
     template: '#riders-component',
     data() {
       return {
+        activeTab: 0,
+        loading: false,
         columns: [
           {
             field: '_id',
@@ -36,8 +38,6 @@ if (document.getElementById('admin-dashboard')) {
           country: '',
           currency: '',
         },
-        loading: false,
-        isOpen: false,
       };
     },
     methods: {
@@ -53,10 +53,24 @@ if (document.getElementById('admin-dashboard')) {
       addRider() {
         this.loading = true;
 
-        postData('/riders/new', 'POST', this.rider_form)
+        doPost('/riders/new', 'POST', this.rider_form)
           .then((data) => {
             // show toast here...
             console.log(data); // JSON data parsed by `data.json()` call
+
+            this.activeTab = 0;
+
+            this.rider_form = {
+              firstname: '',
+              lastname: '',
+              bio: '',
+              account_name: '',
+              account_number: '',
+              bank: '',
+              bio: '',
+              country: '',
+              currency: '',
+            };
 
             this.getRiders();
           })

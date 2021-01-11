@@ -9,7 +9,7 @@ const countrySchema = new Schema(
     short_code: String, // NG
     currency_code: String, // NGN
     dollar_exchange_rate: String, // 380
-    phonumber_code: String, // +234
+    phonenumber_code: String, // +234
   },
   { timestamps: true }
 );

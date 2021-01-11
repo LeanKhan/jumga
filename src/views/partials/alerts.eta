@@ -3,14 +3,14 @@
 <ul>
   <% alerts.error.forEach(alert => { %>
   <li>
-    <div class="notification is-danger">
+    <div class="notification floating is-danger">
       <button class="delete"></button>
       <%= alert.msg %>
     </div>
   </li>
   <% }) %> <% alerts.success.forEach(alert => { %>
   <li>
-    <div class="notification is-success">
+    <div class="notification floating is-success">
       <button class="delete"></button>
       <%= alert.msg %>
     </div>

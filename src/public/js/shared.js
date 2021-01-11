@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-async function postData(url = '', method, _data = {}) {
+async function doPost(url = '', method, _data = {}) {
   // Default options are marked with *
   const response = await fetch(url, {
     method, // *GET, POST, PUT, DELETE, etc.

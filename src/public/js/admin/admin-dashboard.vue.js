@@ -13,7 +13,7 @@ if (document.getElementById('admin-dashboard')) {
     activeTab: 0,
   };
 
-  async function postData(url = '', method, _data = {}) {
+  async function doPost(url = '', method, _data = {}) {
     // Default options are marked with *
     const response = await fetch(url, {
       method, // *GET, POST, PUT, DELETE, etc.
@@ -33,7 +33,7 @@ if (document.getElementById('admin-dashboard')) {
 
   const methods = {
     addRider() {
-      postData('/riders/new', 'POST', this.rider_form)
+      doPost('/riders/new', 'POST', this.rider_form)
         .then((d) => {
           console.log(d); // JSON data parsed by `data.json()` call
         })
@@ -44,7 +44,7 @@ if (document.getElementById('admin-dashboard')) {
     openShop(ev) {
       console.log('Shop is now open!', ev);
 
-      postData(`/shops/open?open=${ev}`, 'PATCH', { data: true })
+      doPost(`/shops/open?open=${ev}`, 'PATCH', { data: true })
         .then((d) => {
           console.log(d); // JSON data parsed by `data.json()` call
           this.isLive = data.isLive;

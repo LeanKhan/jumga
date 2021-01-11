@@ -4,7 +4,8 @@ if (document.getElementById('shop-dashboard')) {
     data() {
       return {
         loading: false,
-        isOpen: false,
+        activeTab: 0,
+        products: [], // list of products :) thank you Jesus!
         columns: [
           {
             field: '_id',
@@ -24,7 +25,6 @@ if (document.getElementById('shop-dashboard')) {
           category: '',
           tags: [],
         },
-        products: [],
       };
     },
     methods: {
@@ -39,9 +39,19 @@ if (document.getElementById('shop-dashboard')) {
       },
       addProduct() {
         this.loading = true;
-        postData('/products/new', 'POST', this.product_form)
+        doPost('/products/new', 'POST', this.product_form)
           .then((data) => {
             console.log(data); // JSON data parsed by `data.json()` call
+            this.activeTab = 0;
+
+            this.product_form = {
+              name: '',
+              price: '',
+              description: '',
+              category: '',
+              tags: [],
+            };
+
             this.getProducts();
           })
           .catch((err) => {

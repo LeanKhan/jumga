@@ -6,8 +6,10 @@ const { Schema } = mongoose;
 const categorySchema = new Schema(
   {
     name: String, // Fashion
-    item_name: String, // Clothes,
-    icon: String,
+    slug: String, // fashion
+    item_name_singular: String, // Clothe,
+    item_name_plural: String, // Clothes,
+    icon: String, // url string maybe
   },
   { timestamps: true }
 );

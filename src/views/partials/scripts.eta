@@ -11,6 +11,7 @@
 <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
 
 <script src="/js/shared.js"></script>
+<script src="/js/merchant/hello.js"></script>
 
 <% if (route_name == 'shop-dashboard') { %>
 <script src="/js/merchant/products.vue.js"></script>
@@ -20,5 +21,8 @@
 <script src="/js/admin/countries.vue.js"></script>
 <script src="/js/admin/riders.vue.js"></script>
 <script src="/js/admin/admin-dashboard.vue.js"></script>
+<% } %> <% if (route_name == 'open-shop') { %>
+<script src="/js/merchant/register.vue.js"></script>
+<script src="/js/merchant/open-shop.vue.js"></script>
 <% } %>
 <!-- <script src="/js/app.vue.js"></script> -->

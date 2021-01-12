@@ -20,6 +20,17 @@ body {
   border-color: #ffcc35 !important;
 }
 
+.navbar-cta-button {
+  box-shadow: 0px 8px 15px rgba(236, 201, 43, 0.4);
+}
+
+.navbar-cta-button:hover {
+  /* background-color: #2EE59D; */
+  box-shadow: 0px 10px 15px rgba(236, 201, 43, 0.4);
+  color: #fff;
+  /* transform: translateY(-7px); */
+}
+
 h1,
 h2,
 h3,

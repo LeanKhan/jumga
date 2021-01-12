@@ -37,8 +37,8 @@ module.exports = (() => {
       if (validator.isEmpty(req.body.description))
         validationErrors.push({ msg: 'Please provide a Shop Description' });
 
-      if (['food', 'tech', 'trash'].includes(req.body.category))
-        validationErrors.push({ msg: 'Invalid category!' });
+      // if (['food', 'tech', 'trash'].includes(req.body.category))
+      //   validationErrors.push({ msg: 'Invalid category!' });
 
       if (validationErrors.length) {
         validationErrors.forEach(async (err) => {
@@ -65,6 +65,7 @@ module.exports = (() => {
           slug,
           description: req.body.description,
           category: req.body.category,
+          category_id: req.body.category_id,
           owner: req.user._id,
         });
 
@@ -99,8 +100,7 @@ module.exports = (() => {
         // eslint-disable-next-line no-unused-vars
         .then((user) => {
           //   req.body.shop = s;
-          req.session.returnTo =
-            '/signin?returnTo=%2Fshops%2F12345%2Fdashboard';
+          req.session.returnTo = '/signin?returnTo=/shops/dashboard';
           return next();
         })
         .catch((err) => {
@@ -117,22 +117,27 @@ module.exports = (() => {
       // add validation checks here... thank you Jesus!
 
       try {
+        const currency = 'USD';
+        const amount = '20';
+        const type = 'shop_payment';
+
         const data = {
           tx_ref: `jumga-tx-${nanoid(12)}`,
           amount: '20',
           currency: 'USD',
-          redirect_url: `${req.protocol}://${req.headers.host}/payments/verify`,
+          redirect_url: `${req.protocol}://${req.headers.host}/payments/verify?&amount=${amount}&currency=${currency}&type=${type}`,
+          // add transaction fee to amount
           payment_options: 'card',
           meta: {
             user_id: req.user._id,
-            shop_id: req.body.shop._id,
+            shop_id: req.body.shop_id || req.body.shop._id,
           },
           customer: {
-            email: 'user@gmail.com',
-            phonenumber: '080****4528',
-            name: 'Yemi Desola',
+            email: req.user.email,
+            phonenumber: req.user.phonenumber,
+            name: `${req.user.firstname} ${req.user.lastname}`,
             user_id: req.user._id,
-            shop_id: req.body.shop._id,
+            shop_id: req.body.shop_id.trim() || req.body.shop._id.trim(),
           },
           customizations: {
             title: 'Jumga Stores',
@@ -144,6 +149,8 @@ module.exports = (() => {
         req.body.data = data;
 
         req.body.type = 'shop_payment';
+
+        req.body.shop = req.body.shop_id.trim() || req.body.shop._id.trim();
 
         return next();
       } catch (err) {
@@ -340,6 +347,7 @@ module.exports = (() => {
               return res.status(400).send({
                 success: false,
                 msg: 'Shop not found!:/',
+                error: { message: 'Shop Not found!' },
               });
 
             console.log('Shop opened successfully! Thank you Jesus!');
@@ -356,14 +364,14 @@ module.exports = (() => {
             return res.status(400).send({
               success: false,
               msg: 'Something went wrong while trying to open Shop :/',
-              data: err,
+              error: err,
             });
           });
       } catch (err) {
         return res.status(400).send({
           success: false,
           msg: 'Something went wrong while trying to open Shop :/',
-          data: err,
+          error: err,
         });
       }
     },

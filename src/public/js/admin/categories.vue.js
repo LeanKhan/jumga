@@ -36,6 +36,14 @@ if (document.getElementById('admin-dashboard')) {
           })
           .catch((err) => {
             console.error(err);
+
+            this.$buefy.notification.open({
+              duration: 5000,
+              message: 'Could not fetch Categories',
+              position: 'is-top',
+              type: 'is-danger',
+              queue: false,
+            });
           });
       },
       addCategory() {
@@ -45,6 +53,28 @@ if (document.getElementById('admin-dashboard')) {
           .then((data) => {
             // show toast here...
             console.log(data); // JSON data parsed by `data.json()` call
+
+            if (!data.success) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: JSON.parse(data.error).message || data.msg,
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+
+            if (!data.success && data.alerts) {
+              data.alerts.forEach((alert) => {
+                this.$buefy.notification.open({
+                  duration: 5000,
+                  message: alert.msg,
+                  position: 'is-top',
+                  type: 'is-danger',
+                  queue: false,
+                });
+              });
+            }
 
             this.activeTab = 0;
 
@@ -58,6 +88,28 @@ if (document.getElementById('admin-dashboard')) {
           .catch((err) => {
             // show toast here...
             console.error(err);
+
+            if (!err.success && err.error) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: err.error.message || 'Could not add Category',
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+
+            if (!err.success && err.alerts) {
+              err.alerts.forEach((alert) => {
+                this.$buefy.notification.open({
+                  duration: 5000,
+                  message: alert.msg,
+                  position: 'is-top',
+                  type: 'is-danger',
+                  queue: false,
+                });
+              });
+            }
           })
           .finally(() => {
             this.loading = false;

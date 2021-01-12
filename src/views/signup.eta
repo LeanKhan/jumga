@@ -64,9 +64,7 @@
 
             <div class="field">
               <div class="control">
-                <label class="label has-text-left" for="phonenumber"
-                  >Email</label
-                >
+                <label class="label has-text-left" for="email">Email</label>
 
                 <input
                   class="input"
@@ -126,43 +124,6 @@
     </div> -->
   </div>
 </section>
-
-<!-- <form action="/signup" method="POST">
-  <label for="firstname">Firstname</label>
-  <br />
-  <input name="firstname" placeholder="firstname" required />
-
-  <label for="lastname">Lastname</label>
-  <br />
-  <input name="lastname" type="text" placeholder="lastname" required />
-
-  <label for="phonenumber">Phonenumber</label>
-  <br />
-  <input name="phonenumber" type="text" placeholder="phonenumber" />
-
-  <label for="phonenumber">Email</label>
-  <br />
-  <input name="email" type="email" placeholder="email" required />
-
-  <label for="password">Password</label>
-  <br />
-  <input name="password" type="password" placeholder="password" required />
-
-  <label for="confirmPassword">Confirm Password</label>
-  <br />
-  <input
-    name="confirmPassword"
-    type="password"
-    placeholder="confirm password"
-  />
-
-  <input
-    type="submit"
-    class="mt-3"
-    style="margin-top: 1rem"
-    value="Create account"
-  />
-</form> -->
 
 <style>
   :root {

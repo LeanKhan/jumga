@@ -1,7 +1,7 @@
 <template type="x-template" id="register-form-component">
   <div>
     <b-steps
-      :value="current_step"
+      :value="step"
       :has-navigation="false"
       type="is-success"
       size="is-medium"
@@ -101,7 +101,7 @@
           <br />
           <small
             >Already have an account?
-            <a class="has-text-primary" href="/signin">Sign in</a></small
+            <a class="has-text-primary" href="/signin?returnTo=/register?step=1">Sign in</a></small
           >
         </form>
       </b-step-item>

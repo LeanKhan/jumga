@@ -3,6 +3,8 @@ const bent = require('bent');
 const validator = require('validator').default;
 const Shop = require('../../models/shop');
 const Rider = require('../../models/dispatch_rider');
+const Transaction = require('../../models/transaction');
+const Message = require('../../models/message');
 // const { retryRequest: retry } = require('../../tools');
 
 async function handleProductPayment(req, res, next) {
@@ -58,43 +60,96 @@ async function handleShopPayment(req, res, next) {
       //   'account.subaccount_id': { $exists: true, $ne: null },
       // }).exec();
 
-      return Rider.findOneAndUpdate(
+      return Rider.findOne({
+        employed: false,
+        'account.subaccount_id': { $exists: true, $ne: null },
+      });
+    };
+
+    const updateRider = (shop) => {
+      if (!shop) throw new Error('Cannot find shop to assign Rider to!');
+      return Rider.findByIdAndUpdate(
+        shop.dispatch_rider,
         {
-          employed: false,
-          'account.subaccount_id': { $exists: true, $ne: null },
+          employed: true,
+          shop: shop._id,
         },
-        { employed: true },
         { new: true }
       );
     };
 
+    const current_shop = await Shop.findOne({
+      _id: response.data.meta.shop_id.trim(),
+    }).exec();
+
+    if (current_shop.dispatch_rider) {
+      console.log('Already have a Dispatch Rider , thank you :)');
+
+      return updateShop(
+        response.data.meta.shop_id.trim(),
+        current_shop.dispatch_rider
+      )
+        .then(async () => {
+          console.log('Shop paid for successfully!');
+          await req.flash('success', {
+            msg: 'Shop Payment verified!',
+          });
+
+          res.redirect(`/shops/dashboard`);
+        })
+        .catch((err) => {
+          throw err;
+        });
+    }
+
     getDispatchRider()
       .then(async (rider) => {
+        console.log(rider);
         if (!rider) {
           await req.flash('error', { msg: "Can't find Dispatch Rider" });
 
-          const { returnTo } = req.session;
-          delete req.session.returnTo;
-          return res.redirect(returnTo || '/error?error=verifying_payment');
+          console.log('Dispatch Rider not assigned -- send message to Admin!');
+
+          // const { returnTo } = req.session;
+          // delete req.session.returnTo;
+          // return res.redirect(returnTo || '/error?error=verifying_payment');
+          const msg = {
+            from: response.data.meta.shop_id.trim(),
+            message: `This shop does not have a Dispatch Rider! Please give them one o`,
+            message_type: 'no_dispatch_rider',
+          };
+          await Message.create(msg);
+          return updateShop(response.data.meta.shop_id.trim(), null);
         }
 
-        return updateShop(response.data.meta.shop_id, rider._id);
+        return updateShop(response.data.meta.shop_id.trim(), rider._id);
       })
-      .then(async (shop) => {
-        if (!shop) {
-          await req.flash('error', { msg: "Couldn't update Shop" });
+      .then(updateRider)
+      .then(async (rider) => {
+        if (!rider) {
+          await req.flash('error', {
+            msg: "Couldn't update Shop. Please try again or message the admin",
+          });
 
           const { returnTo } = req.session;
           delete req.session.returnTo;
-          return res.redirect(returnTo || '/error?error=verifying_payment');
+          return res.redirect(returnTo || '/shops/dashboard');
         }
 
-        console.log('shop paid for successfully! =>', shop);
+        await req.flash('success', {
+          msg: 'Shop Payment verified!',
+        });
+
+        console.log('shop paid for successfully!');
 
         res.redirect(`/shops/dashboard`);
       })
-      .catch((err) => {
+      .catch(async (err) => {
         console.log(err);
+        await req.flash('error', {
+          msg:
+            "Couldn't add Dispatch Rider. Please try again or message the admin",
+        });
 
         const { returnTo } = req.session;
         delete req.session.returnTo;
@@ -102,6 +157,9 @@ async function handleShopPayment(req, res, next) {
       });
   } catch (err) {
     console.log('Error verying payment for shop\n', err);
+    await req.flash('error', {
+      msg: "Couldn't update Shop. Please try again or message the admin",
+    });
     return next(err);
   }
 }
@@ -109,6 +167,8 @@ async function handleShopPayment(req, res, next) {
 module.exports = {
   async pay(req, res) {
     const { data, type } = req.body;
+
+    const shop_id = req.body.shop_id.trim();
 
     // Add reason to redirect '&reason=no-type' or flash message!
     if (!data || !type)
@@ -138,6 +198,54 @@ module.exports = {
       return res.redirect(returnTo || '/error?error=making_payment');
     }
 
+    const findTx = (query) => {
+      return Transaction.findOne(query);
+    };
+
+    // TODO: what if it's a product payment? idk lol
+    if (type == 'shop_payment' && shop_id) {
+      // find if there's a transaction with this shop
+      return findTx({ shop: shop_id, type: 'shop_payment' })
+        .then((tx) => {
+          if (!tx) {
+            console.log('Payment has not been made, neither verified!');
+            console.log('Oya continue :)');
+          }
+
+          if (tx.paid && tx.verified) {
+            console.log('This has already been paid & verified');
+            return res.redirect(req.get('Referer') || '/');
+          }
+
+          if (tx.paid && !tx.verified) {
+            console.log('Payment has been made, good. Now, just verify!');
+
+            return res.redirect(
+              `/payments/verify?status=${tx.transaction.status}&tx_ref=${tx.transaction.tx_ref}&transaction_id=${tx.transaction.id}&amount=${tx.transaction.amount}&currency=${tx.transaction.currency}&type=${type}`
+            );
+          }
+
+          /**
+           * params needed: transaction_id, tx_ref, type, amount, currency
+           * http://localhost:3000/payments/verify?status=successful&tx_ref=hooli-tx-1920bbtytty&transaction_id=1811443
+           */
+
+          if (!tx.paid && !tx.verified) {
+            console.log('Payment has not been made, neither verified!');
+            console.log('Oya continue :)');
+          }
+        })
+        .catch(async (err) => {
+          console.log('Error :/ ', err);
+
+          await req.flash('error', {
+            msg: 'Error while trying to pay for shop. Please try again',
+          });
+
+          return res.redirect('/shops/dashboard');
+        });
+    }
+
     const post = bent('https://api.flutterwave.com/v3/', 'POST', 'json', 200);
 
     let response;
@@ -155,7 +263,14 @@ module.exports = {
         );
       }
 
-      console.log(response);
+      const tx = {
+        actor: type == 'shop_payment' ? 'Shop' : 'Customer',
+        tx_ref: data.tx_ref,
+        shop: shop_id,
+        type,
+      };
+
+      await Transaction.create(tx);
 
       if (response.data.link) return res.redirect(`${response.data.link}`);
     } catch (err) {
@@ -171,19 +286,29 @@ module.exports = {
       const validationErrors = [];
 
       if (validator.isEmpty(transaction_id || ''))
-        validationErrors.push({ msg: 'Transaction ID not found!' });
+        validationErrors.push({
+          msg: 'Transaction ID not found! [payment verification]',
+        });
 
       if (validator.isEmpty(tx_ref || ''))
-        validationErrors.push({ msg: 'Transaction Ref not found!' });
+        validationErrors.push({
+          msg: 'Transaction Ref not found! [payment verification]',
+        });
 
       if (validator.isEmpty(type || ''))
-        validationErrors.push({ msg: 'Payment Type not found!' });
+        validationErrors.push({
+          msg: 'Payment Type not found! [payment verification]',
+        });
 
       if (validator.isEmpty(amount || ''))
-        validationErrors.push({ msg: 'Payment Amount not found!' });
+        validationErrors.push({
+          msg: 'Payment Amount not found! [payment verification]',
+        });
 
       if (validator.isEmpty(currency || ''))
-        validationErrors.push({ msg: 'Payment Currency not found!' });
+        validationErrors.push({
+          msg: 'Payment Currency not found! [payment verification]',
+        });
 
       if (validationErrors.length) {
         validationErrors.forEach(async (err) => {
@@ -209,9 +334,13 @@ module.exports = {
 
         // TODO: IF ANY OF THE VERIFICATION OR PAYMENT STEPS FAIL, PLEASE
         // ALLOW THE USER TO [[ TRY AGAIN ]]
+        // console.log(
+        //   `${transaction_id}, ${tx_ref}, ${type}, ${amount}, ${currency}`
+        // );
+        // console.log(response);
 
         if (
-          response.data.status != 'success' ||
+          response.data.status != 'successful' ||
           response.data.tx_ref != tx_ref ||
           response.data.id != transaction_id ||
           response.data.currency != currency
@@ -220,7 +349,15 @@ module.exports = {
           const { returnTo } = req.session;
           delete req.session.returnTo;
 
-          await req.flash('error', { msg: `Could not verify paymenr :/` });
+          await Transaction.findOneAndUpdate(
+            { tx_ref },
+            {
+              verified: false,
+              transaction: response.data,
+            }
+          );
+
+          await req.flash('error', { msg: `Could not verify payment :/` });
 
           return res.redirect(returnTo || '/error?error=verifying_payment');
         }
@@ -228,6 +365,18 @@ module.exports = {
         console.log('response =>', response);
 
         res.locals.transaction_response = response;
+
+        console.log('Payment Verified successfully!');
+
+        await Transaction.findOneAndUpdate(
+          { tx_ref },
+          {
+            verified: true,
+            paid: true,
+            status: 'paid_and_verified',
+            transaction: response.data,
+          }
+        );
 
         switch (type) {
           case 'shop_payment':
@@ -242,18 +391,6 @@ module.exports = {
         }
       } catch (err) {
         console.log('Error paying for shop\n', err);
-
-        // if (err.code == 'ENOTFOUND' || res.status < 200 || res.status > 299) {
-        //   // this was a network issue...
-        //   // do the verification again!
-
-        //   const tries = (parseInt(req.query.tries) || 1) + 1;
-
-        //   console.log('Trying again!');
-
-        //   return res.redirect(`${req.get('Referer')}&tries=${tries}`);
-        //   // await req.flash('error', { msg: `Please try again! ` });
-        // }
 
         const { returnTo } = req.session;
         delete req.session.returnTo;

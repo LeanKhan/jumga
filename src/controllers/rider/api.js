@@ -1,6 +1,7 @@
 const validator = require('validator');
 const fetch = require('node-fetch');
 const Rider = require('../../models/dispatch_rider');
+const Shop = require('../../models/shop');
 
 module.exports = (() => {
   return {
@@ -8,17 +9,17 @@ module.exports = (() => {
       try {
         if (!req.isAuthenticated()) {
           await req.flash('error', {
-            msg: 'You have to be signed in to open a Shop',
+            msg: 'You have to be signed in to open add Dispatch Rider',
           });
           return res.redirect('/signin?returnTo=%2Fadmin%2Fdashboard');
         }
 
         const validationErrors = [];
 
-        if (validator.isEmpty(req.body.firstname || ''))
+        if (validator.isEmpty(req.body.rider.firstname || ''))
           validationErrors.push({ msg: 'First Name cannot be blank.' });
 
-        if (validator.isEmpty(req.body.lastname || ''))
+        if (validator.isEmpty(req.body.rider.lastname || ''))
           validationErrors.push({ msg: 'ast Name cannot be blank' });
 
         if (validationErrors.length) {
@@ -26,26 +27,33 @@ module.exports = (() => {
             await req.flash('error', err);
           });
 
-          return res.redirect('/admin/dashboard');
+          if (req.xhr)
+            return res.status(400).json({
+              success: false,
+              msg: 'Missing Values! For adding Dispatch Rider',
+              alerts: validationErrors,
+            });
+
+          return res.redirect(req.get('Referer') || '/admin/dashboard');
         }
 
         const rider = new Rider({
-          firstname: req.body.firstname,
-          lastname: req.body.lastname,
-          picture: req.body.picture,
-          phonenumber: req.body.phonenumber,
+          firstname: req.body.rider.firstname,
+          lastname: req.body.rider.lastname,
+          picture: req.body.rider.picture,
+          phonenumber: req.body.rider.phonenumber,
           account: {
             bank: '044',
-            account_number: req.body.account_number,
-            account_name: req.body.account_name,
-            country: req.body.country,
-            currency: req.body.currency,
+            account_number: req.body.rider.account.account_number,
+            account_name: req.body.rider.account.account_name,
+            country: req.body.rider.account.country,
+            currency: req.body.rider.account.currency,
           },
         });
 
         return Rider.findOne({
-          firstname: req.body.firstname,
-          lastname: req.body.lastname,
+          firstname: req.body.rider.firstname,
+          lastname: req.body.rider.lastname,
         })
           .exec()
           .then(async (existingRider) => {
@@ -53,6 +61,15 @@ module.exports = (() => {
               await req.flash('error', {
                 msg: 'Rider with similar name already exists!',
               });
+
+              if (req.xhr)
+                return res.status(400).json({
+                  success: false,
+                  msg:
+                    'Missing Values! For Adding Sub account for Dispatch Rider',
+                  error: { msg: 'Rider with similar naem already exists!' },
+                });
+
               return res.redirect('/admin/dashboard');
             }
             // if not move on!
@@ -71,9 +88,16 @@ module.exports = (() => {
       } catch (error) {
         console.error('Something went wrong :/\n', error);
 
-        return res.redirect(
-          '/error?c=something_went_wrong&where=addding_rider'
-        );
+        await req.flash('error', { msg: 'Smething went wrong!' });
+
+        if (req.xhr)
+          return res.status(400).json({
+            success: true,
+            msg: 'Error adding Dispatch Rider¬',
+            error: error.message,
+          });
+
+        return res.redirect(req.get('Referer') || '/admin/dashboard');
       }
     },
 
@@ -90,10 +114,10 @@ module.exports = (() => {
 
         const validationErrors = [];
 
-        if (validator.isEmpty(req.body.account_name || ''))
+        if (validator.isEmpty(req.body.rider.account.account_name || ''))
           validationErrors.push({ msg: 'Account Name cannot be blank.' });
 
-        if (validator.isEmpty(req.body.account_number || ''))
+        if (validator.isEmpty(req.body.rider.account.account_number || ''))
           validationErrors.push({ msg: 'Please provide an Account Number' });
 
         if (validationErrors.length) {
@@ -101,7 +125,16 @@ module.exports = (() => {
             await req.flash('error', err);
           });
 
-          return res.redirect('/admin/dashboard');
+          // if this is XHR then send this...
+
+          if (req.xhr)
+            return res.status(400).json({
+              success: false,
+              msg: 'Missing Values! For Adding Sub account for Dispatch Rider',
+              alerts: validationErrors,
+            });
+
+          return res.redirect(req.get('Referer') || '/admin/dashboard');
         }
 
         const updateRider = async (response) => {
@@ -156,24 +189,56 @@ module.exports = (() => {
         })
           .then((res) => res.json())
           .then(updateRider)
-          .then((rider) => {
+          .then(async (rider) => {
             console.log('updated rider =>\n', rider);
-            return res.status(200).json({
-              success: true,
+
+            await req.flash('success', {
               msg: 'Dispatch Rider added successfully!',
-              data: rider,
             });
+
+            if (req.xhr)
+              return res.status(200).json({
+                success: true,
+                msg: 'Dispatch Rider added successfully!',
+                data: rider,
+              });
+
+            return res.redirect(req.get('Referer') || '/admin/dashboard');
           })
-          .catch((err) => {
-            console.error(err);
-            return res.redirect('/admin/dashboard?error=rider_addition_failed');
+          .catch(async (error) => {
+            // TODO: stop repeating messages!
+            console.error(error);
+            await req.flash('error', {
+              msg:
+                'Could not create Sub Account for Dispatch rider, please try again!',
+            });
+
+            if (req.xhr)
+              return res.status(400).json({
+                success: false,
+                msg:
+                  'Could not create Sub Account for Dispatch rider, please try again!',
+                error: error.message,
+              });
+
+            return res.redirect(req.get('Referer') || '/admin/dashboard');
           });
       } catch (error) {
         console.error('Something went wrong :/\n', error);
+        await req.flash('error', {
+          msg:
+            'Could not create Sub Account for Dispatch rider, please try again!',
+        });
 
-        return res.redirect(
-          '/error?c=something_went_wrong&where=addding_rider_subaccount'
-        );
+        if (req.xhr)
+          return res.status(400).json({
+            success: false,
+            msg:
+              'Could not create Sub Account for Dispatch rider, please try again!',
+            error: error.message,
+          });
+
+        return res.redirect(req.get('Referer') || '/admin/dashboard');
       }
     },
 
@@ -186,11 +251,85 @@ module.exports = (() => {
             data: riders,
           });
         })
-        .catch((err) => {
+        .catch((error) => {
           return res.status(400).json({
             success: false,
             msg: 'Could not fetch Dispatch Riders',
-            err,
+            error,
+          });
+        });
+    },
+    getRider(req, res) {
+      Rider.findById(req.params.id)
+        .then((rider) => {
+          return res.status(200).json({
+            success: true,
+            msg: 'Dispatch Rider Fetched succesffuly!',
+            data: rider,
+          });
+        })
+        .catch((error) => {
+          return res.status(400).json({
+            success: false,
+            msg: 'Could not fetch Dispatch Rider',
+            error,
+          });
+        });
+    },
+
+    assignToShop(req, res) {
+      // find a random shop and give the Dispatch Rider to them...
+
+      const { id } = req.params;
+
+      const updateShop = (rider_id) => {
+        return Shop.findOneAndUpdate(
+          { dispatch_rider: { $exists: false, $eq: null } },
+          { dispatch_rider: rider_id }
+        );
+      };
+
+      const findRider = () => {
+        return Rider.findOne({
+          _id: id,
+          employed: false,
+          'account.subaccount_id': { $exists: true },
+        });
+      };
+
+      const updateRider = (shop) => {
+        if (!shop) throw new Error('Cannot find shop to assign Rider to!');
+        return Rider.findByIdAndUpdate(id, { employed: true, shop: shop._id });
+      };
+
+      findRider()
+        .then((rider) => {
+          if (!rider) {
+            // shit
+            return res.status(400).json({
+              success: false,
+              msg: "Dispatch Rider either doesn't exist or already has a Shop!",
+            });
+          }
+
+          return updateShop(rider._id);
+        })
+        .then(updateRider)
+        .then((r) => {
+          console.log(
+            `Dispatch Rider ${r.firstname} assigned to Shop successfully!`
+          );
+          return res.status(200).json({
+            success: true,
+            msg: 'Dispatch Rider Added to shop!',
+          });
+        })
+        .catch((err) => {
+          console.log('shit: could not assign dispatch rider to Shop', err);
+          return res.status(400).json({
+            success: false,
+            msg: 'Error assigning Dispatch Rider to Shop',
+            error: err.message,
           });
         });
     },

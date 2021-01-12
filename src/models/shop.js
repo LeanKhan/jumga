@@ -10,6 +10,7 @@ const shopSchema = new Schema(
     slug: String,
     description: String,
     category: String,
+    category_id: { type: Schema.Types.ObjectId, ref: 'Category' },
     account: {
       subaccount_id: { type: String, default: null },
       bank: String,
@@ -24,6 +25,7 @@ const shopSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    country: { type: Schema.Types.ObjectId, ref: 'Country' },
     isLive: {
       type: Boolean,
       default: false,

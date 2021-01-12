@@ -6,6 +6,8 @@ const api = require('./api');
 // get products
 router.get('/countries', api.getCountries);
 
+router.patch('/countries/set', api.setUserCountry);
+
 router.get('/categories', api.getCategories);
 
 /* GET home page. */

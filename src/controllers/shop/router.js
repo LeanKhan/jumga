@@ -19,6 +19,10 @@ router.get('/dashboard/add-account', views.renderAddAccount);
 
 router.post('/new', api.createShop, relogin, api.prepareShopPayment, pay);
 
+router.get('/dashboard/pay', views.renderShopPayment);
+
+router.post('/dashboard/pay', api.prepareShopPayment, pay);
+
 router.post('/dashboard/add-account', api.createSubaccount);
 
 router.patch('/open', isAuthenticated, api.openShop);

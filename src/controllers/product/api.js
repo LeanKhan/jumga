@@ -95,19 +95,20 @@ module.exports = (() => {
           .then(async (existingProduct) => {
             if (existingProduct) {
               await req.flash('error', {
-                msg: 'Product with similar name already exists!',
+                msg: 'Product with same name already exists!',
               });
 
               return res.status(400).send({
                 success: false,
-                msg: 'Product with similar name already exists!',
+                msg: 'Product with same name already exists!',
+                error: { message: 'Product with same name already exists!' },
               });
             }
             // if not move on!
 
-            product.save((err, p) => {
-              if (err) {
-                return res.status(400).send(err);
+            product.save((error, p) => {
+              if (error) {
+                return res.status(400).send({ success: false, error });
               }
               // return next();
               updateShop(p._id)
@@ -129,7 +130,7 @@ module.exports = (() => {
         return res.status(400).send({
           success: false,
           msg: 'Something went wrong while trying to add Product :/',
-          data: error,
+          error,
         });
       }
     },
@@ -250,7 +251,9 @@ module.exports = (() => {
     },
 
     getProducts(req, res) {
-      Product.find({})
+      const { shop } = req.query;
+
+      Product.find({ shop })
         .then((products) => {
           return res.status(200).json({
             success: true,
@@ -258,11 +261,11 @@ module.exports = (() => {
             data: products,
           });
         })
-        .catch((err) => {
+        .catch((error) => {
           return res.status(400).json({
             success: false,
             msg: 'Could not fetch Products',
-            err,
+            error,
           });
         });
     },

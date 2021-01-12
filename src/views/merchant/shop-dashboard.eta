@@ -1,6 +1,10 @@
 <% layout('layouts/default.eta') %>
 
-<div class="container section" id="shop-dashboard">
+<div
+  class="container section"
+  id="shop-dashboard"
+  data-shop_id="<%= shop._id %>"
+>
   <nav class="navbar is-transparent">
     <div class="navbar-brand">
       <h1 class="is-size-2">
@@ -33,7 +37,7 @@
   <p><a href="/shops/dashboard/add-account">add account</a></p>
   <% } %> <% if (!shop.hasPaidFee) { %>
   <p>Please pay your shop opening fee, or else!</p>
-  <p><a href="/shops/dashboard/pay-fee">pay fee</a></p>
+  <p><a href="/shops/dashboard/pay">pay fee</a></p>
   <% } %> <% if (!shop.isLive) { %>
   <p>Publish your store now</p>
   <% } %>
@@ -52,7 +56,8 @@
     </ul>
   </div>
 
-  <router-view></router-view>
+  <!-- pass data from express _directly_ to router-view. thank you Jesus! -->
+  <router-view :shop_id="'<%= shop._id %>'"></router-view>
 </div>
 
 <%~ E.includeFile("components/merchant/products.vue") %>

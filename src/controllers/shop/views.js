@@ -4,7 +4,31 @@ const Product = require('../../models/product');
 module.exports = (() => {
   return {
     renderCreateShop(req, res) {
+      // check if this person has an account...
+      // check if this is an admin
+
       res.render('merchant/new-shop');
+    },
+
+    renderShopPayment(req, res) {
+      // check if this person has an account...
+      // check if this is an admin
+
+      const id = req.user.shop;
+
+      Shop.findById(id)
+        .exec()
+        .then((s) => {
+          if (!s) return res.redirect('/error?c=404_shop');
+
+          console.log(s);
+
+          return res.render('merchant/pay-for-shop', { shop: s });
+        })
+        .catch((err) => {
+          console.error('error rendering pay for shop =>\n', err);
+          return res.redirect('/error');
+        });
     },
 
     renderAddAccount(req, res) {

@@ -128,6 +128,8 @@ app.use(async function (req, res, next) {
     res.locals.user = req.session.passport.user;
   }
 
+  res.locals.country = req.session.country || 'NG';
+
   if (req.session.pageCount) {
     res.locals.pageCount = req.session.pageCount;
   }

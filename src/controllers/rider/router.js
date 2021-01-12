@@ -9,4 +9,10 @@ router.get('/', api.getRiders);
 // check if isAuthenticated, isAdmin, if the rider has been created before and all that. thank you Jesus!
 router.post('/new', api.addRider, api.createSubaccount);
 
+router.post('/add-account', api.createSubaccount);
+
+router.patch('/:id/assign-to-shop', api.assignToShop);
+
+router.get('/:id', api.getRider);
+
 module.exports = router;

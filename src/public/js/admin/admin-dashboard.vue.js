@@ -41,18 +41,6 @@ if (document.getElementById('admin-dashboard')) {
           console.error(err);
         });
     },
-    openShop(ev) {
-      console.log('Shop is now open!', ev);
-
-      doPost(`/shops/open?open=${ev}`, 'PATCH', { data: true })
-        .then((d) => {
-          console.log(d); // JSON data parsed by `data.json()` call
-          this.isLive = data.isLive;
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
   };
 
   const routes = [

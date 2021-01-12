@@ -1,6 +1,7 @@
 if (document.getElementById('shop-dashboard')) {
   var ProductsComponent = {
     template: '#products-component',
+    props: ['shop_id'],
     data() {
       return {
         loading: false,
@@ -29,12 +30,20 @@ if (document.getElementById('shop-dashboard')) {
     },
     methods: {
       getProducts() {
-        doGet('/products', 'GET')
+        doGet(`/products?shop=${this.shop_id}`, 'GET')
           .then((d) => {
             this.products = d.data;
           })
           .catch((err) => {
             console.error(err);
+
+            this.$buefy.notification.open({
+              duration: 5000,
+              message: 'Could not fetch Products!',
+              position: 'is-top',
+              type: 'is-danger',
+              queue: false,
+            });
           });
       },
       addProduct() {
@@ -52,10 +61,40 @@ if (document.getElementById('shop-dashboard')) {
               tags: [],
             };
 
+            this.$buefy.notification.open({
+              duration: 5000,
+              message: 'Product added successully!',
+              position: 'is-top',
+              type: 'is-success',
+              queue: false,
+            });
+
             this.getProducts();
           })
           .catch((err) => {
             console.error(err);
+
+            if (!err.success && err.error) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: err.error.message || 'Error adding Product',
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+
+            if (!err.success && err.alerts) {
+              err.alerts.forEach((alert) => {
+                this.$buefy.notification.open({
+                  duration: 5000,
+                  message: alert.msg,
+                  position: 'is-top',
+                  type: 'is-danger',
+                  queue: false,
+                });
+              });
+            }
           })
           .finally(() => {
             this.loading = false;
@@ -64,7 +103,7 @@ if (document.getElementById('shop-dashboard')) {
       },
     },
     mounted() {
-      console.log('Loaded merchant app! Thank you Jesus!');
+      console.log('Loaded shop products component! Thank you Jesus!');
 
       this.getProducts();
     },

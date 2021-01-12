@@ -1,6 +1,39 @@
 <% layout('layouts/default.eta') %>
 
-<h4>Welcome to Jumga, shop anything!</h4>
+<section class="hero is-white">
+  <div class="hero-body">
+    <div>
+      <div class="columns reverse-columns">
+        <div
+          class="column is-10-mobile is-offset-1-mobile is-10-tablet is-offset-1-tablet is-5-desktop is-offset-1-desktop is-5-widescreen is-offset-1-widescreen is-5-fullhd is-offset-1-fullhd"
+          data-aos="fade-down"
+        >
+          <h1 class="title titled is-1 mb-6 brand-title">
+            Open a shop and sell anything*
+          </h1>
+          <h2
+            class="subtitled subtitle has-text-grey is-4 has-text-weight-normal is-family-sans-serif"
+          >
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Laborum
+            cupiditate dolorum vitae dolores nesciunt totam magni quas.
+          </h2>
+          <div class="buttons">
+            <button class="button is-black">Download</button>
+            <button class="button">Subscribe</button>
+          </div>
+        </div>
+        <div
+          data-aos="fade-right"
+          class="column is-10-mobile is-offset-1-mobile is-10-tablet is-offset-1-tablet is-4-desktop is-offset-1-desktop is-4-widescreen is-offset-1-widescreen is-4-fullhd is-offset-1-fullhd"
+        >
+          <figure class="image is-square">
+            <img src="../images/undraw_Camera_re_cnp4.svg" />
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="section">
   <div class="container">
@@ -15,5 +48,19 @@
       <% }) %>
     </ul>
     <% } %>
+  </div>
+</section>
+
+<section class="section">
+  <div
+    class="intro column is-8 is-offset-2 has-text-centered has-background-light"
+  >
+    <h2 class="title brand-title">Perfect for developers or designers!</h2>
+    <br />
+    <p class="subtitle">
+      Vel fringilla est ullamcorper eget nulla facilisi. Nulla facilisi nullam
+      vehicula ipsum a. Neque egestas congue quisque egestas diam in arcu
+      cursus.
+    </p>
   </div>
 </section>

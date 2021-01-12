@@ -1,20 +1,38 @@
 <!-- TODO: show other alert types -->
-<% if (alerts.error.length || alerts.success.length) { %>
-<ul>
-  <% alerts.error.forEach(alert => { %>
-  <li>
-    <div class="notification floating is-danger">
-      <button class="delete"></button>
-      <%= alert.msg %>
-    </div>
-  </li>
-  <% }) %> <% alerts.success.forEach(alert => { %>
-  <li>
-    <div class="notification floating is-success">
-      <button class="delete"></button>
-      <%= alert.msg %>
-    </div>
-  </li>
-  <% }) %>
-</ul>
+<% if (alerts.error.length) { %>
+<script error_alerts="<%= JSON.stringify(alerts.error) %>">
+  const alerts = JSON.parse(
+    document.currentScript.getAttribute('error_alerts')
+  ); // 1
+
+  if (Buefy && alerts.length) {
+    alerts.forEach(function (alert) {
+      Buefy.NotificationProgrammatic.open({
+        duration: 5000,
+        message: alert.msg,
+        position: 'is-top',
+        type: 'is-danger',
+        queue: false,
+      });
+    });
+  }
+</script>
+<% } %> <% if (alerts.success.length) { %>
+<script success_alerts="<%= JSON.stringify(alerts.success) %>">
+  const alerts = JSON.parse(
+    document.currentScript.getAttribute('success_alerts')
+  ); // 1
+
+  if (Buefy && alerts.length) {
+    alerts.forEach(function (alert) {
+      Buefy.NotificationProgrammatic.open({
+        duration: 5000,
+        message: alert.msg,
+        position: 'is-top',
+        type: 'is-success',
+        queue: false,
+      });
+    });
+  }
+</script>
 <% } %>

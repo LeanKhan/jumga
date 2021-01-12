@@ -12,24 +12,6 @@ if (document.getElementById('shop-dashboard')) {
     isLive: false,
   };
 
-  // async function doPost(url = '', method, data = {}) {
-  //   // Default options are marked with *
-  //   const response = await fetch(url, {
-  //     method, // *GET, POST, PUT, DELETE, etc.
-  //     mode: 'cors', // no-cors, *cors, same-origin
-  //     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-  //     credentials: 'same-origin', // include, *same-origin, omit
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       // 'Content-Type': 'application/x-www-form-urlencoded',
-  //     },
-  //     redirect: 'follow', // manual, *follow, error
-  //     referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-  //     body: JSON.stringify(data), // body data type must match "Content-Type" header
-  //   });
-  //   return response.json(); // parses JSON response into native JavaScript objects
-  // }
-
   const methods = {
     openShop: function (ev) {
       console.log('Shop is now open!', ev);
@@ -38,9 +20,39 @@ if (document.getElementById('shop-dashboard')) {
         .then((data) => {
           console.log(data); // JSON data parsed by `data.json()` call
           this.isLive = data.isLive;
+
+          this.$buefy.notification.open({
+            duration: 5000,
+            message: 'Shop is now live and ready to sell!',
+            position: 'is-top',
+            type: 'is-info',
+            queue: false,
+          });
         })
         .catch((err) => {
           console.error(err);
+
+          if (!err.success && err.error) {
+            this.$buefy.notification.open({
+              duration: 5000,
+              message: err.error.message || 'Error opening Shop!',
+              position: 'is-top',
+              type: 'is-danger',
+              queue: false,
+            });
+          }
+
+          if (!err.success && err.alerts) {
+            err.alerts.forEach((alert) => {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: alert.msg,
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            });
+          }
         });
     },
   };
@@ -49,7 +61,11 @@ if (document.getElementById('shop-dashboard')) {
 
   const routes = [
     { path: '/', redirect: '/products' },
-    { path: '/products', component: ProductsComponent, name: 'Products' },
+    {
+      path: '/products',
+      component: ProductsComponent,
+      name: 'Products',
+    },
   ];
 
   // 3. Create the router instance and pass the `routes` option
@@ -65,6 +81,9 @@ if (document.getElementById('shop-dashboard')) {
     router,
     components: {
       products: ProductsComponent,
+    },
+    mounted: function () {
+      console.log('Loaded Shop Merchant App');
     },
   }).$mount('#shop-dashboard');
 }

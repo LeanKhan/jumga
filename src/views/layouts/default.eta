@@ -81,25 +81,38 @@
                 <span>MERCHANT</span>
                 <% } else { %>
                 <span>SHOPPER</span>
+                <a
+                  href="/register"
+                  class="button is-warning brand-title jumga-yellow navbar-cta-button"
+                  >Open Shop</a
+                >
                 <% } %>
               </div>
               <% } else { %>
               <a
                 href="/register"
-                class="button is-warning brand-title jumga-yellow"
+                class="button is-warning brand-title jumga-yellow navbar-cta-button"
                 >Open Shop</a
               >
               <% } %> <% if (typeof pageCount != 'undefined') { %>
               <b>viewd page => <%= pageCount %> &nbsp;</b>
               <% } %>
             </div>
+
+            <div class="navbar-item is-hoverable">
+              <div class="select is-rounded is-light">
+                <select onchange="changeCountry(this)">
+                  <option value="NG" <%= country == 'NG' && 'selected' %>>NG</option>
+                  <option value="KE" <%= country == 'KE' && 'selected' %>>KE</option>
+                  <option value="GH" <%= country == 'GH' && 'selected' %>>GH</option>
+                  <option value="UK" <%= country == 'UK' && 'selected' %>>UK</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
     </header>
-
-    <!-- ALERTS PARTIALS HERE -->
-    <%~ E.includeFile("partials/alerts.eta", {alerts}) %>
 
     <section class="app-main">
       <div><%~ body %></div>
@@ -108,5 +121,8 @@
     <%~ E.includeFile("partials/scripts.eta", {env, route_name}) %> <% if
     (route_name == 'shop') { %> <%~ E.includeFile("partials/shop-footer.eta") %>
     <% } else { %> <%~ E.includeFile("partials/default-footer.eta") %> <% } %>
+
+    <!-- ALERTS PARTIALS HERE -->
+    <%~ E.includeFile("partials/alerts.eta", {alerts}) %>
   </body>
 </html>

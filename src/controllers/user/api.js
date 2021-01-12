@@ -118,12 +118,12 @@ module.exports = (() => {
         password: req.body.password,
       });
 
-      User.findOne({ email: req.body.phonenumber })
+      User.findOne({ email: req.body.email, phonenumber: req.body.phonenumber })
         .exec()
         .then(async (existingUser) => {
           if (existingUser) {
             await req.flash('error', {
-              msg: 'Account with that phonumber already exists.',
+              msg: 'Account with that email or phonumber already exists.',
             });
             return res.redirect('/signup');
           }
@@ -151,7 +151,7 @@ module.exports = (() => {
           // Now send welcome email :)
           console.log(req.session.returnTo);
           const { returnTo } = req.session;
-          req.session.returnTo = false;
+          delete req.session.returnTo;
           res.redirect(returnTo || '/');
         }
       });
@@ -163,9 +163,7 @@ module.exports = (() => {
           msg: 'You need to be signed in first',
         });
 
-        req.session.returnTo = req.originalUrl;
-
-        return res.redirect('/signin');
+        return res.redirect(`/signin?returnTo=${req.originalUrl}`);
       }
 
       return next();

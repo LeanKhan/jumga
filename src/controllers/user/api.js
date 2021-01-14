@@ -99,8 +99,11 @@ module.exports = (() => {
         validationErrors.push({ msg: 'Passwords do not match' });
 
       if (validationErrors.length) {
-        await req.flash('error', validationErrors);
-        return res.redirect('/signup');
+        validationErrors.forEach(async (err) => {
+          await req.flash('error', err);
+        });
+
+        return res.redirect(req.get('Referer') || '/signup');
       }
       req.body.email = validator.normalizeEmail(req.body.email, {
         gmail_remove_dots: false,
@@ -125,7 +128,7 @@ module.exports = (() => {
             await req.flash('error', {
               msg: 'Account with that email or phonumber already exists.',
             });
-            return res.redirect('/signup');
+            return res.redirect(req.get('Referer') || '/signup');
           }
           // if not move on!
           user.save((err) => {
@@ -207,7 +210,7 @@ module.exports = (() => {
             return res.redirect(returnTo || '/');
           }
 
-          req.logIn(user, (err) => {
+          req.logIn(user, async (err) => {
             if (err) {
               req.logout();
 
@@ -220,6 +223,20 @@ module.exports = (() => {
             }
 
             // Logged in successfullY!
+
+            if (req.query.skipPayment) {
+              await req.flash('success', {
+                msg: 'Welcome to your new Shop!',
+              });
+
+              await req.flash('warning', {
+                msg:
+                  "You can't do much without paying for your shop and adding an account... :p capitalism yunno",
+              });
+
+              return res.redirect('/shops/dashboard');
+            }
+
             return next();
           });
         })

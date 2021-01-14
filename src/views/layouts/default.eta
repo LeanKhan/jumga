@@ -35,13 +35,17 @@
         top: 30px; /* 30px from the bottom */
         transform: translate(-50%);
       }
+
+      label > input.country-select[type='radio'] {
+        visibility: hidden;
+      }
     </style>
   </head>
 
   <body>
     <div class="jumga-top-bar"></div>
     <header class="container" style="font-size: smaller">
-      <nav class="navbar is-transparent">
+      <nav class="navbar is-transparent py-3">
         <div class="navbar-brand brand-title">
           <a class="navbar-item is-size-5" href="/">Jumga</a>
           <div
@@ -55,22 +59,7 @@
         </div>
 
         <div id="navbarExampleTransparentExample" class="navbar-menu">
-          <div class="navbar-start">
-            <a class="navbar-item" href="/shops/new">setup shop</a>
-            <a class="navbar-item" href="/admin/dashboard">admin</a>
-            <a class="navbar-item" href="/shops/dashboard">shop admin</a>
-          </div>
-
           <div class="navbar-end">
-            <div class="navbar-item has-dropdown is-hoverable">
-              <a class="navbar-link" href="#">OPTIONS</a>
-              <div class="navbar-dropdown is-boxed">
-                <a class="navbar-item" href="/signin">signin</a>
-                <a class="navbar-item" href="/signup">signup</a>
-                <a class="navbar-item" href="/signout">signout</a>
-              </div>
-            </div>
-
             <div class="navbar-item">
               <% if (typeof user != 'undefined') { %>
               <div>
@@ -82,32 +71,86 @@
                 <% } else { %>
                 <span>SHOPPER</span>
                 <a
-                  href="/register"
+                  href="/register?step=1"
                   class="button is-warning brand-title jumga-yellow navbar-cta-button"
                   >Open Shop</a
                 >
                 <% } %>
               </div>
-              <% } else { %>
+              <% } else if(route_name != 'shop') { %>
               <a
                 href="/register"
                 class="button is-warning brand-title jumga-yellow navbar-cta-button"
                 >Open Shop</a
               >
-              <% } %> <% if (typeof pageCount != 'undefined') { %>
-              <b>viewd page => <%= pageCount %> &nbsp;</b>
               <% } %>
             </div>
 
-            <div class="navbar-item is-hoverable">
-              <div class="select is-rounded is-light">
-                <select onchange="changeCountry(this)">
-                  <option value="NG" <%= country == 'NG' && 'selected' %>>NG</option>
-                  <option value="KE" <%= country == 'KE' && 'selected' %>>KE</option>
-                  <option value="GH" <%= country == 'GH' && 'selected' %>>GH</option>
-                  <option value="UK" <%= country == 'UK' && 'selected' %>>UK</option>
-                </select>
+            <% if (route_name != 'shop') { %>
+            <div class="navbar-item has-dropdown is-hoverable">
+              <span class="navbar-link">
+                <img
+                  src="http://www.radfaces.com/images/avatars/angela-chase.jpg"
+                  class="author-image"
+                  alt="Placeholder image"
+                  style="border-radius: 50%"
+                />
+              </span>
+              <div class="navbar-dropdown is-boxed">
+                <a class="navbar-item" href="/signin">signin</a>
+                <a class="navbar-item" href="/signup">signup</a>
+                <a class="navbar-item" href="/signout">signout</a>
+                <hr class="dropdown-divider" />
+                <a class="navbar-item" href="/shops/dashboard">shop admin</a>
+                <a class="navbar-item" href="/admin/dashboard">admin</a>
               </div>
+              <% } %>
+            </div>
+
+            <div class="navbar-item has-dropdown is-hoverable">
+              <span class="navbar-link" id="country_dropdown"
+                ><img
+                  src="https://www.countryflags.io/<%= country %>/flat/16.png"
+              /></span>
+              <ul class="navbar-dropdown is-clickable is-boxed">
+                <a class="navbar-item">
+                  <label
+                    ><input type="radio" class="country-select" <%= country ==
+                    'NG' && 'checked' %> onchange="change(this)" value="NG"
+                    name="country"/><img
+                      src="https://www.countryflags.io/NG/flat/16.png"
+                    />
+                    Nigeria</label
+                  >
+                </a>
+                <a class="navbar-item">
+                  <label
+                    ><input type="radio" class="country-select" <%= country ==
+                    'KE' && 'checked' %> onchange="change(this)" value="KE"
+                    name="country"/><img
+                      src="https://www.countryflags.io/KE/flat/16.png"
+                    />Kenya</label
+                  >
+                </a>
+                <a class="navbar-item">
+                  <label
+                    ><input class="country-select" <%= country == 'GH' &&
+                    'checked' %> onchange="change(this)" type="radio" value="GH"
+                    name="country"/><img
+                      src="https://www.countryflags.io/GH/flat/16.png"
+                    />Ghana</label
+                  >
+                </a>
+                <a class="navbar-item">
+                  <label
+                    ><input class="country-select" <%= country == 'GB' &&
+                    'checked' %> onchange="change(this)" type="radio" value="GB"
+                    name="country"/><img
+                      src="https://www.countryflags.io/GB/flat/16.png"
+                    />UK</label
+                  >
+                </a>
+              </ul>
             </div>
           </div>
         </div>

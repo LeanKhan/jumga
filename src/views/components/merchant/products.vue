@@ -35,6 +35,7 @@
 
         <b-field label="Price">
           <b-input v-model="product_form.price" required></b-input>
+          <p>Must be in USD</p>
         </b-field>
 
         <b-field label="Description">

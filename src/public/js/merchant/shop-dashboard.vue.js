@@ -14,20 +14,36 @@ if (document.getElementById('shop-dashboard')) {
 
   const methods = {
     openShop: function (ev) {
-      console.log('Shop is now open!', ev);
+      console.log('Shop is now open!', ev.target.value);
 
-      doPost(`/shops/open?open=${ev}`, 'PATCH', { data: true })
+      const open = !JSON.parse(ev.target.value);
+
+      doPost(`/shops/open?open=${open}`, 'PATCH', { data: true })
         .then((data) => {
           console.log(data); // JSON data parsed by `data.json()` call
-          this.isLive = data.isLive;
 
-          this.$buefy.notification.open({
-            duration: 5000,
-            message: 'Shop is now live and ready to sell!',
-            position: 'is-top',
-            type: 'is-info',
-            queue: false,
-          });
+          if (data.success) {
+            this.$buefy.notification.open({
+              duration: 5000,
+              message: 'Shop is now live and ready to sell!',
+              position: 'is-top',
+              type: 'is-info',
+              queue: false,
+            });
+
+            this.isLive = data.isLive;
+          }
+
+          if (!data.success) {
+            this.$buefy.notification.open({
+              duration: 5000,
+              message:
+                'Could not make Shop live, please contact Admin or try again...',
+              position: 'is-top',
+              type: 'is-danger',
+              queue: false,
+            });
+          }
         })
         .catch((err) => {
           console.error(err);

@@ -1,7 +1,7 @@
 if (document.getElementById('open-shop-app')) {
   var RegisterFormComponent = {
     template: '#register-form-component',
-    props: ['current_step', 'categories', 'user'],
+    props: ['current_step', 'categories', 'countries', 'user'],
     data() {
       return {
         name: 'Register Form Component',

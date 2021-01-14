@@ -2,7 +2,7 @@
 const express = require('express');
 const api = require('./api');
 const views = require('./views');
-const { pay } = require('../pay').api;
+const { pay, beforePay } = require('../pay').api;
 
 const router = express.Router();
 const shop_router = express.Router({ mergeParams: true });
@@ -17,7 +17,14 @@ router.get('/dashboard/add-account', views.renderAddAccount);
 
 // apis
 
-router.post('/new', api.createShop, relogin, api.prepareShopPayment, pay);
+router.post(
+  '/new',
+  api.createShop,
+  relogin,
+  api.prepareShopPayment,
+  beforePay,
+  pay
+);
 
 router.get('/dashboard/pay', views.renderShopPayment);
 

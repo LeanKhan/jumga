@@ -170,6 +170,46 @@ module.exports = {
 
     const shop_id = req.body.shop_id.trim();
 
+    console.log('Here befroe fw pay endpoint');
+
+    const post = bent('https://api.flutterwave.com/v3/', 'POST', 'json', 200);
+
+    let response;
+
+    try {
+      response = await post('payments', data, {
+        Authorization: `Bearer ${process.env.FW_SECRET_KEY.trim()}`,
+      });
+
+      if (!response) {
+        const { returnTo } = req.session;
+        delete req.session.returnTo;
+        return res.redirect(
+          returnTo || `/error?error=making_payment&type=${type}`
+        );
+      }
+
+      const tx = {
+        actor: type == 'shop_payment' ? 'Shop' : 'Customer',
+        tx_ref: data.tx_ref,
+        shop: shop_id,
+        type,
+      };
+
+      await Transaction.create(tx);
+
+      if (response.data.link) return res.redirect(`${response.data.link}`);
+    } catch (err) {
+      console.log('Error paying for shop\n', err);
+      return res.status(400).send({ msg: 'Error paying for shop :(', err });
+    }
+  },
+
+  async beforePay(req, res, next) {
+    const { data, type } = req.body;
+
+    const shop_id = req.body.shop_id.trim();
+
     // Add reason to redirect '&reason=no-type' or flash message!
     if (!data || !type)
       return res.redirect(`/error?error=payment_failed&type=${type}`);
@@ -207,22 +247,19 @@ module.exports = {
       // find if there's a transaction with this shop
       return findTx({ shop: shop_id, type: 'shop_payment' })
         .then((tx) => {
-          if (!tx) {
-            console.log('Payment has not been made, neither verified!');
-            console.log('Oya continue :)');
-          }
+          if (tx) {
+            if (tx.paid && tx.verified) {
+              console.log('This has already been paid & verified');
+              return res.redirect(req.get('Referer') || '/');
+            }
 
-          if (tx.paid && tx.verified) {
-            console.log('This has already been paid & verified');
-            return res.redirect(req.get('Referer') || '/');
-          }
+            if (tx.paid && !tx.verified) {
+              console.log('Payment has been made, good. Now, just verify!');
 
-          if (tx.paid && !tx.verified) {
-            console.log('Payment has been made, good. Now, just verify!');
-
-            return res.redirect(
-              `/payments/verify?status=${tx.transaction.status}&tx_ref=${tx.transaction.tx_ref}&transaction_id=${tx.transaction.id}&amount=${tx.transaction.amount}&currency=${tx.transaction.currency}&type=${type}`
-            );
+              return res.redirect(
+                `/payments/verify?status=${tx.transaction.status}&tx_ref=${tx.transaction.tx_ref}&transaction_id=${tx.transaction.id}&amount=${tx.transaction.amount}&currency=${tx.transaction.currency}&type=${type}`
+              );
+            }
           }
 
           /**
@@ -230,9 +267,11 @@ module.exports = {
            * http://localhost:3000/payments/verify?status=successful&tx_ref=hooli-tx-1920bbtytty&transaction_id=1811443
            */
 
-          if (!tx.paid && !tx.verified) {
+          if (!tx) {
             console.log('Payment has not been made, neither verified!');
             console.log('Oya continue :)');
+
+            return next();
           }
         })
         .catch(async (err) => {
@@ -244,38 +283,6 @@ module.exports = {
 
           return res.redirect('/shops/dashboard');
         });
-    }
-
-    const post = bent('https://api.flutterwave.com/v3/', 'POST', 'json', 200);
-
-    let response;
-
-    try {
-      response = await post('payments', data, {
-        Authorization: `Bearer ${process.env.FW_SECRET_KEY.trim()}`,
-      });
-
-      if (!response) {
-        const { returnTo } = req.session;
-        delete req.session.returnTo;
-        return res.redirect(
-          returnTo || `/error?error=making_payment&type=${type}`
-        );
-      }
-
-      const tx = {
-        actor: type == 'shop_payment' ? 'Shop' : 'Customer',
-        tx_ref: data.tx_ref,
-        shop: shop_id,
-        type,
-      };
-
-      await Transaction.create(tx);
-
-      if (response.data.link) return res.redirect(`${response.data.link}`);
-    } catch (err) {
-      console.log('Error paying for shop\n', err);
-      return res.status(400).send({ msg: 'Error paying for shop :(', err });
     }
   },
 

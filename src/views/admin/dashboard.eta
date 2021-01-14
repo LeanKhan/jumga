@@ -1,7 +1,7 @@
 <% layout('layouts/default.eta') %>
 
 <div class="container section" id="admin-dashboard">
-  <nav class="navbar is-transparent">
+  <nav class="navbar is-transparent" style="z-index: unset">
     <div class="navbar-start">
       <h1 class="is-size-6">Admin</h1>
     </div>

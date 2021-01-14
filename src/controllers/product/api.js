@@ -4,6 +4,7 @@ const { nanoid } = require('nanoid');
 const { slugify } = require('../../tools');
 const Product = require('../../models/product');
 const Shop = require('../../models/shop');
+const Country = require('../../models/country');
 
 module.exports = (() => {
   return {
@@ -157,9 +158,6 @@ module.exports = (() => {
         if (validator.isEmpty(req.body.name || ''))
           validationErrors.push({ msg: 'Please provide a Fullname' });
 
-        if (validator.isEmpty(req.body.quantity || ''))
-          validationErrors.push({ msg: 'No Quantity specified' });
-
         if (validator.isEmpty(req.body.product_name || ''))
           validationErrors.push({ msg: 'Product Name not found' });
 
@@ -186,18 +184,79 @@ module.exports = (() => {
           return res.redirect(returnTo || '/error?error=preparing_payment');
         }
 
-        const { price, delivery_fee } = req.body;
+        let { price } = req.body;
 
-        const fw_trx_fee = 0.038; // $ tranx fee
+        price = parseFloat(price);
 
-        const product_commision = parseInt(price) * 0.025;
-        const delivery_commision = parseInt(delivery_fee) * 0.2;
-        const total_amount =
-          (parseInt(price) + parseInt(delivery_fee)) / (1 - fw_trx_fee);
+        const [cust_country, shop_country] = await Promise.all([
+          Country.findOne({ short_code: req.session.country || 'NG' }),
+          Country.findOne({ short_code: shop.country }),
+        ]);
 
-        console.log(product_commision, ' <- p | d -> ', delivery_commision);
+        let transaction_type;
+        let fw_trx_fee; // $ tranx fee
+        let delivery_fee; // should be getting this from db or somn
+        let currency = 'USD';
+
+        if (price > 1500) {
+          delivery_fee = 150;
+        } else {
+          delivery_fee = 15;
+        }
+
+        // All of these transactions are in DOLLARS, expect specified
+
+        // check if the transaction is local or international, then change
+        // transaction fee and currency...
+        if (shop_country.short_code == cust_country.short_code) {
+          console.log('Local Transaction - from server');
+          fw_trx_fee = parseFloat(cust_country.fw_processing_fees.local);
+          transaction_type = 'local';
+        }
+
+        if (shop_country.short_code != cust_country.short_code) {
+          console.log('International Transaction - from server');
+          if (shop_country.short_code == 'UK') {
+            console.log('Inside the UK');
+          }
+
+          fw_trx_fee = parseFloat(
+            cust_country.fw_processing_fees.international
+          );
+          transaction_type = 'international';
+        }
+
+        let product_commision = price * 0.025;
+        let delivery_commision = delivery_fee * 0.2;
+
+        // in
+        let total_amount = (price + delivery_fee) / (1 - fw_trx_fee / 100);
 
         // here prepare the subaccounts payments...
+        console.log(
+          `price + deli => ${
+            price + delivery_fee
+          } fw_tf => ${fw_trx_fee} : all ${1 - fw_trx_fee / 100} `
+        );
+
+        console.log(
+          cust_country,
+          shop_country,
+          `total_amount => ${total_amount}`
+        );
+
+        const exchange_rate = parseFloat(cust_country.dollar_exchange_rate);
+
+        // const processing_fee = (total_amount - price - delivery_fee) * exchange_rate;
+
+        if (transaction_type == 'local') {
+          total_amount *= exchange_rate;
+          product_commision *= exchange_rate;
+          delivery_commision *= exchange_rate;
+          currency = cust_country.currency_code;
+        }
+
+        console.log(product_commision, ' <- p | d -> ', delivery_commision);
 
         // Payment type
         const type = 'product_payment';
@@ -205,15 +264,16 @@ module.exports = (() => {
         const data = {
           tx_ref: `jumga-tx-${nanoid(12)}`,
           amount: total_amount,
-          currency: req.body.currency,
-          redirect_url: `${req.protocol}://${req.headers.host}/payments/verify?&amount=${total_amount}&currency=${req.body.currency}&type=${type}`,
+          currency,
+          redirect_url: `${req.protocol}://${req.headers.host}/payments/verify?&amount=${total_amount}&currency=${currency}&type=${type}`,
           payment_options: 'card',
           meta: {
-            user_id: req.user._id,
+            user_id: req.user ? req.user._id : 'Customer',
             product_id: req.body.product_id,
             shop_id: shop._id,
             product_price: price,
             delivery_fee,
+            currency,
           },
           customer: {
             email: req.body.email,
@@ -235,7 +295,7 @@ module.exports = (() => {
           ],
           customizations: {
             title: 'Jumga Stores',
-            description: `Pay for ${req.body.quantity} ${req.body.product_name}`,
+            description: `Pay for 1 ${req.body.product_name}`,
             logo: 'https://assets',
           },
         };

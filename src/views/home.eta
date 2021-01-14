@@ -51,10 +51,8 @@
   </div>
 </section>
 
-<section class="section">
-  <div
-    class="intro column is-8 is-offset-2 has-text-centered has-background-light"
-  >
+<section class="section has-background-warning-light">
+  <div class="intro column is-8 is-offset-2 has-text-centered">
     <h2 class="title brand-title">Perfect for developers or designers!</h2>
     <br />
     <p class="subtitle">
@@ -62,5 +60,15 @@
       vehicula ipsum a. Neque egestas congue quisque egestas diam in arcu
       cursus.
     </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="columns is-4">
+      <div class="column">A</div>
+
+      <div class="column">B</div>
+    </div>
   </div>
 </section>

@@ -1,5 +1,6 @@
 <!-- TODO: show other alert types -->
 <% if (alerts.error.length) { %>
+<span>huuuu</span>
 <script error_alerts="<%= JSON.stringify(alerts.error) %>">
   const alerts = JSON.parse(
     document.currentScript.getAttribute('error_alerts')
@@ -30,6 +31,22 @@
         message: alert.msg,
         position: 'is-top',
         type: 'is-success',
+        queue: false,
+      });
+    });
+  }
+</script>
+<% } %> <% if (alerts.info.length) { %>
+<script info_alerts="<%= JSON.stringify(alerts.info) %>">
+  const alerts = JSON.parse(document.currentScript.getAttribute('info_alerts')); // 1
+
+  if (Buefy && alerts.length) {
+    alerts.forEach(function (alert) {
+      Buefy.NotificationProgrammatic.open({
+        duration: 5000,
+        message: alert.msg,
+        position: 'is-top',
+        type: 'is-info',
         queue: false,
       });
     });

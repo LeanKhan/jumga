@@ -1,7 +1,4 @@
-console.log('hei-iii x');
 if (document.getElementById('open-shop-app')) {
-  console.log('hei-iii x2');
-
   const data = {
     activeStep: 0,
   };

@@ -5,7 +5,7 @@
   id="shop-dashboard"
   data-shop_id="<%= shop._id %>"
 >
-  <nav class="navbar is-transparent">
+  <nav class="navbar is-transparent" style="z-index: unset">
     <div class="navbar-brand">
       <h1 class="is-size-2">
         <a href="/<%= shop.slug %>"><%= shop.name %></a>
@@ -15,34 +15,52 @@
 
     <div class="navbar-menu">
       <div class="navbar-end">
+        <% if (shop.account.subaccount_id && shop.hasPaidFee) { %>
         <div class="navbar-item">
           <div class="field is-grouped">
-            <p class="control">
-              <b-switch
-                @input="openShop"
-                v-bind:value="<%= shop.isLive %>"
-                v-model="isLive"
-              >
-                {{ !isLive ? 'Open' : 'Close' }} Shop
-              </b-switch>
-            </p>
+            <div class="control">
+              <div class="custom-switch">
+                <input id="open-shop-switch-1" <%= shop.isLive && 'checked' %>
+                @change="openShop" :value="<%= shop.isLive %>" type="checkbox"
+                class="custom-switch-input" />
+                <label for="open-shop-switch-1" class="custom-switch-label"
+                  >Open</label
+                >
+              </div>
+              <span>Open Shop</span>
+            </div>
           </div>
         </div>
+        <% } %>
       </div>
     </div>
   </nav>
 
   <% if (!shop.account.subaccount_id) { %>
-  <p>Please add a bank account to start recieving payments</p>
-  <p><a href="/shops/dashboard/add-account">add account</a></p>
-  <% } %> <% if (!shop.hasPaidFee) { %>
-  <p>Please pay your shop opening fee, or else!</p>
-  <p><a href="/shops/dashboard/pay">pay fee</a></p>
-  <% } %> <% if (!shop.isLive) { %>
-  <p>Publish your store now</p>
-  <% } %>
+  <div class="notification is-warning">
+    <p>Please add a bank account to start recieving payments</p>
+    <a class="button is-success mt-1" href="/shops/dashboard/add-account"
+      >add account</a
+    >
+  </div>
 
-  <h4>Welcome to our shop! Thank you Jesus!</h4>
+  <% } %> <% if (!shop.hasPaidFee) { %>
+  <div class="notification is-danger">
+    <p>Please pay your shop opening fee, or else!</p>
+    <a class="button is-success mt-1" href="/shops/dashboard/pay">pay fee</a>
+  </div>
+
+  <% } %> <% if (!shop.isLive && shop.account.subaccount_id && shop.hasPaidFee)
+  { %>
+
+  <div class="notification is-info">
+    <p class="subheader">Your Shop is now Approved and ready to go!</p>
+    <small class="has-text-light"
+      >Publish your store now. Click that big ass 'Open Shop' button to start
+      making sales
+    </small>
+  </div>
+  <% } %>
 
   <div class="tabs">
     <ul>

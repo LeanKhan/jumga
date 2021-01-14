@@ -1,8 +1,12 @@
-<footer class="footer has-background-dark has-text-white-ter py-3">
+<hr class="mb-0 p-0" style="height: 1px" />
+<footer class="footer has-background-white has-text-dark-ter py-6">
   <div class="content has-text-centered">
     <small
       >Online Shop Powered by
-      <a class="is-dark is-bold" href="/">Jumga</a></small
+      <a class="jumga-yellow-text" href="/">Jumga</a></small
     >
+
+    <br />
+    <a href="/register" class="button mx-auto is-small">Open yours</a>
   </div>
 </footer>

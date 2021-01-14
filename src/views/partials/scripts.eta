@@ -24,5 +24,7 @@
 <% } %> <% if (route_name == 'open-shop') { %>
 <script src="/js/merchant/register.vue.js"></script>
 <script src="/js/merchant/open-shop.vue.js"></script>
+<% } %> <% if (route_name == 'shop') { %>
+<script src="/js/shop.vue.js"></script>
 <% } %>
 <!-- <script src="/js/app.vue.js"></script> -->

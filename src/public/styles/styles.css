@@ -44,3 +44,56 @@ h6 {
 .jumga-yellow {
   background-color: #ffcc33 !important;
 }
+
+.jumga-yellow-text {
+  color: #ffcc33 !important;
+}
+
+.custom-switch {
+  position: relative;
+  display: inline-block;
+}
+.custom-switch-input {
+  display: none;
+}
+.custom-switch-label {
+  display: block;
+  width: 48px;
+  height: 24px;
+  text-indent: -150%;
+  clip: rect(0 0 0 0);
+  color: transparent;
+  user-select: none;
+}
+.custom-switch-label::before,
+.custom-switch-label::after {
+  content: '';
+  display: block;
+  position: absolute;
+  cursor: pointer;
+}
+.custom-switch-label::before {
+  width: 100%;
+  height: 100%;
+  background-color: #dedede;
+  border-radius: 9999em;
+  -webkit-transition: background-color 0.25s ease;
+  transition: background-color 0.25s ease;
+}
+.custom-switch-label::after {
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
+  -webkit-transition: left 0.25s ease;
+  transition: left 0.25s ease;
+}
+.custom-switch-input:checked + .custom-switch-label::before {
+  background-color: #89c12d;
+}
+.custom-switch-input:checked + .custom-switch-label::after {
+  left: 24px;
+}

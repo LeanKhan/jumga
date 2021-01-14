@@ -1,90 +1,56 @@
 <% layout('layouts/default.eta') %>
 
-<section class="section pt-0 px-3">
+<section class="section pt-0 px-3" id="shop-app">
   <div class="container">
     <section class="hero is-bold">
       <div class="hero-body p-3">
-        <div class="container has-text-left">
-          <h1 class="is-size-4 brand-title is-size-5-mobile is-size-1-desktop">
-            <%= product.shop.name %>
+        <div class="container has-text-centered">
+          <h1 class="is-size-5 brand-title is-size-5-mobile is-size-2-desktop">
+            <a class="has-text-dark" href="/<%= product.shop.slug %>"
+              ><%= product.shop.name %></a
+            >
           </h1>
-          <p class="ellipsis is-ellipsis-2"><%= product.shop.description %></p>
+          <p class="ellipsis is-ellipsis-2 has-text-grey">
+            <%= product.shop.description %>
+          </p>
         </div>
       </div>
     </section>
 
-    <nav class="navbar is-transparent">
-      <div class="navbar-start">
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Categories</a>
-          <div class="navbar-dropdown is-boxed">
-            <a class="navbar-item" href="/signin">signin</a>
-            <a class="navbar-item" href="/signup">signup</a>
-            <a class="navbar-item" href="/signout">signout</a>
-          </div>
-        </div>
+    <hr class="mb-0 p-0" style="height: 1px" />
 
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Info</a>
-          <div class="navbar-dropdown is-boxed">
-            <a class="navbar-item" href="/signin">signin</a>
-            <a class="navbar-item" href="/signup">signup</a>
-            <a class="navbar-item" href="/signout">signout</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="navbar-menu">
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <div class="field is-grouped">
-              <input class="input" type="text" placeholder="Search" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <hr class="m-0 mb-3 p-0" />
-
-    <section id="shop" class="section">
+    <section id="shop" class="section px-0">
       <div class="container">
-        <h4 class="title brand-title is-size-5"><%= product.name %></h4>
-
         <div class="container has-text-centered">
           <div class="columns is-8 is-variable">
             <div class="column is-two-thirds has-text-left">
-              <h1 class="title is-1">Contact Us</h1>
-              <p class="is-size-4">
+              <div class="card rb-card">
+                <div class="card-image">
+                  <figure class="image is-16by9">
+                    <img
+                      src="https://via.placeholder.com/640x360"
+                      alt="Rental Rates and Rental Prices in Phoenix, AZ"
+                    />
+                  </figure>
+                </div>
+              </div>
+              <h1 class="title brand-title mt-3 is-size-3">
+                <%= product.name %>
+              </h1>
+              <p class="is-size-5 subtitle">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla
                 eligendi soluta voluptate facere molestiae consequatur.
               </p>
-              <div class="social-media">
-                <a
-                  href="https://facebook.com"
-                  target="_blank"
-                  class="button is-light is-large"
-                  ><i class="fa fa-facebook-square" aria-hidden="true"></i
-                ></a>
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  class="button is-light is-large"
-                  ><i class="fa fa-instagram" aria-hidden="true"></i
-                ></a>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  class="button is-light is-large"
-                  ><i class="fa fa-twitter" aria-hidden="true"></i
-                ></a>
-              </div>
             </div>
             <div class="column is-one-third has-text-left">
-              <form
-                action="/products/pay?returnTo=<%= route.originalUrl %> "
-                method="POST"
+              <button
+                class="button is-link is-success is-fullwidth has-text-weight-medium is-medium"
+                v-bind:class="{'is-loading': loading}"
+                v-on:click="loading = !loading"
               >
+                Load
+              </button>
+              <form action="/products/pay" method="POST">
                 <input
                   hidden
                   type="hidden"
@@ -97,9 +63,21 @@
                   name="product_id"
                   value="<%= product._id %>"
                 />
-                <input hidden type="hidden" name="currency" value="USD" />
+                <input
+                  hidden
+                  type="hidden"
+                  name="currency"
+                  value="<%= cust_country.currency_code %>"
+                />
 
-                <input hidden type="hidden" name="price" value="200" />
+                <input hidden type="hidden" name="price" value="<%= price %>" />
+
+                <input
+                  hidden
+                  type="hidden"
+                  name="total_amount"
+                  value="<%= total_amount %>"
+                />
 
                 <input
                   hidden
@@ -108,37 +86,79 @@
                   value="<%= product.shop._id %>"
                 />
 
-                <input hidden type="hidden" name="delivery_fee" value="15" />
+                <input
+                  hidden
+                  type="hidden"
+                  name="delivery_fee"
+                  value="<%= delivery_fee %>"
+                />
 
-                <div class="field">
-                  <label class="label">Quantity</label>
-                  <div class="control">
-                    <input name="quantity" class="input" type="number" />
-                  </div>
+                <div class="notification is-light">
+                  <ul>
+                    <li>
+                      <b>Product Price</b> <%= transaction_type ==
+                      'international' ? '$' : cust_country.currency_code %>
+                      <span>{{ <%= price * (transaction_type == 'international' ? 1 :
+                        exchange_rate) %> | currency }}</span>
+                    </li>
+                    <li>
+                      <b>Delivery</b> <%= transaction_type == 'international' ?
+                      '$' : cust_country.currency_code %>
+                      <span>
+                        {{  <%= delivery_fee * (transaction_type == 'international'
+                        ? 1 : exchange_rate) %> | currency }}
+                      </span>
+                    </li>
+                    <li>
+                      <b>Payment Processing</b> <%= transaction_type ==
+                      'international' ? '$' : cust_country.currency_code %>
+                      <span>
+                        {{ <%= processing_fee * (transaction_type ==
+                        'international' ? 1 : exchange_rate) %> | currency }}
+                      </span>
+                    </li>
+                    <li class="has-text-success has-text-weight-bold is-size-5">
+                      <span>
+                        <%= transaction_type == 'international' ? '$' :
+                        cust_country.currency_code.trim() %>
+                      </span>
+
+                      <span>{{ <%= total_amount * (transaction_type == 'international'
+                        ? 1 : exchange_rate) %> | currency }}</span>
+                    </li>
+                  </ul>
                 </div>
 
                 <div class="field">
                   <label class="label">Name</label>
                   <div class="control">
-                    <input name="name" class="input" type="text" />
+                    <input name="name" class="input" type="text" required />
                   </div>
                 </div>
                 <div class="field">
                   <label class="label">Email</label>
                   <div class="control">
-                    <input name="email" class="input" type="text" />
+                    <input name="email" class="input" type="text" required />
                   </div>
                 </div>
                 <div class="field">
                   <label class="label">Phonenumber</label>
                   <div class="control">
-                    <input name="phonenumber" class="input" type="text" />
+                    <input
+                      name="phonenumber"
+                      class="input"
+                      type="text"
+                      required
+                    />
                   </div>
                 </div>
+
                 <div class="control">
                   <button
                     type="submit"
-                    class="button is-link jumga-yellow is-fullwidth has-text-weight-medium"
+                    class="button is-link is-success is-fullwidth has-text-weight-medium is-medium"
+                    v-bind:class="{'is-loading': loading}"
+                    v-on:click="loading = !loading"
                   >
                     Buy
                   </button>

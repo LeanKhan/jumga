@@ -4,53 +4,22 @@
   <div class="container">
     <section class="hero is-bold">
       <div class="hero-body p-3">
-        <div class="container has-text-left">
-          <h1 class="is-size-4 brand-title is-size-5-mobile is-size-1-desktop">
+        <div class="container has-text-centered">
+          <h1 class="is-size-5 brand-title is-size-5-mobile is-size-2-desktop">
             <%= shop.name %>
           </h1>
-          <p class="ellipsis is-ellipsis-2"><%= shop.description %></p>
+          <p class="ellipsis is-ellipsis-2 has-text-grey">
+            <%= shop.description %>
+          </p>
         </div>
       </div>
     </section>
 
-    <nav class="navbar is-transparent">
-      <div class="navbar-start">
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Categories</a>
-          <div class="navbar-dropdown is-boxed">
-            <a class="navbar-item" href="/signin">signin</a>
-            <a class="navbar-item" href="/signup">signup</a>
-            <a class="navbar-item" href="/signout">signout</a>
-          </div>
-        </div>
+    <hr class="mb-0 p-0" style="height: 1px" />
 
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Info</a>
-          <div class="navbar-dropdown is-boxed">
-            <a class="navbar-item" href="/signin">signin</a>
-            <a class="navbar-item" href="/signup">signup</a>
-            <a class="navbar-item" href="/signout">signout</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="navbar-menu">
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <div class="field is-grouped">
-              <input class="input" type="text" placeholder="Search" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <hr class="m-0 mb-3 p-0" />
-
-    <section id="shop" class="section">
+    <section id="shop" class="section px-0">
       <div class="container">
-        <h4>Products</h4>
-
+        <% if (shop.products.length) { %>
         <div class="columns is-multiline">
           <% shop.products.forEach(product => { %>
           <div class="column is-one-third">
@@ -85,15 +54,24 @@
                 </div>
               </div>
 
-              <div class="card-footer has-background-grey p-1">
+              <div class="card-footer has-background-light p-1">
                 <div class="tags">
-                  <span class="tag is-primary is-light">Primary</span>
+                  <% product.tags.forEach(tag => { %>
+                  <span class="tag has-background-warning-light is-light">
+                    <%= tag %>
+                  </span>
+                  <% }) %>
                 </div>
               </div>
             </div>
           </div>
           <% }) %>
         </div>
+        <% } else { %>
+        <div class="notification is-light">
+          <p class="subheader">This Shop doesn't have any products yet...</p>
+        </div>
+        <% } %>
       </div>
     </section>
   </div>

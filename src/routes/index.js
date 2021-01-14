@@ -13,6 +13,7 @@ const data = require('../controllers/data').router;
 const { views } = require('../controllers/views');
 const Rider = require('../models/dispatch_rider');
 const Category = require('../models/category');
+const Country = require('../models/country');
 
 /* Render home page */
 router.get('/', function (req, res, next) {
@@ -52,7 +53,7 @@ router.get('/register', async function (req, res) {
   }
 
   if (req.isAuthenticated() && !req.user.isAdmin && !req.user.shop) {
-    await req.flash('error', {
+    await req.flash('info', {
       msg: 'No need to register',
     });
   }
@@ -64,17 +65,28 @@ router.get('/register', async function (req, res) {
   //   return res.redirect(`/signup?returnTo=/register?step=0`);
   // }
 
-  Category.find({})
-    .exec()
-    .then((categories) => {
-      return res.render('open-shop', {
-        step: currentStep,
-        categories: JSON.stringify(categories),
-      });
-    })
-    .catch((err) => {
-      console.error('Error fetching dispatch_riders =>\n', err);
-    });
+  const [categories, countries] = await Promise.all([
+    Category.find({}),
+    Country.find({}),
+  ]);
+
+  return res.render('open-shop', {
+    step: currentStep,
+    categories: JSON.stringify(categories),
+    countries: JSON.stringify(countries),
+  });
+
+  // Category.find({})
+  //   .exec()
+  //   .then((categories) => {
+  //     return res.render('open-shop', {
+  //       step: currentStep,
+  //       categories: JSON.stringify(categories),
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     console.error('Error fetching dispatch_riders =>\n', err);
+  //   });
 });
 
 router.get('/signin', user.views.renderSignin);

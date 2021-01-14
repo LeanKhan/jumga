@@ -36,6 +36,10 @@ module.exports = (() => {
         validationErrors.push({ msg: 'Shop Name cannot be blank.' });
       if (validator.isEmpty(req.body.description))
         validationErrors.push({ msg: 'Please provide a Shop Description' });
+      if (validator.isEmpty(req.body.country))
+        validationErrors.push({ msg: 'Country cannot be blank.' });
+      if (validator.isEmpty(req.body.category))
+        validationErrors.push({ msg: 'Category cannot be blank' });
 
       // if (['food', 'tech', 'trash'].includes(req.body.category))
       //   validationErrors.push({ msg: 'Invalid category!' });
@@ -47,7 +51,7 @@ module.exports = (() => {
 
         const { returnTo } = req.session;
         delete req.session.returnTo;
-        return res.redirect(returnTo || '/shops/new');
+        return res.redirect(returnTo || '/register?step=1');
       }
 
       const slug = slugify(req.body.shopName);
@@ -65,7 +69,7 @@ module.exports = (() => {
           slug,
           description: req.body.description,
           category: req.body.category,
-          category_id: req.body.category_id,
+          country: req.body.country,
           owner: req.user._id,
         });
 
@@ -78,7 +82,7 @@ module.exports = (() => {
               });
               const { returnTo } = req.session;
               delete req.session.returnTo;
-              return res.redirect(returnTo || '/shops/new');
+              return res.redirect(returnTo || '/register?step=1');
             }
             // if not move on!
 
@@ -95,17 +99,20 @@ module.exports = (() => {
           });
       };
 
-      addShop()
-        .then(updateUser)
-        // eslint-disable-next-line no-unused-vars
-        .then((user) => {
-          //   req.body.shop = s;
-          req.session.returnTo = '/signin?returnTo=/shops/dashboard';
-          return next();
-        })
-        .catch((err) => {
-          return next(err);
-        });
+      return (
+        addShop()
+          .then(updateUser)
+          // eslint-disable-next-line no-unused-vars
+          .then(async (user) => {
+            //   req.body.shop = s;
+            req.session.returnTo = '/signin?returnTo=/shops/dashboard';
+
+            return next();
+          })
+          .catch((err) => {
+            return next(err);
+          })
+      );
 
       //   maybe create the shop first in the db then complete the payment?
       // thank you Jesus!
@@ -134,7 +141,7 @@ module.exports = (() => {
           },
           customer: {
             email: req.user.email,
-            phonenumber: req.user.phonenumber,
+            phone_number: req.user.phonenumber,
             name: `${req.user.firstname} ${req.user.lastname}`,
             user_id: req.user._id,
             shop_id: req.body.shop_id.trim() || req.body.shop._id.trim(),
@@ -170,7 +177,7 @@ module.exports = (() => {
           await req.flash('error', {
             msg: 'You have to be signed in to open a Shop',
           });
-          return res.redirect('/signin?returnTo=%2Fshops%2Fdashboard');
+          return res.redirect('/signin?returnTo=/register?step=1');
         }
 
         // check if shop exists actually...
@@ -199,7 +206,9 @@ module.exports = (() => {
             await req.flash('error', err);
           });
 
-          return res.redirect('/shops/dashboard');
+          const { returnTo } = req.session;
+          delete req.session.returnTo;
+          return res.redirect(returnTo || '/register?step=2');
         }
 
         let current_shop;
@@ -248,7 +257,7 @@ module.exports = (() => {
           business_contact_mobile: req.user.phonenumber,
           business_mobile: req.user.phonenumber.trim(),
           business_email: data.business_email.trim(),
-          country: data.country.trim().toUpperCase(),
+          country: current_shop.country.trim().toUpperCase(),
           meta: [
             { meta_name: 'account_type', meta_value: 'shop' },
             { meta_name: 'merchant_id', meta_value: `${req.user._id}` },
@@ -274,14 +283,20 @@ module.exports = (() => {
           })
           .catch((err) => {
             console.error(err);
-            return res.redirect('/shops/dashboard?error=rider_addition_failed');
+            return res.redirect(
+              '/shops/dashboard?error=account_addition_failed'
+            );
           });
       } catch (error) {
         console.error('Something went wrong :/\n', error);
+        await req.flash('error', {
+          msg:
+            'Something went wrong adding your Shop Account. You can try again later',
+        });
 
-        return res.redirect(
-          '/error?c=something_went_wrong&where=addding_shop_subaccount'
-        );
+        const { returnTo } = req.session;
+        delete req.session.returnTo;
+        return res.redirect(returnTo || '/shops/dashboard');
       }
     },
 

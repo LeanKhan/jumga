@@ -6,7 +6,10 @@
       <div class="columns is-justify-content-center">
         <div class="column is-half right has-text-centered">
           <p class="subtitle">Add Bank Account to Shop</p>
-          <form method="POST">
+          <form
+            method="POST"
+            action="/shops/dashboard/add-account?returnTo=/shops/dashboard"
+          >
             <div class="field">
               <div class="control">
                 <label class="label has-text-left" for="account_number"
@@ -65,38 +68,6 @@
                   type="text"
                   value="044"
                   placeholder="bank"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <label class="label has-text-left" for="country">Country</label>
-
-                <input
-                  class="input"
-                  name="country"
-                  type="text"
-                  value="NG"
-                  placeholder="country"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <label class="label has-text-left" for="currency"
-                  >Currency</label
-                >
-
-                <input
-                  class="input"
-                  name="currency"
-                  type="text"
-                  placeholder="currency"
-                  value="NGN"
                   required
                 />
               </div>

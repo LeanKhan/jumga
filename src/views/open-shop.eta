@@ -18,6 +18,7 @@
           <register-form
             :current_step="<%= step || 0 %>"
             :categories="<%= categories %>"
+            :countries="<%= countries %>"
             :user="<%= typeof user != 'undefined' ? JSON.stringify(user) : false%>"
           ></register-form>
         </div>
@@ -41,7 +42,6 @@
   }
 
   body {
-    height: 100vh;
     color: var(--textDark);
   }
 

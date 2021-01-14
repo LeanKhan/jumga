@@ -8,10 +8,20 @@
   <nav class="navbar is-transparent" style="z-index: unset">
     <div class="navbar-brand">
       <h1 class="is-size-2">
-        <a href="/<%= shop.slug %>"><%= shop.name %></a>
-        <a v-if="isLive" href="/<%= shop.slug %>">view</a>
+        <a class="has-text-dark" href="/<%= shop.slug %>"><%= shop.name %></a>
       </h1>
     </div>
+
+<% if (shop.isLive) { %>
+  <div class="navbar-start">
+  <div class="navbar-item">
+       <a class="button is-light" href="/<%= shop.slug %>">
+          <img src="https://icongr.am/feather/eye.svg?size=20&color=2e2929">
+          </a>
+  </div>
+</div>
+<% } %>
+
 
     <div class="navbar-menu">
       <div class="navbar-end">
@@ -27,7 +37,7 @@
                   >Open</label
                 >
               </div>
-              <span>Open Shop</span>
+              <span><%= !shop.isLive ? 'Open' : 'Close' %>  Shop</span>
             </div>
           </div>
         </div>
@@ -71,11 +81,19 @@
         exact
         ><a>Products</a></router-link
       >
+      <router-link
+        active-class="is-active"
+        tag="li"
+        :to="{name: 'Update Shop'}"
+        exact
+        ><a>Edit Shop</a></router-link
+      >
     </ul>
   </div>
 
   <!-- pass data from express _directly_ to router-view. thank you Jesus! -->
-  <router-view :shop_id="'<%= shop._id %>'"></router-view>
+  <router-view :shop_id="'<%= shop._id %>'" :shop_slug="'<%= shop.slug %>'" :shop_description="'<%= shop.description %>'" :shop_theme_color="'<%= shop.theme_color %>'" :shop_banner_image="'<%= shop.pictures.banner_image %>'" :shop_logo="'<%= shop.pictures.logo %>'" ></router-view>
 </div>
 
 <%~ E.includeFile("components/merchant/products.vue") %>
+<%~ E.includeFile("components/merchant/update-shop.vue") %>

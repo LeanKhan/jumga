@@ -43,11 +43,16 @@
   </head>
 
   <body>
-    <div class="jumga-top-bar"></div>
-    <header class="container" style="font-size: smaller">
-      <nav class="navbar is-transparent py-3">
+
+    <% if (route_name == 'shop' || route_name == 'shop-dashboard') { %>
+    <div class="jumga-top-bar" style="background-color: <%= shop.theme_color || '#ffcc33' %>"></div>
+    <% } else { %>
+    <div class="jumga-top-bar" style="background-color:#ffcc33"></div>
+    <% } %>
+    <header style="font-size: smaller">
+      <nav class="navbar container py-3" style="background: none;">
         <div class="navbar-brand brand-title">
-          <a class="navbar-item is-size-5" href="/">Jumga</a>
+          <a class="navbar-item is-size-5" href="/" style="color: <%= route_name == 'explore' ? 'white' : 'initial' %>">Jumga</a>
           <div
             class="navbar-burger burger"
             data-target="navbarExampleTransparentExample"
@@ -59,8 +64,15 @@
         </div>
 
         <div id="navbarExampleTransparentExample" class="navbar-menu">
-          <div class="navbar-end">
+          <div class="navbar-start">
             <div class="navbar-item">
+              <a href="/explore" class="has-text-dark">
+                Explore
+              </a>
+            </div>
+          </div>
+          <div class="navbar-end">
+            <div class="navbar-item" style="color: <%= route_name == 'explore' ? 'white !important' : 'initial' %>">
               <% if (typeof user != 'undefined') { %>
               <div>
                 <b>Hi, <%= user.firstname %> &nbsp;</b>
@@ -89,12 +101,44 @@
             <% if (route_name != 'shop') { %>
             <div class="navbar-item has-dropdown is-hoverable">
               <span class="navbar-link">
+                <% if (typeof user != 'undefined') { %>
+              <div>
+                <% if (user.isAdmin) { %>
+                <!-- admin -->
+                <img
+                  src="http://www.radfaces.com/images/avatars/linda-barret.jpg"
+                  class="author-image"
+                  alt="Placeholder image"
+                  style="border-radius: 50%"
+                />
+                <% } else if (user.hasShop) { %>
+                <!-- merchant -->
+                <img
+                  src="http://www.radfaces.com/images/avatars/bishop.jpg"
+                  class="author-image"
+                  alt="Placeholder image"
+                  style="border-radius: 50%"
+                />
+                <% } else { %>
+                <!-- shopper has account -->
                 <img
                   src="http://www.radfaces.com/images/avatars/angela-chase.jpg"
                   class="author-image"
                   alt="Placeholder image"
                   style="border-radius: 50%"
                 />
+                <% } %>
+              </div>
+              <% } else { %>
+              <!-- shopper, does not have account or is not signed in -->
+             <img
+                  src="https://icongr.am/clarity/avatar.svg?size=23&color=52514f"
+                  class="avatar-image"
+                  alt="Jumga user avatar"
+                  style="border-radius: 50%"
+                />
+              <% } %>
+
               </span>
               <div class="navbar-dropdown is-boxed">
                 <a class="navbar-item" href="/signin">signin</a>
@@ -107,50 +151,82 @@
               <% } %>
             </div>
 
-            <div class="navbar-item has-dropdown is-hoverable">
-              <span class="navbar-link" id="country_dropdown"
+<div class="dropdown navbar-item is-hoverable">
+  <div class="dropdown-trigger">
+    <span class="navbar-link" id="country_dropdown"
                 ><img
                   src="https://www.countryflags.io/<%= country %>/flat/16.png"
               /></span>
-              <ul class="navbar-dropdown is-clickable is-boxed">
-                <a class="navbar-item">
-                  <label
+  </div>
+  <div class="dropdown-menu" style="min-width: auto !important" id="dropdown-menu4" role="menu">
+    <div class="dropdown-content has-text-left has-text-weight-medium px-0" style="width: fit-content">
+      <a href="javascript: void(0);" class="dropdown-item">
+ <label class="is-clickable" 
                     ><input type="radio" class="country-select" <%= country ==
                     'NG' && 'checked' %> onchange="change(this)" value="NG"
-                    name="country"/><img
+                    name="country"/>
+                    <span class="p-1">
+                      <img
                       src="https://www.countryflags.io/NG/flat/16.png"
                     />
-                    Nigeria</label
-                  >
-                </a>
-                <a class="navbar-item">
-                  <label
+                    </span>
+                    <span>
+                      Nigeria
+                    </span>
+                    </label
+                  >      </a>
+
+                    <a href="javascript: void(0);" class="dropdown-item">
+                  <label class="is-clickable" 
                     ><input type="radio" class="country-select" <%= country ==
                     'KE' && 'checked' %> onchange="change(this)" value="KE"
-                    name="country"/><img
+                    name="country"/>
+                    <span class="p-1">
+                      <img
                       src="https://www.countryflags.io/KE/flat/16.png"
-                    />Kenya</label
+                    />
+                    </span>
+                    <span>Kenya</span>
+                    </label
                   >
                 </a>
-                <a class="navbar-item">
-                  <label
+
+                <a href="javascript: void(0);" class="dropdown-item">
+                  <label class="is-clickable" 
                     ><input class="country-select" <%= country == 'GH' &&
                     'checked' %> onchange="change(this)" type="radio" value="GH"
-                    name="country"/><img
+                    name="country"/>
+                    <span class="p-1">
+                      <img
                       src="https://www.countryflags.io/GH/flat/16.png"
-                    />Ghana</label
+                    />
+                    </span>
+                    
+                    <span>Ghana</span>
+                    </label
                   >
                 </a>
-                <a class="navbar-item">
-                  <label
+
+                 <a href="javascript: void(0);" class="dropdown-item">
+                  <label class="is-clickable" 
                     ><input class="country-select" <%= country == 'GB' &&
                     'checked' %> onchange="change(this)" type="radio" value="GB"
-                    name="country"/><img
+                    name="country"/>
+                    <span class="p-1">
+                     <img
                       src="https://www.countryflags.io/GB/flat/16.png"
-                    />UK</label
+                    /> 
+                    </span>
+                    <span>
+                      UK
+                    </span>
+                    </label
                   >
                 </a>
-              </ul>
+    </div>
+  </div>
+</div>
+             
             </div>
           </div>
         </div>

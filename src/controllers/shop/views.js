@@ -18,6 +18,8 @@ module.exports = (() => {
       const id = req.user.shop;
 
       Shop.findById(id)
+        .select('name _id')
+        .lean()
         .exec()
         .then((s) => {
           if (!s) return res.redirect('/error?c=404_shop');
@@ -45,6 +47,7 @@ module.exports = (() => {
 
       // fetch shop data here...
       Shop.findById(id)
+        .lean()
         .populate('products')
         .exec()
         .then((s) => {
@@ -67,6 +70,7 @@ module.exports = (() => {
 
       // fetch shop data here...
       Shop.findOne({ slug })
+        .lean()
         .populate('products')
         .exec()
         .then((s) => {
@@ -74,7 +78,7 @@ module.exports = (() => {
 
           if (!s.isLive) return res.redirect('/error?c=404_shop');
 
-          res.render('merchant/shop', { shop: s });
+          res.render('merchant/shop', { shop: s, products: s.products });
         })
         .catch((err) => {
           console.error('error opening shop =>\n', err);
@@ -91,6 +95,7 @@ module.exports = (() => {
 
       // fetch shop data here...
       Product.findOne({ slug })
+        .lean()
         .populate('shop')
         .exec()
         .then(async (p) => {
@@ -99,8 +104,10 @@ module.exports = (() => {
           console.log('country => ', req.session.country);
 
           const [cust_country, shop_country] = await Promise.all([
-            Country.findOne({ short_code: req.session.country || 'NG' }),
-            Country.findOne({ short_code: p.shop.country }),
+            Country.findOne({ short_code: req.session.country || 'NG' })
+              .lean()
+              .exec(),
+            Country.findOne({ short_code: p.shop.country }).lean().exec(),
           ]);
 
           // use alerts here... thank you Jesus!
@@ -149,6 +156,7 @@ module.exports = (() => {
 
           res.render('merchant/product', {
             product: p,
+            shop: p.shop,
             price,
             total_amount,
             delivery_fee,

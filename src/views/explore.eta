@@ -1,0 +1,94 @@
+<% layout('layouts/default.eta') %>
+
+<section
+  class="hero is-info is-medium is-bold"
+  style="position: relative; top: -76px"
+>
+  <div class="explore-hero-body section">
+    <div class="container section has-text-centered">
+      <h1 class="title brand-title">Find what you dey find</h1>
+      <div class="column is-8 is-offset-2">
+        <div class="container">
+          <form action="/poop/search" method="GET">
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input
+                  name="q"
+                  class="input"
+                  placeholder="search"
+                  type="text"
+                  required
+                />
+              </div>
+              <div class="control">
+                <a class="button is-outlined">
+                  <img
+                    src="https://icongr.am/clarity/search.svg?size=16&color=000"
+                  />
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <!-- START ARTICLE FEED -->
+  <section class="articles">
+    <div class="column is-10 is-offset-2">
+      <div class="container">
+        <% if (products.length) { %>
+        <div class="columns is-multiline">
+          <% products.forEach(product => { %>
+          <div class="column is-one-third">
+            <div class="card is-shadowless">
+              <div class="card-image" style="border-top: 1px solid #ffcc33">
+                <figure class="image is-square">
+                  <img
+                    src="https://via.placeholder.com/640x640"
+                    alt="Rental Rates and Rental Prices in Phoenix, AZ"
+                    style="border-radius: 10px"
+                  />
+                </figure>
+              </div>
+              <div
+                class="card-content is-flex is-justify-content-space-between px-2"
+              >
+                <div class="has-text-justified">
+                  <h3 class="title is-size-4 ellipsis is-ellipsis-1">
+                    <a class="has-text-dark"> <%= product.name %> </a>
+                  </h3>
+                  <h4 class="subtitle is-size-5 has-text-primary">
+                    $<%= product.price %>
+                  </h4>
+                </div>
+              </div>
+
+              <div class="card-footer p-1" style="border-top: none">
+                <div class="tags">
+                  <% product.tags.forEach(tag => { %>
+                  <a
+                    href="/poop/search?q=<%= tag %>"
+                    class="tag has-background-warning-light is-light"
+                  >
+                    <%= tag %>
+                  </a>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <div class="notification is-light">
+          <p class="subheader">This Shop doesn't have any products yet...</p>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+</div>

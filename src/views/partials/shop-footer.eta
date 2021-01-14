@@ -7,6 +7,6 @@
     >
 
     <br />
-    <a href="/register" class="button mx-auto is-small">Open yours</a>
+    <a href="/register" class="button is-light has-text-grey mt-2 is-small">Open yours</a>
   </div>
 </footer>

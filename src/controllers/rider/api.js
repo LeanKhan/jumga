@@ -55,6 +55,7 @@ module.exports = (() => {
           firstname: req.body.rider.firstname,
           lastname: req.body.rider.lastname,
         })
+          .lean()
           .exec()
           .then(async (existingRider) => {
             if (existingRider) {
@@ -152,7 +153,9 @@ module.exports = (() => {
               'account.full_name': response.data.full_name,
             },
             { new: true }
-          );
+          )
+            .lean()
+            .exec();
         };
 
         const data = req.body.rider;
@@ -244,6 +247,8 @@ module.exports = (() => {
 
     getRiders(req, res) {
       Rider.find({})
+        .lean()
+        .exec()
         .then((riders) => {
           return res.status(200).json({
             success: true,
@@ -261,6 +266,8 @@ module.exports = (() => {
     },
     getRider(req, res) {
       Rider.findById(req.params.id)
+        .lean()
+        .exec()
         .then((rider) => {
           return res.status(200).json({
             success: true,
@@ -276,7 +283,73 @@ module.exports = (() => {
           });
         });
     },
+    async updateRider(req, res) {
+      try {
+        const { id } = req.params;
+        const { update } = req.body;
 
+        if (!req.user.isAdmin) {
+          await req.flash('error', {
+            msg: 'Only Admins can do this!',
+          });
+          return res
+            .status(401)
+            .send({ success: false, msg: 'UNAUTHORISEEEED!' });
+        }
+
+        if (!req.isAuthenticated()) {
+          await req.flash('error', {
+            msg: 'You have to be signed in as an Admin!',
+          });
+          return res
+            .status(401)
+            .send({ success: false, msg: 'UNAUTHORISEEEED!' });
+        }
+
+        if (!id)
+          return res
+            .status(404)
+            .send({ success: false, msg: 'NO DISPATCH RIDER ID SENT!!' });
+        if (!update)
+          return res
+            .status(404)
+            .send({ success: false, msg: 'NO UPDATE SENT!!' });
+
+        /** Remove unwanted properties */
+        delete update.account_number;
+        delete update.account_name;
+        delete update.bank;
+        delete update.country;
+
+        Rider.findByIdAndUpdate(id, update, { new: true })
+          .lean()
+          .exec()
+          .then((rider) => {
+            console.log('Dispatch Rider updated successfully!');
+
+            return res.status(200).send({
+              success: true,
+              msg: 'Dispatch Rider Updated successfully!',
+              data: rider,
+            });
+          })
+          .catch((err) => {
+            console.log('Erro updaitn Rider! -=>', err);
+            return res.status(400).send({
+              success: false,
+              msg: 'Error updating Rider!',
+              error: err.message,
+            });
+          });
+      } catch (error) {
+        console.error('Error updating Rider! => ', error);
+        return res.status(400).send({
+          success: false,
+          msg: 'Error updating Rider!',
+          error: error.message,
+        });
+      }
+    },
     assignToShop(req, res) {
       // find a random shop and give the Dispatch Rider to them...
 
@@ -286,7 +359,9 @@ module.exports = (() => {
         return Shop.findOneAndUpdate(
           { dispatch_rider: { $exists: false, $eq: null } },
           { dispatch_rider: rider_id }
-        );
+        )
+          .lean()
+          .exec();
       };
 
       const findRider = () => {
@@ -294,12 +369,16 @@ module.exports = (() => {
           _id: id,
           employed: false,
           'account.subaccount_id': { $exists: true },
-        });
+        })
+          .lean()
+          .exec();
       };
 
       const updateRider = (shop) => {
         if (!shop) throw new Error('Cannot find shop to assign Rider to!');
-        return Rider.findByIdAndUpdate(id, { employed: true, shop: shop._id });
+        return Rider.findByIdAndUpdate(id, { employed: true, shop: shop._id })
+          .lean()
+          .exec();
       };
 
       findRider()

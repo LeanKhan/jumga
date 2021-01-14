@@ -15,6 +15,8 @@ router.get('/dashboard', isAuthenticated, views.renderShopAdmin);
 
 router.get('/dashboard/add-account', views.renderAddAccount);
 
+router.put('/dashboard/update', api.updateShop);
+
 // apis
 
 router.post(
@@ -37,6 +39,8 @@ router.patch('/open', isAuthenticated, api.openShop);
 /** SINGLE SHOP VIEWS ROUTER - THANK YOU JESUS */
 
 shop_router.get('/products/:product_slug', views.renderProduct);
+
+shop_router.get('/search', api.searchShop);
 
 shop_router.get('/', views.renderShop);
 

@@ -11,6 +11,8 @@ router.post('/new', api.addRider, api.createSubaccount);
 
 router.post('/add-account', api.createSubaccount);
 
+router.put('/:id/update', api.updateRider);
+
 router.patch('/:id/assign-to-shop', api.assignToShop);
 
 router.get('/:id', api.getRider);

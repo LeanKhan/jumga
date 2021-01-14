@@ -28,6 +28,7 @@ router.get('/admin/dashboard', function (req, res) {
   res.locals.route_name = 'admin-dashboard';
 
   Rider.find({})
+    .lean()
     .exec()
     .then((rs) => {
       return res.render('admin/dashboard', { dispatch_riders: rs });
@@ -36,6 +37,8 @@ router.get('/admin/dashboard', function (req, res) {
       console.error('Error fetching dispatch_riders =>\n', err);
     });
 });
+
+router.get('/explore', views.renderExplorePage);
 
 router.get('/register', async function (req, res) {
   res.locals.route_name = 'open-shop';
@@ -66,8 +69,8 @@ router.get('/register', async function (req, res) {
   // }
 
   const [categories, countries] = await Promise.all([
-    Category.find({}),
-    Country.find({}),
+    Category.find({}).lean().exec(),
+    Country.find({}).lean().exec(),
   ]);
 
   return res.render('open-shop', {

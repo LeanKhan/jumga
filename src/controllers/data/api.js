@@ -6,6 +6,8 @@ const { slugify } = require('../../tools');
 module.exports = {
   getCategories(req, res) {
     Category.find({})
+      .lean()
+      .exec()
       .then((categories) => {
         return res.status(200).json({
           success: true,
@@ -23,6 +25,8 @@ module.exports = {
   },
   getCountries(req, res) {
     Country.find({})
+      .lean()
+      .exec()
       .then((countries) => {
         return res.status(200).json({
           success: true,
@@ -81,6 +85,7 @@ module.exports = {
       return Category.findOne({
         slug,
       })
+        .lean()
         .exec()
         .then(async (existingCategory) => {
           if (existingCategory) {
@@ -164,6 +169,7 @@ module.exports = {
       return Country.findOne({
         short_code: req.body.short_code,
       })
+        .lean()
         .exec()
         .then(async (existingCountry) => {
           if (existingCountry) {
@@ -197,6 +203,134 @@ module.exports = {
         success: false,
         msg: 'Something went wrong while trying to add Country :/',
         data: err,
+      });
+    }
+  },
+
+  async updateCountry(req, res) {
+    try {
+      const { id } = req.params;
+      const { update } = req.body;
+
+      // move all these to middlware! Thank you Jesus!
+
+      if (!req.user.isAdmin) {
+        await req.flash('error', {
+          msg: 'Only Admins can do this!',
+        });
+        return res
+          .status(401)
+          .send({ success: false, msg: 'UNAUTHORISEEEED!' });
+      }
+
+      if (!req.isAuthenticated()) {
+        await req.flash('error', {
+          msg: 'You have to be signed in as an Admin! to do this!',
+        });
+        return res
+          .status(401)
+          .send({ success: false, msg: 'UNAUTHORISEEEED!' });
+      }
+
+      if (!id)
+        return res
+          .status(404)
+          .send({ success: false, msg: 'NO ID or SLUG SENT!!' });
+      if (!update)
+        return res
+          .status(404)
+          .send({ success: false, msg: 'NO UPDATE SENT!!' });
+
+      Country.findByIdAndUpdate(id, update, { new: true })
+        .lean()
+        .exec()
+        .then((country) => {
+          console.log('Country updated successfully!');
+
+          return res.status(200).send({
+            success: true,
+            msg: 'Country Updated successfully!',
+            data: country,
+          });
+        })
+        .catch((err) => {
+          console.log('Erro updaitn country! -=>', err);
+          return res.status(400).send({
+            success: false,
+            msg: 'Error updating country!',
+            error: err.message,
+          });
+        });
+    } catch (error) {
+      console.error('Error updating Country! => ', error);
+      return res.status(400).send({
+        success: false,
+        msg: 'Error updating country!',
+        error: error.message,
+      });
+    }
+  },
+
+  async updateCategory(req, res) {
+    try {
+      const { id } = req.params;
+      const { update } = req.body;
+
+      // move all these to middlware! Thank you Jesus!
+
+      if (!req.user.isAdmin) {
+        await req.flash('error', {
+          msg: 'Only Admins can do this!',
+        });
+        return res
+          .status(401)
+          .send({ success: false, msg: 'UNAUTHORISEEEED!' });
+      }
+
+      if (!req.isAuthenticated()) {
+        await req.flash('error', {
+          msg: 'You have to be signed in as an Admin! to do this!',
+        });
+        return res
+          .status(401)
+          .send({ success: false, msg: 'UNAUTHORISEEEED!' });
+      }
+
+      if (!id)
+        return res
+          .status(404)
+          .send({ success: false, msg: 'NO ID or SLUG SENT!!' });
+      if (!update)
+        return res
+          .status(404)
+          .send({ success: false, msg: 'NO UPDATE SENT!!' });
+
+      Category.findByIdAndUpdate(id, update, { new: true })
+        .lean()
+        .exec()
+        .then((category) => {
+          console.log('Category updated successfully!');
+
+          return res.status(200).send({
+            success: true,
+            msg: 'Category Updated successfully!',
+            data: category,
+          });
+        })
+        .catch((err) => {
+          console.log('Erro updaitn category! -=>', err);
+          return res.status(400).send({
+            success: false,
+            msg: 'Error updating category!',
+            error: err.message,
+          });
+        });
+    } catch (error) {
+      console.error('Error updating Category! => ', error);
+      return res.status(400).send({
+        success: false,
+        msg: 'Error updating category!',
+        error: error.message,
       });
     }
   },

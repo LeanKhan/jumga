@@ -8,12 +8,6 @@ if (document.getElementById('admin-dashboard')) {
         loading: false,
         columns: [
           {
-            field: '_id',
-            label: 'ID',
-            width: '40',
-            numeric: false,
-          },
-          {
             field: 'firstname',
             label: 'Firstname',
           },
@@ -31,6 +25,7 @@ if (document.getElementById('admin-dashboard')) {
           },
         ],
         riders: [],
+        update: false,
         selected_rider: null,
         rider_form: {
           firstname: '',
@@ -261,11 +256,70 @@ if (document.getElementById('admin-dashboard')) {
             this.isOpen = false;
           });
       },
-      goToAddAccount() {
-        this.fetchRider();
+      updateRider() {
+        this.loading = true;
+        doPost(`/riders/${this.selected_rider._id}/update`, 'PUT', {
+          update: this.rider_form,
+        })
+          .then((data) => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            this.activeTab = 0;
 
-        this.activeTab = 2;
+            if (data.success) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: 'Rider Updated Successfully!',
+                position: 'is-top',
+                type: 'is-success',
+                queue: false,
+              });
+
+              this.cancel();
+            }
+
+            if (!data.success) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message:
+                  data.msg || `${data.error} \n [Could not Update Rider]`,
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+
+            // this.$router.push('/');
+          })
+          .catch((err) => {
+            console.error(err);
+
+            if (!err.success && err.error) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: err.error.message || 'Error updating Rider',
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+
+            if (!err.success && err.alerts) {
+              err.alerts.forEach((alert) => {
+                this.$buefy.notification.open({
+                  duration: 5000,
+                  message: alert.msg,
+                  position: 'is-top',
+                  type: 'is-danger',
+                  queue: false,
+                });
+              });
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       },
+
       assignToShop() {
         doPost(`/riders/${this.selected_rider._id}/assign-to-shop`, 'PATCH', {
           rider: this.rider_form,
@@ -357,6 +411,29 @@ if (document.getElementById('admin-dashboard')) {
             this.loading = false;
             this.isOpen = false;
           });
+      },
+      goToAddAccount() {
+        this.fetchRider();
+
+        this.activeTab = 2;
+      },
+      goToAddRider() {
+        this.activeTab = 1;
+      },
+
+      cancel() {
+        this.update = false;
+        this.activeTab = 0;
+        this.selected_rider = null;
+      },
+
+      goToUpdateRider() {
+        this.update = true;
+        this.activeTab = 1;
+
+        if (this.selected_rider) {
+          this.rider_form = this.selected_rider;
+        }
       },
     },
     mounted() {

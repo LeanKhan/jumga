@@ -9,21 +9,62 @@
           </span>
         </template>
 
-        <b-table
-          v-if="countries.length"
-          :data="countries"
-          :columns="columns"
-        ></b-table>
+        <article class="panel is-shadowless is-info">
+          <div class="panel-heading">
+            <span>Countries</span>
+            <span>
+              <button
+                class="button is-pulled-right is-small is-success"
+                @click="goToAddCountry()"
+              >
+                New
+              </button>
+            </span>
+          </div>
+          <div class="panel-block" style="display: inherit !important">
+            <div class="columns">
+              <div class="column is-3">
+                <b-field>
+                  <b-button
+                    label="Clear selected"
+                    class="is-outlined"
+                    type="is-danger"
+                    :disabled="!selected_country"
+                    @click="selected_country = null"
+                  />
+                </b-field>
+              </div>
 
-        <div v-else class="notification is-light">
-          No Countries yet <br />
-          <b-button @click="activeTab = 1"> New </b-button>
-        </div>
+              <div class="column is-9" v-if="selected_country">
+                <div class="field has-addons is-justify-content-flex-end">
+                  <p class="control">
+                    <button class="button" @click="goToUpdateCountry()">
+                      <span>Edit</span>
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <b-table
+              v-if="countries.length"
+              :data="countries"
+              :columns="columns"
+              :selected.sync="selected_country"
+              striped
+            ></b-table>
+
+            <div v-else class="notification is-light">
+              No Countries yet <br />
+              <b-button @click="goToAddCountry()"> New </b-button>
+            </div>
+          </div>
+        </article>
       </b-tab-item>
       <b-tab-item>
         <template #header>
           <b-icon icon="source-pull"></b-icon>
-          <span> Add Country </span>
+          <span> {{ update ? 'Update' : 'Add' }} Country </span>
         </template>
         <!-- form -->
         <b-field label="Name">
@@ -67,8 +108,18 @@
         </b-field>
 
         <!-- submit button -->
-        <b-button :loading="loading" class="is-success" @click="addCountry()"
-          >Add</b-button
+        <b-button
+          :loading="loading"
+          class="is-success"
+          @click="update ? updateCountry() : addCountry()"
+          >{{ update ? 'Update' : 'Add' }}</b-button
+        >
+
+        <b-button
+          :loading="loading"
+          class="is-outlined is-danger"
+          @click="cancel()"
+          >Cancel</b-button
         >
       </b-tab-item>
     </b-tabs>

@@ -82,6 +82,11 @@ if (document.getElementById('shop-dashboard')) {
       component: ProductsComponent,
       name: 'Products',
     },
+    {
+      path: '/update',
+      component: UpdateShopComponent,
+      name: 'Update Shop',
+    },
   ];
 
   // 3. Create the router instance and pass the `routes` option
@@ -97,6 +102,7 @@ if (document.getElementById('shop-dashboard')) {
     router,
     components: {
       products: ProductsComponent,
+      update: UpdateShopComponent
     },
     mounted: function () {
       console.log('Loaded Shop Merchant App');

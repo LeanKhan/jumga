@@ -29,6 +29,8 @@ if (document.getElementById('admin-dashboard')) {
           },
         ],
         countries: [],
+        update: false,
+        selected_country: null,
         country_form: {
           name: '', // Nigeria
           short_code: '', // NG
@@ -128,6 +130,85 @@ if (document.getElementById('admin-dashboard')) {
             this.loading = false;
             this.isOpen = false;
           });
+      },
+      updateCountry() {
+        this.loading = true;
+        doPost(`/data/countries/${this.selected_country._id}/update`, 'PUT', {
+          update: this.country_form,
+        })
+          .then((data) => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            this.activeTab = 0;
+
+            if (data.success) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: 'Country Updated Successfully!',
+                position: 'is-top',
+                type: 'is-success',
+                queue: false,
+              });
+
+              this.cancel();
+            }
+
+            if (!data.success) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message:
+                  data.msg || `${data.error} \n [Could not Update Country]`,
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+
+            // this.$router.push('/');
+          })
+          .catch((err) => {
+            console.error(err);
+
+            if (!err.success && err.error) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: err.error.message || 'Error updating Country',
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+
+            if (!err.success && err.alerts) {
+              err.alerts.forEach((alert) => {
+                this.$buefy.notification.open({
+                  duration: 5000,
+                  message: alert.msg,
+                  position: 'is-top',
+                  type: 'is-danger',
+                  queue: false,
+                });
+              });
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      },
+      goToAddCountry() {
+        this.activeTab = 1;
+      },
+      cancel() {
+        this.update = false;
+        this.activeTab = 0;
+        this.selected_country = null;
+      },
+      goToUpdateCountry() {
+        this.update = true;
+        this.activeTab = 1;
+
+        if (this.selected_country) {
+          this.country_form = this.selected_country;
+        }
       },
     },
     mounted() {

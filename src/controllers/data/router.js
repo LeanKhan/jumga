@@ -10,6 +10,10 @@ router.patch('/countries/set', api.setUserCountry);
 
 router.get('/categories', api.getCategories);
 
+router.put('/countries/:id/update', api.updateCountry);
+
+router.put('/categories/:id/update', api.updateCategory);
+
 /* GET home page. */
 // check if isAuthenticated, isAdmin, if the rider has been created before and all that. thank you Jesus!
 router.post('/countries/new', api.addCountry);

@@ -51,19 +51,18 @@ async function handleShopPayment(req, res, next) {
         { _id: shop_id },
         { hasPaidFee: true, dispatch_rider: rider },
         { new: true }
-      );
+      )
+        .lean()
+        .exec();
     };
 
     const getDispatchRider = () => {
-      // Rider.findOne({
-      //   employed: false,
-      //   'account.subaccount_id': { $exists: true, $ne: null },
-      // }).exec();
-
       return Rider.findOne({
         employed: false,
         'account.subaccount_id': { $exists: true, $ne: null },
-      });
+      })
+        .lean()
+        .exec();
     };
 
     const updateRider = (shop) => {
@@ -75,7 +74,9 @@ async function handleShopPayment(req, res, next) {
           shop: shop._id,
         },
         { new: true }
-      );
+      )
+        .lean()
+        .exec();
     };
 
     const current_shop = await Shop.findOne({
@@ -239,7 +240,7 @@ module.exports = {
     }
 
     const findTx = (query) => {
-      return Transaction.findOne(query);
+      return Transaction.findOne(query).lean().exec();
     };
 
     // TODO: what if it's a product payment? idk lol
@@ -362,7 +363,9 @@ module.exports = {
               verified: false,
               transaction: response.data,
             }
-          );
+          )
+            .lean()
+            .exec();
 
           await req.flash('error', { msg: `Could not verify payment :/` });
 
@@ -383,7 +386,9 @@ module.exports = {
             status: 'paid_and_verified',
             transaction: response.data,
           }
-        );
+        )
+          .lean()
+          .exec();
 
         switch (type) {
           case 'shop_payment':

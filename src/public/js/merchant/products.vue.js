@@ -1,7 +1,7 @@
 if (document.getElementById('shop-dashboard')) {
   var ProductsComponent = {
     template: '#products-component',
-    props: ['shop_id'],
+    props: ['shop_id', 'shop_slug'],
     data() {
       return {
         loading: false,
@@ -54,6 +54,8 @@ if (document.getElementById('shop-dashboard')) {
             this.activeTab = 0;
 
             this.product_form = {
+              shop_id: this.shop_id,
+              shop_slug: this.shop_slug,
               name: '',
               price: '',
               description: '',

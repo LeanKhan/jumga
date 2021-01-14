@@ -122,6 +122,7 @@ module.exports = (() => {
       });
 
       User.findOne({ email: req.body.email, phonenumber: req.body.phonenumber })
+        .lean()
         .exec()
         .then(async (existingUser) => {
           if (existingUser) {
@@ -198,6 +199,8 @@ module.exports = (() => {
       // add alerts here
 
       User.findById(req.user._id)
+        .lean()
+        .exec()
         .then((user) => {
           if (!user) {
             req.logout();

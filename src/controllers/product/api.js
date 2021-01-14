@@ -73,7 +73,9 @@ module.exports = (() => {
           return Shop.findOneAndUpdate(
             { _id: req.user.shop },
             { $push: { products: product_id } }
-          );
+          )
+            .lean()
+            .exec();
         };
 
         const slug = slugify(req.body.name);
@@ -86,12 +88,14 @@ module.exports = (() => {
           category: req.body.category,
           tags: req.body.tags,
           shop: req.user.shop,
+          shop_slug: req.body.shop_id,
         });
 
         return Product.findOne({
           slug,
           shop: req.user.shop,
         })
+          .lean()
           .exec()
           .then(async (existingProduct) => {
             if (existingProduct) {
@@ -172,9 +176,9 @@ module.exports = (() => {
         }
 
         const shop = await Shop.findOne({ _id: req.body.shop_id })
+          .lean()
           .populate('dispatch_rider')
           .exec();
-
         if (!shop) {
           await req.flash('error', {
             msg: 'Shop does not exist!',
@@ -189,8 +193,10 @@ module.exports = (() => {
         price = parseFloat(price);
 
         const [cust_country, shop_country] = await Promise.all([
-          Country.findOne({ short_code: req.session.country || 'NG' }),
-          Country.findOne({ short_code: shop.country }),
+          Country.findOne({ short_code: req.session.country || 'NG' })
+            .lean()
+            .exec(),
+          Country.findOne({ short_code: shop.country }).lean().exec(),
         ]);
 
         let transaction_type;
@@ -314,6 +320,8 @@ module.exports = (() => {
       const { shop } = req.query;
 
       Product.find({ shop })
+        .lean()
+        .exec()
         .then((products) => {
           return res.status(200).json({
             success: true,

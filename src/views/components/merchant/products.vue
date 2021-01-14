@@ -51,7 +51,6 @@
           <b-taginput
             v-model="product_form.tags"
             ellipsis
-            icon="label"
             placeholder="Add a tag"
             aria-close-label="Delete this tag"
           >

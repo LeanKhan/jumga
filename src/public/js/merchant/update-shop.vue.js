@@ -1,7 +1,14 @@
 if (document.getElementById('shop-dashboard')) {
   var UpdateShopComponent = {
     template: '#update-shop-component',
-    props: ['shop_id', 'shop_slug', 'shop_description', 'shop_theme_color', 'shop_banner_image', 'shop_logo'],
+    props: [
+      'shop_id',
+      'shop_slug',
+      'shop_description',
+      'shop_theme_color',
+      'shop_banner_image',
+      'shop_logo',
+    ],
     data() {
       return {
         loading: false,
@@ -11,42 +18,53 @@ if (document.getElementById('shop-dashboard')) {
           description: this.shop_description,
           pictures: {
             banner_image: this.shop_banner_image,
-            logo:this.shop_logo
-          }
+            logo: this.shop_logo,
+          },
         },
       };
     },
     methods: {
       updateShop() {
         this.loading = true;
-        doPost('/shops/dashboard/update', 'PUT', {update: this.shop_form})
+        doPost('/shops/dashboard/update', 'PUT', { update: this.shop_form })
           .then((data) => {
             console.log(data); // JSON data parsed by `data.json()` call
             this.activeTab = 0;
 
-            if(data.success) {
-                 this.$buefy.notification.open({
-              duration: 5000,
-              message: 'Shop Updated Successfully!',
-              position: 'is-top',
-              type: 'is-success',
-              queue: false,
-            });
+            if (data.success) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: 'Shop Updated Successfully!',
+                position: 'is-top',
+                type: 'is-success',
+                queue: false,
+              });
             }
 
-            if(!data.success) {
-                 this.$buefy.notification.open({
-              duration: 5000,
-              message: data.msg || `${data.error} \n [Could not Update shop]`,
-              position: 'is-top',
-              type: 'is-danger',
-              queue: false,
-            });
+            if (!data.success) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: data.msg || `${data.error} \n [Could not Update shop]`,
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+
+            if (!data.success && data.alerts) {
+              data.alerts.forEach((alert) => {
+                this.$buefy.notification.open({
+                  duration: 5000,
+                  message: alert.msg,
+                  position: 'is-top',
+                  type: 'is-danger',
+                  queue: false,
+                });
+              });
             }
 
             this.$router.push('/');
-
-                   })
+          })
           .catch((err) => {
             console.error(err);
 

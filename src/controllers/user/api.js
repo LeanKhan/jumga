@@ -113,24 +113,25 @@ module.exports = (() => {
     },
 
     async saveUser(req, res, next) {
-      const user = new User({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        phonenumber: req.body.phonenumber,
-        email: req.body.email,
-        password: req.body.password,
-      });
-
-      User.findOne({ email: req.body.email, phonenumber: req.body.phonenumber })
+      User.findOne({ email: req.body.email })
         .lean()
         .exec()
         .then(async (existingUser) => {
           if (existingUser) {
             await req.flash('error', {
-              msg: 'Account with that email or phonumber already exists.',
+              msg: 'User already has an account!',
             });
             return res.redirect(req.get('Referer') || '/signup');
           }
+
+          const user = new User({
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            phonenumber: req.body.phonenumber,
+            email: req.body.email,
+            password: req.body.password,
+          });
+
           // if not move on!
           user.save((err) => {
             if (err) {

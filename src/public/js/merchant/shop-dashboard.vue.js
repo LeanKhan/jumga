@@ -44,6 +44,18 @@ if (document.getElementById('shop-dashboard')) {
               queue: false,
             });
           }
+
+          if (!data.success && data.alerts) {
+            data.alerts.forEach((alert) => {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: alert.msg,
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            });
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -87,6 +99,11 @@ if (document.getElementById('shop-dashboard')) {
       component: UpdateShopComponent,
       name: 'Update Shop',
     },
+    {
+      path: '/office',
+      component: OfficeComponent,
+      name: 'Office',
+    },
   ];
 
   // 3. Create the router instance and pass the `routes` option
@@ -102,7 +119,8 @@ if (document.getElementById('shop-dashboard')) {
     router,
     components: {
       products: ProductsComponent,
-      update: UpdateShopComponent
+      update: UpdateShopComponent,
+      office: OfficeComponent,
     },
     mounted: function () {
       console.log('Loaded Shop Merchant App');

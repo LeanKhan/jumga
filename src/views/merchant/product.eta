@@ -18,34 +18,47 @@
       </div>
     </section>
 
-<nav class="navbar" role="navigation" aria-label="main navigation" style="z-index: 0">
-<div class="navbar-start">
-  <div class="navbar-item">
-       <a class="button is-light" href="/shops/dashboard">
-          <img src="https://icongr.am/feather/settings.svg?size=20&color=2e2929">
+    <nav
+      class="navbar"
+      role="navigation"
+      aria-label="main navigation"
+      style="z-index: 0"
+    >
+      <div class="navbar-start">
+        <div class="navbar-item">
+          <a class="button is-light" href="/shops/dashboard">
+            <img
+              src="https://icongr.am/feather/settings.svg?size=20&color=2e2929"
+            />
           </a>
-  </div>
-</div>
-  <div class="navbar-end">
-    <!-- navbar items, navbar burger... -->
-    <form action="/<%=shop.slug%>/search" method="GET">
-      <div class="field has-addons">
-                  <div class="control">
-                    <input name="q" class="input" placeholder="search" type="text" required />
-                  </div>
-                   <div class="control">
-    <a class="button is-outlined">
-      <img src="https://icongr.am/clarity/search.svg?size=16&color=000">
-    </a>
-  </div>
-                </div>
-
-    </form>
-  </div>
-</nav>
+        </div>
+      </div>
+      <div class="navbar-end">
+        <!-- navbar items, navbar burger... -->
+        <form action="/<%=shop.slug%>/search" method="GET">
+          <div class="field has-addons">
+            <div class="control">
+              <input
+                name="q"
+                class="input"
+                placeholder="search"
+                type="text"
+                required
+              />
+            </div>
+            <div class="control">
+              <a class="button is-outlined">
+                <img
+                  src="https://icongr.am/clarity/search.svg?size=16&color=000"
+                />
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </nav>
 
     <hr class="mb-0 p-0" style="height: 1px" />
-
 
     <section id="shop" class="section px-0">
       <div class="container">
@@ -65,9 +78,7 @@
               <h1 class="title brand-title mt-3 is-size-3">
                 <%= product.name %>
               </h1>
-              <p class="is-size-5 subtitle">
-                <%= product.desctiption %>
-              </p>
+              <p class="is-size-5 subtitle"><%= product.description %></p>
             </div>
             <div class="column is-one-third has-text-left">
               <form action="/products/pay" method="POST">
@@ -116,35 +127,28 @@
                 <div class="notification is-light">
                   <ul>
                     <li>
-                      <b>Product Price</b> <%= transaction_type ==
-                      'international' ? '$' : cust_country.currency_code %>
-                      <span>{{ <%= price * (transaction_type == 'international' ? 1 :
-                        exchange_rate) %> | currency }}</span>
+                      <b>Product Price</b> <%= cust_country.currency_code %>
+                      <span>{{ <%= price * exchange_rate %> | currency }}</span>
                     </li>
                     <li>
-                      <b>Delivery</b> <%= transaction_type == 'international' ?
-                      '$' : cust_country.currency_code %>
+                      <b>Delivery</b> <%= cust_country.currency_code %>
                       <span>
-                        {{  <%= delivery_fee * (transaction_type == 'international'
-                        ? 1 : exchange_rate) %> | currency }}
+                        {{  <%= delivery_fee * exchange_rate %> | currency }}
                       </span>
                     </li>
                     <li>
-                      <b>Payment Processing</b> <%= transaction_type ==
-                      'international' ? '$' : cust_country.currency_code %>
+                      <b>Payment Processing</b> <%= cust_country.currency_code
+                      %>
                       <span>
-                        {{ <%= processing_fee * (transaction_type ==
-                        'international' ? 1 : exchange_rate) %> | currency }}
+                        {{ <%= processing_fee * exchange_rate %> | currency }}
                       </span>
                     </li>
                     <li class="has-text-success has-text-weight-bold is-size-5">
-                      <span>
-                        <%= transaction_type == 'international' ? '$' :
-                        cust_country.currency_code.trim() %>
-                      </span>
+                      <span> <%= cust_country.currency_code.trim() %> </span>
 
-                      <span>{{ <%= total_amount * (transaction_type == 'international'
-                        ? 1 : exchange_rate) %> | currency }}</span>
+                      <span
+                        >{{ <%= total_amount * exchange_rate %> | currency }}</span
+                      >
                     </li>
                   </ul>
                 </div>
@@ -171,6 +175,26 @@
                       required
                     />
                   </div>
+                </div>
+
+                <div class="control">
+                  <% if (cust_country.short_code == 'GH') { %>
+                  <label class="radio">
+                    <input
+                      type="radio"
+                      value="mobile_money_ghana"
+                      name="payment_method"
+                    />
+                    Pay with Mobile Money (MTN, Airtel/Tigo, Vodafone)?
+                  </label>
+                  <% } %> <% if (cust_country.short_code == 'KE') { %>
+                  <p>Pay With</p>
+
+                  <label class="radio">
+                    <input type="radio" value="mpesa" name="payment_method" />
+                    Pay with Mobile Money (MPESA)?
+                  </label>
+                  <% } %>
                 </div>
 
                 <div class="control">

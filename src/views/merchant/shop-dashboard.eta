@@ -12,16 +12,15 @@
       </h1>
     </div>
 
-<% if (shop.isLive) { %>
-  <div class="navbar-start">
-  <div class="navbar-item">
-       <a class="button is-light" href="/<%= shop.slug %>">
-          <img src="https://icongr.am/feather/eye.svg?size=20&color=2e2929">
-          </a>
-  </div>
-</div>
-<% } %>
-
+    <% if (shop.isLive) { %>
+    <div class="navbar-start">
+      <div class="navbar-item">
+        <a class="button is-light" href="/<%= shop.slug %>">
+          <img src="https://icongr.am/feather/eye.svg?size=20&color=2e2929" />
+        </a>
+      </div>
+    </div>
+    <% } %>
 
     <div class="navbar-menu">
       <div class="navbar-end">
@@ -37,7 +36,7 @@
                   >Open</label
                 >
               </div>
-              <span><%= !shop.isLive ? 'Open' : 'Close' %>  Shop</span>
+              <span><%= !shop.isLive ? 'Open' : 'Close' %> Shop</span>
             </div>
           </div>
         </div>
@@ -46,7 +45,13 @@
     </div>
   </nav>
 
-  <% if (!shop.account.subaccount_id) { %>
+  <% if (!shop.dispatch_rider) { %>
+  <div class="notification is-danger">
+    <p>Looks like you don't have a Dispatch Rider...</p>
+    <p>Please tell admin</p>
+  </div>
+
+  <% } %> <% if (!shop.account.subaccount_id) { %>
   <div class="notification is-warning">
     <p>Please add a bank account to start recieving payments</p>
     <a class="button is-success mt-1" href="/shops/dashboard/add-account"
@@ -88,12 +93,28 @@
         exact
         ><a>Edit Shop</a></router-link
       >
+      <router-link
+        active-class="is-active"
+        tag="li"
+        :to="{name: 'Office'}"
+        exact
+        ><a>Office</a></router-link
+      >
     </ul>
   </div>
 
   <!-- pass data from express _directly_ to router-view. thank you Jesus! -->
-  <router-view :shop_id="'<%= shop._id %>'" :shop_slug="'<%= shop.slug %>'" :shop_description="'<%= shop.description %>'" :shop_theme_color="'<%= shop.theme_color %>'" :shop_banner_image="'<%= shop.pictures.banner_image %>'" :shop_logo="'<%= shop.pictures.logo %>'" ></router-view>
+  <router-view
+    :shop_id="'<%= shop._id %>'"
+    :country=" <%= JSON.stringify(shop.country_id) %>"
+    :shop_slug="'<%= shop.slug %>'"
+    :shop_description="'<%= shop.description %>'"
+    :shop_theme_color="'<%= shop.theme_color %>'"
+    :shop_banner_image="'<%= shop.pictures.banner_image || '' %>'"
+    :shop_logo="'<%= shop.pictures.logo || '' %>'"
+  ></router-view>
 </div>
 
-<%~ E.includeFile("components/merchant/products.vue") %>
-<%~ E.includeFile("components/merchant/update-shop.vue") %>
+<%~ E.includeFile("components/merchant/products.vue") %> <%~
+E.includeFile("components/merchant/update-shop.vue") %> <%~
+E.includeFile("components/merchant/office.vue") %>

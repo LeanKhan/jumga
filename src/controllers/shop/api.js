@@ -71,7 +71,9 @@ module.exports = {
         slug,
         description: req.body.description,
         category: req.body.category,
+        category_id: req.body.category_id,
         country: req.body.country,
+        country_id: req.body.country_id,
         owner: req.user._id,
       });
 
@@ -96,7 +98,8 @@ module.exports = {
               }
 
               req.body.shop = s;
-              return resolve(s);
+              req.body.shop_id = s._id.toString();
+              return resolve(s._id);
             });
           });
         });
@@ -107,9 +110,6 @@ module.exports = {
         .then(updateUser)
         // eslint-disable-next-line no-unused-vars
         .then(async (user) => {
-          //   req.body.shop = s;
-          req.session.returnTo = '/signin?returnTo=/shops/dashboard';
-
           return next();
         })
         .catch((err) => {
@@ -130,7 +130,7 @@ module.exports = {
       const currency = 'USD';
       const amount = '20';
       const type = 'shop_payment';
-
+      console.log(req.body.shop_id);
       const data = {
         tx_ref: `jumga-tx-${nanoid(12)}`,
         amount: '20',
@@ -147,7 +147,7 @@ module.exports = {
           phone_number: req.user.phonenumber,
           name: `${req.user.firstname} ${req.user.lastname}`,
           user_id: req.user._id,
-          shop_id: req.body.shop_id.trim() || req.body.shop._id.trim(),
+          shop_id: req.body.shop_id,
         },
         customizations: {
           title: 'Jumga Stores',
@@ -160,8 +160,6 @@ module.exports = {
 
       req.body.type = 'shop_payment';
 
-      req.body.shop = req.body.shop_id.trim() || req.body.shop._id.trim();
-
       return next();
     } catch (err) {
       return next(err);
@@ -171,16 +169,16 @@ module.exports = {
     try {
       if (!req.user.shop) {
         await req.flash('error', {
-          msg: "Admins or current Merchants can't create shops.",
+          msg: 'You no get Shop! Sign in and try again',
         });
         return res.redirect('/');
       }
 
       if (!req.isAuthenticated()) {
         await req.flash('error', {
-          msg: 'You have to be signed in to open a Shop',
+          msg: 'You have to be signed in to add Shop account!',
         });
-        return res.redirect('/signin?returnTo=/register?step=1');
+        return res.redirect('/signin?returnTo=/shops/dashboard');
       }
 
       // check if shop exists actually...
@@ -478,6 +476,104 @@ module.exports = {
       return res
         .status(400)
         .send({ succes: false, msg: 'Error searching shop!' });
+    }
+  },
+
+  async getShops(req, res) {
+    try {
+      let { query } = req.query;
+
+      try {
+        query = JSON.parse(query);
+      } catch (err) {
+        console.log('Erro parsing get shops query');
+        query = {};
+      }
+
+      Shop.find(query)
+        .lean()
+        .exec()
+        .then((shops) => {
+          return res.status(200).send({
+            success: true,
+            msg: 'Shops fetched successfully!',
+            data: shops,
+          });
+        })
+        .catch((err) => {
+          console.error('Error fetching Shops! => ', err);
+          return res.status(400).send({
+            success: false,
+            msg: 'Error fetching Shops!',
+            error: err.message,
+          });
+        });
+    } catch (err) {
+      console.error('Error fetching Shops! => ', err);
+      return res.status(400).send({
+        success: false,
+        msg: 'Error fetching Shops!',
+        error: err.message,
+      });
+    }
+  },
+
+  async fetchShop(req, res) {
+    try {
+      let select;
+      let populate;
+      if (req.query.select) {
+        console.log('Select these!', req.query.select);
+        select = req.query.select.replace(/,/g, ' ');
+      }
+
+      if (req.query.populate) {
+        console.log('poppoo');
+        populate = req.query.populate;
+      }
+
+      const getter = () => {
+        if (select && populate) {
+          console.log('here in botle');
+          return Shop.findById(req.params.id)
+            .select(select)
+            .populate(populate)
+            .lean()
+            .exec();
+        }
+
+        if (select) {
+          return Shop.findById(req.params.id).select(select).lean().exec();
+        }
+
+        if (populate) {
+          return Shop.findById(req.params.id).populate(populate).lean().exec();
+        }
+
+        return Shop.findById(req.params.id).lean().exec();
+      };
+
+      getter()
+        .then((shop) => {
+          return res.status(200).json({
+            success: true,
+            msg: 'Shop Fetched succesffuly!',
+            data: shop,
+          });
+        })
+        .catch((error) => {
+          return res.status(400).json({
+            success: false,
+            msg: 'Could not fetch Shop',
+            error: error.message,
+          });
+        });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        msg: 'Could not fetch Shop',
+        error: err.message,
+      });
     }
   },
 };

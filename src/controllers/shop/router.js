@@ -36,6 +36,10 @@ router.post('/dashboard/add-account', api.createSubaccount);
 
 router.patch('/open', isAuthenticated, api.openShop);
 
+router.get('/', api.getShops);
+
+router.get('/:id', api.fetchShop);
+
 /** SINGLE SHOP VIEWS ROUTER - THANK YOU JESUS */
 
 shop_router.get('/products/:product_slug', views.renderProduct);

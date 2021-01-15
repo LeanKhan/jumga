@@ -5,7 +5,6 @@ const { Schema } = mongoose;
 // Define our model
 const riderSchema = new Schema(
   {
-    riderID: String,
     firstname: { type: String, lowercase: true },
     lastname: { type: String, lowercase: true },
     phonenumber: String,

@@ -48,7 +48,7 @@ module.exports = (() => {
       // fetch shop data here...
       Shop.findById(id)
         .lean()
-        .populate('products')
+        .populate('products country_id category_id')
         .exec()
         .then((s) => {
           if (!s) return res.redirect('/error?c=404_shop');
@@ -61,7 +61,7 @@ module.exports = (() => {
         });
     },
 
-    renderShop(req, res) {
+    async renderShop(req, res) {
       const { shop_slug: slug } = req.params;
 
       res.locals.route_name = 'shop';
@@ -71,14 +71,24 @@ module.exports = (() => {
       // fetch shop data here...
       Shop.findOne({ slug })
         .lean()
-        .populate('products')
+        .populate('products country_id')
         .exec()
-        .then((s) => {
+        .then(async (s) => {
           if (!s) return res.redirect('/error?c=404_shop');
 
           if (!s.isLive) return res.redirect('/error?c=404_shop');
 
-          res.render('merchant/shop', { shop: s, products: s.products });
+          const cust_country = await Country.findOne({
+            short_code: req.session.country || 'NG',
+          })
+            .lean()
+            .exec();
+
+          res.render('merchant/shop', {
+            shop: s,
+            products: s.products,
+            cust_country,
+          });
         })
         .catch((err) => {
           console.error('error opening shop =>\n', err);
@@ -126,11 +136,11 @@ module.exports = (() => {
 
           if (shop_country.short_code != cust_country.short_code) {
             console.log('International Transaction');
-            if (shop_country.short_code == 'UK') {
+            if (shop_country.short_code == 'GB') {
               console.log('Inside the UK');
             }
 
-            fw_trx_fee = cust_country.fw_processing_fees.international;
+            fw_trx_fee = cust_country.fw_processing_fees.international || 3.8;
             transaction_type = 'international';
           }
 
@@ -144,10 +154,11 @@ module.exports = (() => {
             delivery_fee = 15;
           }
 
+          const exchange_rate = parseFloat(cust_country.dollar_exchange_rate);
+
+          // All in Dollars for now...
           const total_amount =
             (price + delivery_fee) / (1 - parseFloat(fw_trx_fee) / 100);
-
-          const exchange_rate = parseFloat(cust_country.dollar_exchange_rate);
 
           let processing_fee = total_amount - price - delivery_fee;
 

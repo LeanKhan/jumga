@@ -1,5 +1,6 @@
 const validator = require('validator');
 const fetch = require('node-fetch');
+// const qs = require('querystring');
 const Rider = require('../../models/dispatch_rider');
 const Shop = require('../../models/shop');
 
@@ -265,9 +266,21 @@ module.exports = (() => {
         });
     },
     getRider(req, res) {
-      Rider.findById(req.params.id)
-        .lean()
-        .exec()
+      let select;
+      if (req.query.select) {
+        console.log('Select these!', req.query.select);
+        select = req.query.select.replace(/,/g, ' ');
+      }
+
+      const getter = () => {
+        if (select) {
+          return Rider.findById(req.params.id).select(select).lean().exec();
+        }
+
+        return Rider.findById(req.params.id).lean().exec();
+      };
+
+      getter()
         .then((rider) => {
           return res.status(200).json({
             success: true,

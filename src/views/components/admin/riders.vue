@@ -36,10 +36,7 @@
               </div>
 
               <div class="column is-9" v-if="selected_rider">
-                <div
-                  class="field has-addons is-justify-content-flex-end"
-                  v-show="selected_rider"
-                >
+                <div class="field has-addons is-justify-content-flex-end">
                   <p
                     class="control"
                     v-if="!selected_rider.account.subaccount_id"

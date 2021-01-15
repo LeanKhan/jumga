@@ -7,12 +7,11 @@ const productSchema = new Schema(
   {
     name: String,
     slug: String,
-    category: String,
-    category_id: { type: Schema.Types.ObjectId, ref: 'Category' },
-    description: String,
     price: String,
+    picture: String,
+    description: String,
     tags: [{ type: String }],
-    pictures: [{ type: String }],
+    shop_slug: String,
     shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
   },
   { timestamps: true }

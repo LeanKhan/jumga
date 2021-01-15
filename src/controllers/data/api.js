@@ -337,6 +337,6 @@ module.exports = {
 
   setUserCountry(req, res) {
     req.session.country = req.body.country;
-    return res.status(200).send('country has been set');
+    return res.status(200).send({ success: true, msg: 'country has been set' });
   },
 };

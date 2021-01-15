@@ -143,7 +143,9 @@ async function handleShopPayment(req, res, next) {
 
         console.log('shop paid for successfully!');
 
-        res.redirect(`/shops/dashboard`);
+        const { returnTo } = req.session;
+        delete req.session.returnTo;
+        return res.redirect(returnTo || '/shops/dashboard');
       })
       .catch(async (err) => {
         console.log(err);
@@ -199,7 +201,16 @@ module.exports = {
 
       await Transaction.create(tx);
 
-      if (response.data.link) return res.redirect(`${response.data.link}`);
+      if (response.data.link) return res.redirect(response.data.link);
+
+      if (response.meta.authorization.redirect)
+        return res.redirect(response.meta.authorization.redirect);
+
+      // for mpesa payments...
+      if (response.data.payment_type == 'mpesa')
+        return res.redirect(
+          `/payments/verify?status=${response.data.status}&tx_ref=${response.data.tx_ref}&transaction_id=${response.data.id}&amount=${response.data.amount}&currency=${response.data.currency}&type=${type}`
+        );
     } catch (err) {
       console.log('Error paying for shop\n', err);
       return res.status(400).send({ msg: 'Error paying for shop :(', err });
@@ -209,7 +220,7 @@ module.exports = {
   async beforePay(req, res, next) {
     const { data, type } = req.body;
 
-    const shop_id = req.body.shop_id.trim();
+    const { shop_id } = req.body;
 
     // Add reason to redirect '&reason=no-type' or flash message!
     if (!data || !type)
@@ -289,7 +300,24 @@ module.exports = {
 
   async verify(req, res, next) {
     try {
-      const { transaction_id, tx_ref, type, amount, currency } = req.query;
+      const {
+        transaction_id,
+        tx_ref,
+        type,
+        amount,
+        currency,
+        status,
+      } = req.query;
+
+      if (status == 'cancelled') {
+        await req.flash('error', {
+          msg: `Cancelled Payment... for ${
+            type == 'shop_payment' ? 'Shop' : 'Product'
+          }`,
+        });
+        const redirect = type == 'shop_payment' ? '/shops/dashboard' : '/';
+        return res.redirect(redirect);
+      }
 
       const validationErrors = [];
 

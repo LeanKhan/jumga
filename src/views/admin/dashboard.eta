@@ -7,7 +7,7 @@
     </div>
 
     <div class="navbar-end">
-      <p>Current User: Sophia</p>
+      <p>Admin: <%= user.firstname || 'Admin' %></p>
     </div>
   </nav>
 
@@ -34,6 +34,9 @@
         exact
         ><a>Countries</a></router-link
       >
+      <router-link active-class="is-active" tag="li" :to="{name: 'Shops'}" exact
+        ><a>Shops</a></router-link
+      >
     </ul>
   </div>
 
@@ -42,4 +45,5 @@
 
 <%~ E.includeFile("components/admin/riders.vue") %> <%~
 E.includeFile("components/admin/categories.vue") %> <%~
-E.includeFile("components/admin/countries.vue") %>
+E.includeFile("components/admin/countries.vue") %> <%~
+E.includeFile("components/admin/shops.vue") %>

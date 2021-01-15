@@ -90,7 +90,12 @@
               />
             </div>
           </div>
-          <button class="button is-block is-primary is-fullwidth is-medium">
+          <button
+            type="submit"
+            v-bind:class="{ 'is-loading': loading }"
+            v-on:click="loading = true"
+            class="button is-block is-primary is-fullwidth is-medium"
+          >
             Create Account
           </button>
           <br />
@@ -102,7 +107,7 @@
           >
         </form>
       </b-step-item>
-      <b-step-item :step="2" label="Setup">
+      <b-step-item :step="2" label="Setup Shop">
         <form method="POST" action="/shops/new?returnTo=/register?step=2">
           <div class="field">
             <div class="control">
@@ -145,25 +150,11 @@
               >
 
               <div class="select is-block">
-                <select name="category" style="width: 100%">
-                  <option v-for="(c, i) in categories" :key="i" :value="c.slug">
-                    {{ c.name }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="field">
-            <div class="control">
-              <label class="label has-text-left" for="country">Country</label>
-
-              <div class="select is-block">
-                <select name="country" style="width: 100%">
+                <select style="width: 100%" v-model="shop_form.category">
                   <option
-                    v-for="(c, i) in countries"
+                    v-for="(c, i) in categories"
                     :key="i"
-                    :value="c.short_code"
+                    :value="{ code: c.slug, id: c._id }"
                   >
                     {{ c.name }}
                   </option>
@@ -172,7 +163,54 @@
             </div>
           </div>
 
+          <input
+            hidden
+            type="hidden"
+            name="category"
+            :value="shop_form.category.code"
+          />
+          <input
+            hidden
+            type="hidden"
+            name="category_id"
+            :value="shop_form.category.id"
+          />
+
+          <div class="field">
+            <div class="control">
+              <label class="label has-text-left" for="country">Country</label>
+
+              <div class="select is-block">
+                <select style="width: 100%" v-model="shop_form.country">
+                  <option
+                    v-for="(c, i) in countries"
+                    :key="i"
+                    :value="{ code: c.short_code, id: c._id }"
+                  >
+                    {{ c.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <input
+            hidden
+            type="hidden"
+            name="country"
+            :value="shop_form.country.code"
+          />
+          <input
+            hidden
+            type="hidden"
+            name="country_id"
+            :value="shop_form.country.id"
+          />
+
           <button
+            type="submit"
+            v-bind:class="{ 'is-loading': loading }"
+            v-on:click="loading = !loading"
             class="button is-block is-warning jumga-yellow is-fullwidth is-medium"
           >
             Create Shop and Pay $20*
@@ -184,6 +222,8 @@
               type="submit"
               formaction="/shops/new?skipPayment=true"
               class="button is-light is-small"
+              v-bind:class="{ 'is-loading': loading }"
+              v-on:click="loading = !loading"
             >
               Pay fee later (at your own risk :)
             </button></small
@@ -288,7 +328,11 @@
             </div>
           </div> -->
 
-          <button class="button is-block is-success is-fullwidth is-medium">
+          <button
+            v-bind:class="{ 'is-loading': loading }"
+            v-on:click="loading = !loading"
+            class="button is-block is-success is-fullwidth is-medium"
+          >
             Add Account
           </button>
           <br />

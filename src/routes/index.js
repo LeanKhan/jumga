@@ -47,18 +47,20 @@ router.get('/register', async function (req, res) {
 
   const currentStep = req.query.step || 0;
 
-  // check if user is admin, user is merchant, or user is registered.
-  if (req.isAuthenticated() && (req.user.isAdmin || req.user.shop)) {
-    await req.flash('error', {
-      msg: "Admins or current Merchants can't create shops.",
-    });
-    return res.redirect('/');
-  }
+  if (currentStep != 2) {
+    // check if user is admin, user is merchant, or user is registered.
+    if (req.isAuthenticated() && (req.user.isAdmin || req.user.shop)) {
+      await req.flash('error', {
+        msg: "Admins or current Merchants can't create shops.",
+      });
+      return res.redirect('/');
+    }
 
-  if (req.isAuthenticated() && !req.user.isAdmin && !req.user.shop) {
-    await req.flash('info', {
-      msg: 'No need to register',
-    });
+    if (req.isAuthenticated() && !req.user.isAdmin && !req.user.shop) {
+      await req.flash('info', {
+        msg: 'No need to register',
+      });
+    }
   }
 
   // if (!req.isAuthenticated()) {
@@ -73,23 +75,11 @@ router.get('/register', async function (req, res) {
     Country.find({}).lean().exec(),
   ]);
 
-  return res.render('open-shop', {
+  return res.render('register', {
     step: currentStep,
     categories: JSON.stringify(categories),
     countries: JSON.stringify(countries),
   });
-
-  // Category.find({})
-  //   .exec()
-  //   .then((categories) => {
-  //     return res.render('open-shop', {
-  //       step: currentStep,
-  //       categories: JSON.stringify(categories),
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     console.error('Error fetching dispatch_riders =>\n', err);
-  //   });
 });
 
 router.get('/signin', user.views.renderSignin);

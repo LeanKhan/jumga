@@ -288,6 +288,18 @@ if (document.getElementById('admin-dashboard')) {
               });
             }
 
+            if (!data.success && data.alerts) {
+              data.alerts.forEach((alert) => {
+                this.$buefy.notification.open({
+                  duration: 5000,
+                  message: alert.msg,
+                  position: 'is-top',
+                  type: 'is-danger',
+                  queue: false,
+                });
+              });
+            }
+
             // this.$router.push('/');
           })
           .catch((err) => {
@@ -326,7 +338,6 @@ if (document.getElementById('admin-dashboard')) {
         })
           .then((data) => {
             // show toast here...
-            console.log('bad request?');
             console.log(data); // JSON data parsed by `data.json()` call
 
             if (!data.success) {

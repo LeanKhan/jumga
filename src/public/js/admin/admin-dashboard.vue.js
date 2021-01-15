@@ -13,41 +13,38 @@ if (document.getElementById('admin-dashboard')) {
     activeTab: 0,
   };
 
-  async function doPost(url = '', method, _data = {}) {
-    // Default options are marked with *
-    const response = await fetch(url, {
-      method, // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'application/json',
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(_data), // body data type must match "Content-Type" header
-    });
-    return response.json(); // parses JSON response into native JavaScript objects
-  }
-
-  const methods = {
-    addRider() {
-      doPost('/riders/new', 'POST', this.rider_form)
-        .then((d) => {
-          console.log(d); // JSON data parsed by `data.json()` call
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-  };
+  // async function doPost(url = '', method, _data = {}) {
+  //   // Default options are marked with *
+  //   const response = await fetch(url, {
+  //     method, // *GET, POST, PUT, DELETE, etc.
+  //     mode: 'cors', // no-cors, *cors, same-origin
+  //     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+  //     credentials: 'same-origin', // include, *same-origin, omit
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       // 'Content-Type': 'application/x-www-form-urlencoded',
+  //     },
+  //     redirect: 'follow', // manual, *follow, error
+  //     referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+  //     body: JSON.stringify(_data), // body data type must match "Content-Type" header
+  //   });
+  //   return response.json(); // parses JSON response into native JavaScript objects
+  // }
 
   const routes = [
-    { path: '/', redirect: '/riders' },
+    { path: '', redirect: '/riders' },
     { path: '/riders', component: RidersComponent, name: 'Riders' },
-    { path: '/categories', component: CategoriesComponent, name: 'Categories' },
-    { path: '/countries', component: CountriesComponent, name: 'Countries' },
+    {
+      path: '/categories',
+      component: CategoriesComponent,
+      name: 'Categories',
+    },
+    {
+      path: '/countries',
+      component: CountriesComponent,
+      name: 'Countries',
+    },
+    { path: '/shops', component: ShopsComponent, name: 'Shops' },
   ];
 
   // 3. Create the router instance and pass the `routes` option
@@ -63,7 +60,6 @@ if (document.getElementById('admin-dashboard')) {
 
   const AdminDashboard = new Vue({
     data,
-    methods,
     router,
     components: {
       riders: RidersComponent,

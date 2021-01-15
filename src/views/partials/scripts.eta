@@ -16,10 +16,12 @@
 <% if (route_name == 'shop-dashboard') { %>
 <script src="/js/merchant/products.vue.js"></script>
 <script src="/js/merchant/update-shop.vue.js"></script>
+<script src="/js/merchant/office.vue.js"></script>
 <script src="/js/merchant/shop-dashboard.vue.js"></script>
 <% } %> <% if (route_name == 'admin-dashboard') { %>
 <script src="/js/admin/categories.vue.js"></script>
 <script src="/js/admin/countries.vue.js"></script>
+<script src="/js/admin/shops.vue.js"></script>
 <script src="/js/admin/riders.vue.js"></script>
 <script src="/js/admin/admin-dashboard.vue.js"></script>
 <% } %> <% if (route_name == 'open-shop') { %>

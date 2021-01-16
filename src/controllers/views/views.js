@@ -118,10 +118,10 @@ module.exports = {
 
       if (req.isAuthenticated() && !req.user.isAdmin && !req.user.shop) {
         await req.flash('info', {
-          msg: 'No need to register',
+          msg: 'Already have an account, \n so just setup shop',
         });
 
-        return res.redirect('/');
+        return res.redirect('/register?step=1');
       }
     }
 

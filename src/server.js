@@ -26,7 +26,7 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect(process.env.MONGO_DB_URI.trim(), { useUnifiedTopology: true });
 mongoose.connection.on('connected', () => {
-  console.log('Jumga MongoDB connection to database successful! :)');
+  console.log('MongoDB connection to Jumga database successful! :)');
 });
 mongoose.connection.on('error', (err) => {
   console.error(err);
@@ -144,7 +144,7 @@ app.use(async function (req, res, next) {
 
   res.locals.host = req.headers.host;
 
-  res.locals.title = 'Jumga E-Plaza';
+  res.locals.title = 'Jumga | Buy and Sell online';
 
   res.locals.route_name = '';
 
@@ -197,9 +197,7 @@ if (process.env.NODE_ENV.trim() === 'dev') {
   // Render an actual error page here :/
   app.use((err, req, res) => {
     console.error(err);
-    res
-      .status(500)
-      .send("Server Error :( \n\n please contact support, that's me! XD");
+    res.redirect('/error?error=server_error');
   });
 }
 

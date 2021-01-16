@@ -53,7 +53,7 @@
     <% } %>
     <header style="font-size: smaller">
       <%~ includeFile("partials/default-navbar.eta", {env, route_name, country,
-      user: typeof user != 'undefined' || undefined }) %>
+      user: typeof user != 'undefined' ? user : undefined }) %>
     </header>
 
     <section class="app-main body-content">

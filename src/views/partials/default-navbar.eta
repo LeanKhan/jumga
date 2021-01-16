@@ -61,6 +61,7 @@
           <div>
             <% if (user.isAdmin) { %>
             <!-- admin -->
+            <!-- The Radfaces images are sent from http.. mayeb use a proxy server? -->
             <img
               src="http://www.radfaces.com/images/avatars/linda-barret.jpg"
               class="author-image"

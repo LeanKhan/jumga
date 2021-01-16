@@ -204,6 +204,7 @@ if (process.env.NODE_ENV.trim() === 'dev') {
 }
 
 app.get('*', (req, res) => {
+  res.locals.route_name = '404';
   res.render('error');
 });
 

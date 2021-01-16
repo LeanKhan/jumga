@@ -7,7 +7,7 @@ yarn-error.log*
 
 # output dirs
 /dist
-
+/build
 # Runtime data
 pids
 *.pid

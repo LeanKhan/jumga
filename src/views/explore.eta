@@ -1,94 +1,135 @@
 <% layout('layouts/default.eta') %>
 
-<section
-  class="hero is-info is-medium is-bold"
-  style="position: relative; top: -76px"
->
-  <div class="explore-hero-body section">
-    <div class="container section has-text-centered">
-      <h1 class="title brand-title">Find what you dey find</h1>
-      <div class="column is-8 is-offset-2">
-        <div class="container">
-          <form action="/poop/search" method="GET">
-            <div class="field has-addons">
-              <div class="control is-expanded">
-                <input
-                  name="q"
-                  class="input"
-                  placeholder="search"
-                  type="text"
-                  required
-                />
-              </div>
-              <div class="control">
-                <a class="button is-outlined">
-                  <img
-                    src="https://icongr.am/clarity/search.svg?size=16&color=000"
+<main id="explore-app">
+  <section
+    class="hero is-info is-medium is-bold"
+    style="position: relative; top: -76px"
+  >
+    <div class="explore-hero-body section">
+      <div class="container section has-text-centered">
+        <h1 class="title brand-title">Find what you dey find</h1>
+        <div class="column is-8 is-offset-2">
+          <div class="container">
+            <form method="GET">
+              <input type="hidden" hidden name="search" value="true" />
+              <div class="field has-addons">
+                <div class="control is-expanded">
+                  <input
+                    name="q"
+                    class="input"
+                    placeholder="search jumga"
+                    type="text"
+                    required
                   />
-                </a>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="container">
-  <!-- START ARTICLE FEED -->
-  <section class="articles">
-    <div class="column is-10 is-offset-2">
-      <div class="container">
-        <% if (products.length) { %>
-        <div class="columns is-multiline">
-          <% products.forEach(product => { %>
-          <div class="column is-one-third">
-            <div class="card is-shadowless">
-              <div class="card-image" style="border-top: 1px solid #ffcc33">
-                <figure class="image is-square">
-                  <img
-                    src="https://via.placeholder.com/640x640"
-                    alt="Rental Rates and Rental Prices in Phoenix, AZ"
-                    style="border-radius: 10px"
-                  />
-                </figure>
-              </div>
-              <div
-                class="card-content is-flex is-justify-content-space-between px-2"
-              >
-                <div class="has-text-justified">
-                  <h3 class="title is-size-4 ellipsis is-ellipsis-1">
-                    <a class="has-text-dark"> <%= product.name %> </a>
-                  </h3>
-                  <h4 class="subtitle is-size-5 has-text-primary">
-                    $<%= product.price %>
-                  </h4>
                 </div>
-              </div>
-
-              <div class="card-footer p-1" style="border-top: none">
-                <div class="tags">
-                  <% product.tags.forEach(tag => { %>
-                  <a
-                    href="/poop/search?q=<%= tag %>"
-                    class="tag has-background-warning-light is-light"
+                <div class="control">
+                  <button
+                    type="submit"
+                    class="button has-background-warning is-outlined is-white"
                   >
-                    <%= tag %>
-                  </a>
-                  <% }) %>
+                    <img
+                      src="https://icongr.am/feather/search.svg?size=16&color=000"
+                    />
+                  </button>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
-          <% }) %>
         </div>
-        <% } else { %>
-        <div class="notification is-light">
-          <p class="subheader">This Shop doesn't have any products yet...</p>
-        </div>
-        <% } %>
       </div>
     </div>
   </section>
-</div>
+
+  <div class="container">
+    <!-- START ARTICLE FEED -->
+    <% if (route.query.search) { %>
+    <h4 class="is-size-5">For your search '<%= route.query.q %>'</h4>
+    <a href="/explore">cancel search</a>
+    <% } %>
+    <section class="articles">
+      <div class="column">
+        <div class="container">
+          <% if (products.length) { %>
+          <div class="columns is-multiline">
+            <% products.forEach(product => { %>
+            <div class="column is-3">
+              <div class="card is-shadowless">
+                <div class="card-image">
+                  <figure class="image is-square">
+                    <img
+                      src="https://via.placeholder.com/640x640"
+                      alt="Rental Rates and Rental Prices in Phoenix, AZ"
+                      style="border-radius: 10px"
+                    />
+                  </figure>
+                </div>
+                <div
+                  class="card-content is-justify-content-space-between py-1 px-2"
+                >
+                  <div class="has-text-justified">
+                    <h3 class="title is-size-4 ellipsis is-ellipsis-1">
+                      <a
+                        class="has-text-dark"
+                        href="/<%= product.shop.slug %>/products/<%= product.slug %>"
+                      >
+                        <%= product.name %>
+                      </a>
+                    </h3>
+                    <h4 class="subtitle is-size-5 has-text-primary">
+                      <%= cust_country.currency_code %> <%= product.price %>
+                    </h4>
+                  </div>
+
+                  <article class="media mt-2">
+                    <div class="media-left">
+                      <figure class="image is-32x32">
+                        <img
+                          class="is-rounded"
+                          src="https://via.placeholder.com/32x32"
+                          alt="Image"
+                        />
+                      </figure>
+                    </div>
+                    <div class="media-content">
+                      <div class="content">
+                        <p>
+                          <a href="/<%= product.shop.slug %>">
+                            <%= product.shop.name %>
+                          </a>
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+                <div class="card-footer p-1" style="border-top: none">
+                  <div class="tags">
+                    <% if (product.tags.length) { %> <%
+                    product.tags.forEach(function (tag) { %>
+                    <a
+                      href="/explore?search=true&q=<%= tag %>"
+                      class="tag has-background-warning-light is-light"
+                    >
+                      <%= tag %>
+                    </a>
+                    <% }) %> <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } else if(route.query.search) { %>
+          <div class="notification is-light">
+            <p class="subheader">No products match your search :/</p>
+          </div>
+          <% } else { %>
+          <div class="notification is-light">
+            <p class="subheader">No products yet :/</p>
+          </div>
+          <%} %>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

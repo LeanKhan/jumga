@@ -1,3 +1,38 @@
 <% layout('layouts/default.eta') %>
 
-<h4>ERROR! Sorry, go back home :/</h4>
+<section class="container mb-6">
+  <div class="columns is-multiline">
+    <div class="column mt-6 is-full main">
+      <div class="columns is-justify-content-center">
+        <div class="column is-half right has-text-centered">
+          <h1 class="is-size-3 brand-title">Woops!</h1>
+          <% if (route_name == 'error') { %>
+          <div>Error! Doing what: <%= route.query.error %></div>
+          <div class="notification is-danger-light">
+            <%= route.query.reason || 'Unknown Error!' %>
+          </div>
+          <% } %> <% if (route_name == '404') { %>
+          <div>404! Page not found</div>
+          <div class="notification is-warning-light">
+            Can't find that <%= route.query.missing %>
+          </div>
+          <% } %>
+
+          <p>Go back <a href="/">HOME</a></p>
+        </div>
+      </div>
+    </div>
+    <!-- 
+      <div class="column is-centered has-text-centered">
+        <p>Already have an account? <a href="/signup">Sign in</a></p>
+      </div> -->
+  </div>
+</section>
+
+<style>
+  .main {
+    background: rgb(247, 247, 247);
+    border-radius: 10px;
+    min-height: 50vh;
+  }
+</style>

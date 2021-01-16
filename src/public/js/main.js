@@ -17,6 +17,9 @@ function change(c) {
   c.blur();
 
   doPost('/data/countries/set', 'PATCH', { country }).then((response) => {
+    if (response.success) {
+      window.location.reload();
+    }
     console.log(response);
   });
 }

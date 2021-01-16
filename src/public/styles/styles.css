@@ -6,6 +6,16 @@ body {
   color: #2d3748 !important;
 }
 
+.body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.body-content {
+  flex: 1;
+}
+
 .brand-title {
   font-family: 'Calistoga', sans-serif;
 }

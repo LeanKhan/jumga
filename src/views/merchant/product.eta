@@ -25,6 +25,8 @@
       style="z-index: 0"
     >
       <div class="navbar-start">
+        <% if ( typeof user != 'undefined' && user.isAdmin || typeof user !=
+        'undefined' && user.shop == shop._id) { %>
         <div class="navbar-item">
           <a class="button is-light" href="/shops/dashboard">
             <img
@@ -32,6 +34,7 @@
             />
           </a>
         </div>
+        <% } %>
       </div>
       <div class="navbar-end">
         <!-- navbar items, navbar burger... -->
@@ -41,17 +44,17 @@
               <input
                 name="q"
                 class="input"
-                placeholder="search"
+                placeholder="search shop"
                 type="text"
                 required
               />
             </div>
             <div class="control">
-              <a class="button is-outlined">
+              <button type="submit" class="button is-outlined">
                 <img
                   src="https://icongr.am/clarity/search.svg?size=16&color=000"
                 />
-              </a>
+              </button>
             </div>
           </div>
         </form>
@@ -151,6 +154,13 @@
                       >
                     </li>
                   </ul>
+
+                  <p>
+                    <small
+                      >These figures may be slightly wrong, but the final charge
+                      will be accurate</small
+                    >
+                  </p>
                 </div>
 
                 <div class="field">
@@ -208,6 +218,17 @@
                   </button>
                 </div>
               </form>
+              <!-- Trusted by flutterwave image -->
+
+              <a href="https://flutterwave.com" target="_blank">
+                <figure class="image">
+                  <img
+                    class="mt-4"
+                    src="/img/trusted_by_flutterwave.png"
+                    width="180px"
+                  />
+                </figure>
+              </a>
             </div>
           </div>
         </div>

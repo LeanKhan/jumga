@@ -24,7 +24,7 @@ async function handleProductPayment(req, res, next) {
 
     const { returnTo } = req.session;
     delete req.session.returnTo;
-    return res.redirect(returnTo || '/');
+    return res.redirect(returnTo || `/success/${response.data.tx_ref}`);
   } catch (err) {
     // yooooo
     return next(err);
@@ -111,9 +111,6 @@ async function handleShopPayment(req, res, next) {
 
           console.log('Dispatch Rider not assigned -- send message to Admin!');
 
-          // const { returnTo } = req.session;
-          // delete req.session.returnTo;
-          // return res.redirect(returnTo || '/error?error=verifying_payment');
           const msg = {
             from: response.data.meta.shop_id.trim(),
             message: `This shop does not have a Dispatch Rider! Please give them one o`,
@@ -224,7 +221,7 @@ module.exports = {
 
     // Add reason to redirect '&reason=no-type' or flash message!
     if (!data || !type)
-      return res.redirect(`/error?error=payment_failed&type=${type}`);
+      return res.redirect(`/error?error=making_payment&type=${type}`);
 
     const validationErrors = [];
 

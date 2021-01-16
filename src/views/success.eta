@@ -1,0 +1,58 @@
+<% layout('layouts/default.eta') %>
+
+<section class="container mb-6">
+  <div class="columns is-multiline">
+    <div class="column mt-6 is-full main has-background-success has-text-white">
+      <div class="columns is-justify-content-center">
+        <div class="column is-half right has-text-centered">
+          <h1 class="brand-title is-size-2">Order Complete!</h1>
+
+          <h5 class="is-size-5">
+            Oshey, Payment of <%= tx.transaction.currency %> <%=
+            tx.transaction.charged_amount %> successful!
+          </h5>
+          <p>Your Order is on the way :)</p>
+
+          <div class="has-text-dark has-text-weight-medium is-size-5">
+            Our Rider
+            <span class="is-capitalized">
+              <%= tx.transaction.meta.dispatch_rider.firstname %></span
+            >
+            is on their way.
+            <p>
+              Call them on
+              <u>
+                <a
+                  class="has-text-warning"
+                  href="tel:<%= tx.transaction.meta.dispatch_rider.phonenumber %>"
+                  ><%= tx.transaction.meta.dispatch_rider.phonenumber %></a
+                >
+              </u>
+            </p>
+            <p>
+              Your Order code is <%= tx.transaction.id %>. This is also your
+              tracking codde
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="has-text-dark has-text-weight-bold has-text-centered">
+      Thanks for shopping! <a href="/">back home</a>
+    </p>
+
+    <!-- 
+      <div class="column is-centered has-text-centered">
+        <p>Already have an account? <a href="/signup">Sign in</a></p>
+      </div> -->
+  </div>
+</section>
+
+<style>
+  .main {
+    background: rgb(247, 247, 247);
+    border-radius: 10px;
+    min-height: 50vh;
+  }
+</style>

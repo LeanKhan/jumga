@@ -22,7 +22,7 @@ module.exports = (() => {
         .lean()
         .exec()
         .then((s) => {
-          if (!s) return res.redirect('/error?c=404_shop');
+          if (!s) return res.redirect('/404?missing=shop');
 
           console.log(s);
 
@@ -30,7 +30,7 @@ module.exports = (() => {
         })
         .catch((err) => {
           console.error('error rendering pay for shop =>\n', err);
-          return res.redirect('/error');
+          return res.redirect('/error?error=rendering_pay_page');
         });
     },
 
@@ -43,7 +43,7 @@ module.exports = (() => {
 
       res.locals.route_name = 'shop-dashboard';
 
-      if (!id) return res.redirect('/error?c=shop_id_missing');
+      if (!id) return res.redirect('/error?error=shop_id_missing');
 
       // fetch shop data here...
       Shop.findById(id)
@@ -51,13 +51,15 @@ module.exports = (() => {
         .populate('products country_id category_id')
         .exec()
         .then((s) => {
-          if (!s) return res.redirect('/error?c=404_shop');
+          if (!s) return res.redirect('/404?missing=shop');
 
           res.render('merchant/shop-dashboard', { shop: s });
         })
         .catch((err) => {
           console.error('error rendering shop dashboard =>\n', err);
-          return res.redirect('/error');
+          return res.redirect(
+            '/error?error=rendering_shop_admin_page&reason=unknown_error'
+          );
         });
     },
 
@@ -66,7 +68,7 @@ module.exports = (() => {
 
       res.locals.route_name = 'shop';
 
-      if (!slug) return res.redirect('/error?c=shop_slug_missing');
+      if (!slug) return res.redirect('/error?error=shop_slug_missing');
 
       // fetch shop data here...
       Shop.findOne({ slug })
@@ -74,9 +76,9 @@ module.exports = (() => {
         .populate('products country_id')
         .exec()
         .then(async (s) => {
-          if (!s) return res.redirect('/error?c=404_shop');
+          if (!s) return res.redirect('/404?missing=shop');
 
-          if (!s.isLive) return res.redirect('/error?c=404_shop');
+          if (!s.isLive) return res.redirect('/404?missing=shop');
 
           const cust_country = await Country.findOne({
             short_code: req.session.country || 'NG',
@@ -92,7 +94,9 @@ module.exports = (() => {
         })
         .catch((err) => {
           console.error('error opening shop =>\n', err);
-          return res.redirect('/error');
+          return res.redirect(
+            '/error?error=rendering_shop_page&reason=unknown'
+          );
         });
     },
 
@@ -101,7 +105,7 @@ module.exports = (() => {
 
       res.locals.route_name = 'shop';
 
-      if (!slug) return res.redirect('/error?c=product_slug_missing');
+      if (!slug) return res.redirect('/error?error=product_slug_missing');
 
       // fetch shop data here...
       Product.findOne({ slug })
@@ -109,7 +113,7 @@ module.exports = (() => {
         .populate('shop')
         .exec()
         .then(async (p) => {
-          if (!p) return res.redirect('/error?c=404_product');
+          if (!p) return res.redirect('/404?missing=product');
 
           console.log('country => ', req.session.country);
 
@@ -121,7 +125,7 @@ module.exports = (() => {
           ]);
 
           // use alerts here... thank you Jesus!
-          if (!p.shop.isLive) return res.redirect('/error?c=shop_is_not_live');
+          if (!p.shop.isLive) return res.redirect('/404?missing=shop');
 
           let fw_trx_fee; // $ tranx fee. get this from Country
           let transaction_type;
@@ -180,7 +184,9 @@ module.exports = (() => {
         })
         .catch((err) => {
           console.error('error opening product page =>\n', err);
-          return res.redirect('/error');
+          return res.redirect(
+            '/error?error=rendering_product_page&reason=unknown'
+          );
         });
     },
   };

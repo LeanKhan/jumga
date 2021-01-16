@@ -12,8 +12,6 @@ const products = require('../controllers/product').router;
 const data = require('../controllers/data').router;
 const { views } = require('../controllers/views');
 const Rider = require('../models/dispatch_rider');
-const Category = require('../models/category');
-const Country = require('../models/country');
 
 /* Render home page */
 router.get('/', function (req, res, next) {
@@ -40,47 +38,9 @@ router.get('/admin/dashboard', function (req, res) {
 
 router.get('/explore', views.renderExplorePage);
 
-router.get('/register', async function (req, res) {
-  res.locals.route_name = 'open-shop';
+router.get('/register', views.renderRegisterPage);
 
-  req.session.allow = false;
-
-  const currentStep = req.query.step || 0;
-
-  if (currentStep != 2) {
-    // check if user is admin, user is merchant, or user is registered.
-    if (req.isAuthenticated() && (req.user.isAdmin || req.user.shop)) {
-      await req.flash('error', {
-        msg: "Admins or current Merchants can't create shops.",
-      });
-      return res.redirect('/');
-    }
-
-    if (req.isAuthenticated() && !req.user.isAdmin && !req.user.shop) {
-      await req.flash('info', {
-        msg: 'No need to register',
-      });
-    }
-  }
-
-  // if (!req.isAuthenticated()) {
-  //   await req.flash('error', {
-  //     msg: 'You have to have an account to open a Shop',
-  //   });
-  //   return res.redirect(`/signup?returnTo=/register?step=0`);
-  // }
-
-  const [categories, countries] = await Promise.all([
-    Category.find({}).lean().exec(),
-    Country.find({}).lean().exec(),
-  ]);
-
-  return res.render('register', {
-    step: currentStep,
-    categories: JSON.stringify(categories),
-    countries: JSON.stringify(countries),
-  });
-});
+router.get('/success/:tx_ref', views.renderOrderSuccessPage);
 
 router.get('/signin', user.views.renderSignin);
 
@@ -110,6 +70,14 @@ router.use('/riders', riders);
 router.use('/products', products);
 
 router.get('/error', function (req, res) {
+  res.locals.route_name = 'error';
+
+  res.render('error');
+});
+
+router.get('/404', function (req, res) {
+  res.locals.route_name = '404';
+
   res.render('error');
 });
 

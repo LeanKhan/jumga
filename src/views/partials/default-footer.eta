@@ -1,7 +1,28 @@
-<footer class="footer">
-  <div class="content has-text-left">
-    <p>
-      <a class="is-dark is-bold" href="/">Jumga Stores</a>
+<hr class="m-0" />
+<footer class="section has-background-white">
+  <div class="container">
+    <div class="columns">
+      <div class="column is-4 has-text-centered is-hidden-tablet">
+        <a class="title is-4" href="/#features">Features</a>
+      </div>
+      <div class="column is-4">
+        <div class="level">
+          <a class="level-item" href="/#features">Features</a
+          ><a class="level-item" href="/#pricing">Pricing</a>
+        </div>
+      </div>
+      <div class="column is-4 has-text-centered is-hidden-mobile brand-title">
+        <a class="title is-4" href="/">Jumga</a>
+      </div>
+      <div class="column is-4 has-text-right">
+        <div class="level">
+          <a class="level-item" href="/#hero">About</a
+          ><a class="level-item" href="/explore">Explore</a>
+        </div>
+      </div>
+    </div>
+    <p class="subtitle has-text-centered is-6">
+      © 2021 Jumga. All right reserved.
     </p>
   </div>
 </footer>

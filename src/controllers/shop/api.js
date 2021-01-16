@@ -5,6 +5,7 @@ const fetch = require('node-fetch');
 const Shop = require('../../models/shop');
 const User = require('../../models/user');
 const Product = require('../../models/product');
+const Country = require('../../models/country');
 const { slugify } = require('../../tools');
 
 module.exports = {
@@ -224,7 +225,7 @@ module.exports = {
           return res.redirect('/');
         }
       } catch (err) {
-        return res.redirect('/error?c=shop_not_found');
+        return res.redirect('/404?c=shop_not_found');
       }
 
       const data = req.body;
@@ -331,7 +332,7 @@ module.exports = {
 
       return next();
     } catch (err) {
-      return res.redirect('/error?c=shop_not_found');
+      return res.redirect('/404?missing=shop');
     }
   },
 
@@ -457,21 +458,26 @@ module.exports = {
 
       res.locals.route_name = 'shop';
 
-      if (!slug) return res.redirect('/error?c=shop_slug_missing');
+      if (!slug) return res.redirect('/error?error=shop_slug_missing');
 
       // fetch shop data here...
-      const [products, shop] = await Promise.all([
+      const [products, shop, cust_country] = await Promise.all([
         Product.find({ shop_slug: slug, $text: { $search: req.query.q } })
           .lean()
           .exec(),
         Shop.findOne({ slug }).lean().exec(),
+        Country.findOne({
+          short_code: req.session.country || 'NG',
+        })
+          .lean()
+          .exec(),
       ]);
 
-      if (!shop) return res.redirect('/error?c=404_shop');
+      if (!shop) return res.redirect('/404?missing=shop');
 
-      if (!shop.isLive) return res.redirect('/error?c=404_shop');
+      if (!shop.isLive) return res.redirect('/404?missing=shop');
 
-      return res.render('merchant/shop', { shop, products });
+      return res.render('merchant/shop', { shop, products, cust_country });
     } catch (err) {
       return res
         .status(400)

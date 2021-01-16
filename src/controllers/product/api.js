@@ -177,7 +177,7 @@ module.exports = (() => {
 
         const shop = await Shop.findOne({ _id: req.body.shop_id })
           .select('account _id dispatch_rider country')
-          .populate('dispatch_rider')
+          .populate('dispatch_rider', 'account')
           .lean()
           .exec();
         if (!shop) {
@@ -292,6 +292,7 @@ module.exports = (() => {
             product_id: req.body.product_id,
             shop_id: shop._id,
             product_price: price / exchange_rate,
+            dispatch_rider: shop.dispatch_rider._id,
             delivery_fee,
             currency,
           },

@@ -42,198 +42,21 @@
     </style>
   </head>
 
-  <body>
-
+  <body class="body">
     <% if (route_name == 'shop' || route_name == 'shop-dashboard') { %>
-    <div class="jumga-top-bar" style="background-color: <%= shop.theme_color || '#ffcc33' %>"></div>
+    <div
+      class="jumga-top-bar"
+      style="background-color: <%= shop.theme_color || '#ffcc33' %>"
+    ></div>
     <% } else { %>
-    <div class="jumga-top-bar" style="background-color:#ffcc33"></div>
+    <div class="jumga-top-bar" style="background-color: #ffcc33"></div>
     <% } %>
     <header style="font-size: smaller">
-      <nav class="navbar container py-3" style="background: none;">
-        <div class="navbar-brand brand-title">
-          <a class="navbar-item is-size-5" href="/" style="color: <%= route_name == 'explore' ? 'white' : 'initial' %>">Jumga</a>
-          <div
-            class="navbar-burger burger"
-            data-target="navbarExampleTransparentExample"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-
-        <div id="navbarExampleTransparentExample" class="navbar-menu">
-          <div class="navbar-start">
-            <div class="navbar-item">
-              <a href="/explore" class="has-text-dark">
-                Explore
-              </a>
-            </div>
-          </div>
-          <div class="navbar-end">
-            <div class="navbar-item" style="color: <%= route_name == 'explore' ? 'white !important' : 'initial' %>">
-              <% if (typeof user != 'undefined') { %>
-              <div>
-                <b>Hi, <%= user.firstname %> &nbsp;</b>
-                <% if (user.isAdmin) { %>
-                <span>ADMIN</span>
-                <% } else if (user.hasShop) { %>
-                <span>MERCHANT</span>
-                <% } else { %>
-                <span>SHOPPER</span>
-                <a
-                  href="/register?step=1"
-                  class="button is-warning brand-title jumga-yellow navbar-cta-button"
-                  >Open Shop</a
-                >
-                <% } %>
-              </div>
-              <% } else if(route_name != 'shop') { %>
-              <a
-                href="/register"
-                class="button is-warning brand-title jumga-yellow navbar-cta-button"
-                >Open Shop</a
-              >
-              <% } %>
-            </div>
-
-            <% if (route_name != 'shop') { %>
-            <div class="navbar-item has-dropdown is-hoverable">
-              <span class="navbar-link">
-                <% if (typeof user != 'undefined') { %>
-              <div>
-                <% if (user.isAdmin) { %>
-                <!-- admin -->
-                <img
-                  src="http://www.radfaces.com/images/avatars/linda-barret.jpg"
-                  class="author-image"
-                  alt="Placeholder image"
-                  style="border-radius: 50%"
-                />
-                <% } else if (user.hasShop) { %>
-                <!-- merchant -->
-                <img
-                  src="http://www.radfaces.com/images/avatars/bishop.jpg"
-                  class="author-image"
-                  alt="Placeholder image"
-                  style="border-radius: 50%"
-                />
-                <% } else { %>
-                <!-- shopper has account -->
-                <img
-                  src="http://www.radfaces.com/images/avatars/angela-chase.jpg"
-                  class="author-image"
-                  alt="Placeholder image"
-                  style="border-radius: 50%"
-                />
-                <% } %>
-              </div>
-              <% } else { %>
-              <!-- shopper, does not have account or is not signed in -->
-             <img
-                  src="https://icongr.am/clarity/avatar.svg?size=23&color=52514f"
-                  class="avatar-image"
-                  alt="Jumga user avatar"
-                  style="border-radius: 50%"
-                />
-              <% } %>
-
-              </span>
-              <div class="navbar-dropdown is-boxed">
-                <a class="navbar-item" href="/signin">signin</a>
-                <a class="navbar-item" href="/signup">signup</a>
-                <a class="navbar-item" href="/signout">signout</a>
-                <hr class="dropdown-divider" />
-                <a class="navbar-item" href="/shops/dashboard">shop admin</a>
-                <a class="navbar-item" href="/admin/dashboard">admin</a>
-              </div>
-              <% } %>
-            </div>
-
-<div class="dropdown navbar-item is-hoverable">
-  <div class="dropdown-trigger">
-    <span class="navbar-link" id="country_dropdown"
-                ><img
-                  src="https://www.countryflags.io/<%= country %>/flat/16.png"
-              /></span>
-  </div>
-  <div class="dropdown-menu" style="min-width: auto !important" id="dropdown-menu4" role="menu">
-    <div class="dropdown-content has-text-left has-text-weight-medium px-0" style="width: fit-content">
-      <a href="javascript: void(0);" class="dropdown-item">
- <label class="is-clickable" 
-                    ><input type="radio" class="country-select" <%= country ==
-                    'NG' && 'checked' %> onchange="change(this)" value="NG"
-                    name="country"/>
-                    <span class="p-1">
-                      <img
-                      src="https://www.countryflags.io/NG/flat/16.png"
-                    />
-                    </span>
-                    <span>
-                      Nigeria
-                    </span>
-                    </label
-                  >      </a>
-
-                    <a href="javascript: void(0);" class="dropdown-item">
-                  <label class="is-clickable" 
-                    ><input type="radio" class="country-select" <%= country ==
-                    'KE' && 'checked' %> onchange="change(this)" value="KE"
-                    name="country"/>
-                    <span class="p-1">
-                      <img
-                      src="https://www.countryflags.io/KE/flat/16.png"
-                    />
-                    </span>
-                    <span>Kenya</span>
-                    </label
-                  >
-                </a>
-
-                <a href="javascript: void(0);" class="dropdown-item">
-                  <label class="is-clickable" 
-                    ><input class="country-select" <%= country == 'GH' &&
-                    'checked' %> onchange="change(this)" type="radio" value="GH"
-                    name="country"/>
-                    <span class="p-1">
-                      <img
-                      src="https://www.countryflags.io/GH/flat/16.png"
-                    />
-                    </span>
-                    
-                    <span>Ghana</span>
-                    </label
-                  >
-                </a>
-
-                 <a href="javascript: void(0);" class="dropdown-item">
-                  <label class="is-clickable" 
-                    ><input class="country-select" <%= country == 'GB' &&
-                    'checked' %> onchange="change(this)" type="radio" value="GB"
-                    name="country"/>
-                    <span class="p-1">
-                     <img
-                      src="https://www.countryflags.io/GB/flat/16.png"
-                    /> 
-                    </span>
-                    <span>
-                      UK
-                    </span>
-                    </label
-                  >
-                </a>
-    </div>
-  </div>
-</div>
-             
-            </div>
-          </div>
-        </div>
-      </nav>
+      <%~ includeFile("partials/default-navbar.eta", {env, route_name, country,
+      user: typeof user != 'undefined' || undefined }) %>
     </header>
 
-    <section class="app-main">
+    <section class="app-main body-content">
       <div><%~ body %></div>
     </section>
 

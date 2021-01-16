@@ -121,7 +121,6 @@ module.exports = {
           msg: 'Already have an account, \n so just setup shop',
         });
 
-        return res.redirect('/register?step=1');
       }
 
       if (req.isAuthenticated() && !req.user.isAdmin && req.user.shop) {
@@ -129,7 +128,6 @@ module.exports = {
           msg: 'Add your shop account',
         });
 
-        return res.redirect('/register?step=2');
       }
     }
 

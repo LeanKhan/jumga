@@ -26,6 +26,11 @@ if (document.getElementById('open-shop-app')) {
         console.log('signed in!');
         this.step = 1;
       }
+
+      if (this.user && this.user.shop && !this.user.isAdmin) {
+        console.log('signed in and open account!');
+        this.step = 2;
+      }
     },
   };
 }

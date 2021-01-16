@@ -37,6 +37,11 @@ if (document.getElementById('admin-dashboard')) {
           currency_code: '', // NGN
           dollar_exchange_rate: '', // 380
           phonenumber_code: '', // +234
+          payment_methods: [],
+          fw_processing_fees: {
+            local: '',
+            international: ''
+          }
         },
       };
     },

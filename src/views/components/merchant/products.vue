@@ -100,19 +100,22 @@
           <span> {{ update ? 'Update' : 'Add' }} Product </span>
         </template>
 
-        <b-field label="Name">
+        <b-field label="Name" message="Name of your product">
           <b-input v-model="product_form.name" required></b-input>
         </b-field>
 
         <!-- TODO: show local price here... thank you Jesus! -->
-        <b-field label="Price" message="Price Should be in US Dollars">
-          <b-input v-model="product_form.price" required></b-input>
-          <p class="control">
-            <span class="button is-static">
+
+                <b-field label="Price" message="Price must be the Dollar price">
+            <b-field>
+                <p class="control">
+<span class="button is-static">
               {{ country.currency_code }} {{ convertedCurrency }}
-            </span>
-          </p>
+            </span>                </p>
+                <b-numberinput type="is-warning" expanded controls-position="compact" v-model="product_form.price" required  controls-alignment="right" />
+            </b-field>
         </b-field>
+
 
         <b-field label="Picture">
           <b-input v-model="product_form.picture" required></b-input>

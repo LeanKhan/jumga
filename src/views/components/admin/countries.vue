@@ -99,6 +99,32 @@
           ></b-input>
         </b-field>
 
+        <b-field label="Payment Methods">
+          <b-taginput
+            v-model="country_form.payment_methods"
+            ellipsis
+            placeholder="card, ussd"
+            aria-close-label="remove payment method"
+            required
+          ></b-taginput>
+        </b-field>
+
+        <b-field label="Local Processing Fee">
+          <b-input
+            v-model="country_form.fw_processing_fees.local"
+            placeholder="1.4"
+            required
+          ></b-input>
+        </b-field>
+
+        <b-field label="International Process Fee">
+          <b-input
+            v-model="country_form.fw_processing_fees.international"
+            placeholder="3.8"
+            required
+          ></b-input>
+        </b-field>
+
         <b-field label="Dollar Exchange Rate">
           <b-input
             v-model="country_form.dollar_exchange_rate"

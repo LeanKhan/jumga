@@ -52,6 +52,9 @@ module.exports = (() => {
         if (validator.isEmpty(req.body.price))
           validationErrors.push({ msg: 'Product Price cannot be blank' });
 
+        if (!validator.isNumeric(req.body.price.trim()))
+          validationErrors.push({ msg: 'Product Price must be a number!' });
+
         if (validator.isEmpty(req.body.shop_slug))
           validationErrors.push({ msg: 'Shop Slug Missing!' });
 

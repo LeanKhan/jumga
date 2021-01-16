@@ -123,6 +123,14 @@ module.exports = {
 
         return res.redirect('/register?step=1');
       }
+
+      if (req.isAuthenticated() && !req.user.isAdmin && req.user.shop) {
+        await req.flash('info', {
+          msg: 'Add your shop account',
+        });
+
+        return res.redirect('/register?step=2');
+      }
     }
 
     // if (!req.isAuthenticated()) {

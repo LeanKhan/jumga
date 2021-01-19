@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head lang="en">
-    <title><%= title %></title>
-    <meta
-      name="description"
-      content="Open your online Shop and start making money :) | Jumga"
-    />
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+ 
+    <%~ E.includeFile("partials/metatags.eta", {meta}) %>
 
     <%~ E.includeFile("partials/links.eta") %>
 
@@ -41,10 +35,10 @@
 
   <body class="body">
     <% if (route_name == 'shop' || route_name == 'shop-dashboard') { %>
-    <div
+    <
       class="jumga-top-bar"
       style="background-color: <%= shop.theme_color || '#ffcc33' %>"
-    ></div>
+    ></>
     <% } else { %>
     <div class="jumga-top-bar" style="background-color: #ffcc33"></div>
     <% } %>
@@ -54,7 +48,7 @@
     </header>
 
     <section class="app-main body-content">
-      <div><%~ body %></div>
+      <%~ body %>
     </section>
 
     <%~ E.includeFile("partials/scripts.eta", {env, route_name}) %> <% if

@@ -1,6 +1,10 @@
+/**
+ * Merchant: Update Shop Component
+ */
 if (document.getElementById('shop-dashboard')) {
   var UpdateShopComponent = {
     template: '#update-shop-component',
+    mixins: [NotificationMixin],
     props: [
       'shop_id',
       'shop_slug',
@@ -28,67 +32,21 @@ if (document.getElementById('shop-dashboard')) {
         this.loading = true;
         doPost('/shops/dashboard/update', 'PUT', { update: this.shop_form })
           .then((data) => {
-            console.log(data); // JSON data parsed by `data.json()` call
+            console.log(data);
+
             this.activeTab = 0;
-
-            if (data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: 'Shop Updated Successfully!',
-                position: 'is-top',
-                type: 'is-success',
-                queue: false,
-              });
-            }
-
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: data.error || `${data.msg} \n [Could not Update shop]`,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!data.success && data.alerts) {
-              data.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
-
-            this.$router.push('/');
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Shop updated successfully!',
+              'Could not update Shop',
+              () => {
+                this.$router.push();
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            if (!err.success && err.error) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || 'Error updating shop',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;
@@ -96,14 +54,7 @@ if (document.getElementById('shop-dashboard')) {
       },
     },
     mounted() {
-      console.log('Loaded update shop! Thank you Jesus!');
+      console.log('Loaded update-shop component! Thank you Jesus!');
     },
   };
-
-  // const formatter = new Intl.NumberFormat('en-US', {
-  //   style: 'decimal',
-  //   minimumFractionDigits: 2,
-  // });
-
-  // Vue.filter('currency', value => `\u20A6 ${formatter.format(value)}`);
 }

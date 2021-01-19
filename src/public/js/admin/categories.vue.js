@@ -2,6 +2,7 @@
 if (document.getElementById('admin-dashboard')) {
   var CategoriesComponent = {
     template: '#categories-component',
+    mixins: [NotificationMixin],
     data() {
       return {
         activeTab: 0,
@@ -33,19 +34,19 @@ if (document.getElementById('admin-dashboard')) {
     methods: {
       getCategories() {
         doGet('/data/categories', 'GET')
-          .then((d) => {
-            this.categories = d.data;
+          .then((data) => {
+            this.showAlerts(
+              this.$buefy,
+              data,
+              null,
+              'Could not fetch Categories',
+              () => {
+                this.categories = data.data;
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: 'Could not fetch Categories',
-              position: 'is-top',
-              type: 'is-danger',
-              queue: false,
-            });
+            this.networkErrorAlert(this.$buefy, err);
           });
       },
       addCategory() {
@@ -53,65 +54,26 @@ if (document.getElementById('admin-dashboard')) {
 
         doPost('/data/categories/new', 'POST', this.category_form)
           .then((data) => {
-            // show toast here...
-            console.log(data); // JSON data parsed by `data.json()` call
-
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: JSON.parse(data.error).message || data.msg,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!data.success && data.alerts) {
-              data.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Category added successfully',
+              'Could not add Category',
+              () => {
+                this.getCategories();
+              }
+            );
 
             this.activeTab = 0;
 
-            (this.category_form = {
+            this.category_form = {
               name: '', // Fashion
               item_name_singular: '', // Clothes,
               item_name_plural: '',
-            }),
-              this.getCategories();
+            };
           })
           .catch((err) => {
-            // show toast here...
-            console.error(err);
-
-            if (!err.success && err.error) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || 'Could not add Category',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;
@@ -124,58 +86,20 @@ if (document.getElementById('admin-dashboard')) {
           update: this.category_form,
         })
           .then((data) => {
-            console.log(data); // JSON data parsed by `data.json()` call
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Category updated successfully',
+              'Could not update Category',
+              () => {
+                this.cancel();
+              }
+            );
+
             this.activeTab = 0;
-
-            if (data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: 'Category Updated Successfully!',
-                position: 'is-top',
-                type: 'is-success',
-                queue: false,
-              });
-
-              this.cancel();
-            }
-
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message:
-                  data.error || `${data.msg} \n [Could not Update Category]`,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            // this.$router.push('/');
           })
           .catch((err) => {
-            console.error(err);
-
-            if (!err.success && err.error) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || 'Error updating Category',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;

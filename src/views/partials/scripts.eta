@@ -12,6 +12,7 @@
 
 <script src="/js/shared.js"></script>
 <script src="/js/main.js"></script>
+<script src="/js/mixins.vue.js"></script>
 
 <% if (route_name == 'shop-dashboard') { %>
 <script src="/js/merchant/products.vue.js"></script>
@@ -32,4 +33,3 @@
 <% } %> <% if (route_name == 'explore') { %>
 <script src="/js/explore.vue.js"></script>
 <% } %>
-<!-- <script src="/js/app.vue.js"></script> -->

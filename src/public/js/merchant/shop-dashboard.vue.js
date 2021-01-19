@@ -1,11 +1,7 @@
+/**
+ * Shop-Dashboard Component
+ */
 if (document.getElementById('shop-dashboard')) {
-  // const formatter = new Intl.NumberFormat('en-US', {
-  //   style: 'decimal',
-  //   minimumFractionDigits: 2,
-  // });
-
-  // Vue.filter('currency', value => `\u20A6 ${formatter.format(value)}`);
-
   // register modal component
   Vue.component('modal', ModalComponent);
 
@@ -13,10 +9,6 @@ if (document.getElementById('shop-dashboard')) {
     style: 'decimal',
     minimumFractionDigits: 2,
   });
-
-  /**
-   * \u20A6  is the unicode for Naira symbol
-   */
 
   Vue.filter('currency', (value) => `${formatter.format(value)}`);
 
@@ -49,17 +41,6 @@ if (document.getElementById('shop-dashboard')) {
             this.isLive = data.isLive;
           }
 
-          if (!data.success) {
-            this.$buefy.notification.open({
-              duration: 5000,
-              message:
-                'Could not make Shop live, please contact Admin or try again...',
-              position: 'is-top',
-              type: 'is-danger',
-              queue: false,
-            });
-          }
-
           if (!data.success && data.alerts) {
             data.alerts.forEach((alert) => {
               this.$buefy.notification.open({
@@ -69,6 +50,18 @@ if (document.getElementById('shop-dashboard')) {
                 type: 'is-danger',
                 queue: false,
               });
+            });
+          }
+
+          if (!data.success) {
+            this.$buefy.notification.open({
+              duration: 5000,
+              message:
+                data.error ||
+                'Could not make Shop live, please contact Admin or try again...',
+              position: 'is-top',
+              type: 'is-danger',
+              queue: false,
             });
           }
         })
@@ -100,8 +93,6 @@ if (document.getElementById('shop-dashboard')) {
     },
   };
 
-  // ROUTER
-
   const routes = [
     { path: '/', redirect: '/products' },
     {
@@ -121,11 +112,11 @@ if (document.getElementById('shop-dashboard')) {
     },
   ];
 
-  // 3. Create the router instance and pass the `routes` option
-  // You can pass in additional options here, but let's
-  // keep it simple for now.
+  /**
+   * got a lot of help from the Vue Router docs! (solid docs!)
+   */
   const router = new VueRouter({
-    routes, // short for `routes: routes`
+    routes,
   });
 
   const ShopDashboard = new Vue({

@@ -3,6 +3,11 @@ const Agenda = require('agenda');
 
 const address = process.env.MONGO_DB_URI.trim().toLowerCase();
 
+/**
+ * Agenda is used to schedule task for your code to do later.
+ * - I use it to update the Country Exchange Rates and Delete Useless Sessions in the db
+ */
+
 const agenda = new Agenda({
   db: {
     address,
@@ -12,8 +17,6 @@ const agenda = new Agenda({
     },
   },
 }).processEvery('2 minutes');
-
-// Send Job follow up email...
 
 require('./jobs')(agenda);
 
@@ -28,26 +31,10 @@ require('./jobs')(agenda);
   });
 })()
   .then(() => {
-    console.log(
-      'Started Agenda [inside async function]: ',
-      new Date().toLocaleTimeString()
-    );
+    console.log('Started Agenda', new Date().toLocaleTimeString());
   })
   .catch((err) => {
-    console.log(
-      'Error Starting Agenda [inside async function]: ',
-      err,
-      new Date().toLocaleTimeString()
-    );
+    console.log('Error Starting Agenda ', err, new Date().toLocaleTimeString());
   });
-
-// agenda.start();
-
-// agenda.every('10 mins', 'check for today jobs');
-
-console.log(
-  'Started Agenda [outside async function]: ',
-  new Date().toLocaleTimeString()
-);
 
 module.exports = agenda;

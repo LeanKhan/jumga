@@ -1,10 +1,13 @@
+/**
+ * Register-Shop Component
+ */
 if (document.getElementById('open-shop-app')) {
   var RegisterFormComponent = {
     template: '#register-form-component',
     props: ['current_step', 'categories', 'countries', 'user'],
     data() {
       return {
-        name: 'Register Form Component',
+        name: 'Register Shop Component',
         step: this.current_step,
         loading: false,
         shop_form: {

@@ -1,7 +1,11 @@
+/**
+ * Admin: Shops-Component
+ */
 /* eslint-disable no-unused-vars */
 if (document.getElementById('admin-dashboard')) {
   var ShopsComponent = {
     template: '#shops-component',
+    mixins: [NotificationMixin],
     data() {
       return {
         activeTab: 0,
@@ -14,85 +18,43 @@ if (document.getElementById('admin-dashboard')) {
       getShops() {
         doGet(`/shops?query={}`, 'GET')
           .then((data) => {
-            if (data.success) {
-              this.shops = data.data;
-            } else {
-              console.error(data.error);
-
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: 'Could not fetch Shops',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
+            this.showAlerts(
+              this.$buefy,
+              data,
+              null,
+              'Could not fetch Shops',
+              () => {
+                this.shops = data.data;
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: 'Could not fetch Shops',
-              position: 'is-top',
-              type: 'is-danger',
-              queue: false,
-            });
-          });
-      },
-      getDispatchRider(id, shop_slug) {
-        const q = new URLSearchParams({
-          select: ['firstname', 'lastname', 'picture'],
-        }).toString();
-        return doGet(`/riders/${id}?${q}`, 'GET')
-          .then((data) => {
-            if (data.success) {
-              return data.data;
-            } else {
-              console.error(data.error);
-
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: `Could not fetch Dispatch Rider for Shop ${shop_slug}`,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-            return { lastname: 'Not Found :/' };
-          })
-          .catch((err) => {
-            return { firstname: 'Not Found :/' };
-
-            console.error(err);
-
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: `Could not fetch Dispatch Rider for Shop ${shop_slug}`,
-              position: 'is-top',
-              type: 'is-danger',
-              queue: false,
-            });
+            this.networkErrorAlert(this.$buefy, err);
           });
       },
       deleteShop() {
         this.loading = true;
 
+        const ans = confirm(
+          'Are you sure you want to delete this shop?\nNo going back o'
+        );
+
+        if (!ans) return false;
+
         doGet(`/shops/${this.selected_shop._id}`, 'DELETE')
           .then((data) => {
-            if (data.success) {
-              this.getShops();
-            } else {
-              console.error(data.error);
-
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: data.error || 'Shop could not be deleted :/',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Shop deleted successfully',
+              'Could not delete Shops',
+              () => {
+                this.getShops();
+              }
+            );
+          })
+          .catch((err) => {
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;

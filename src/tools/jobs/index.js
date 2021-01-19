@@ -5,8 +5,12 @@ const Session = require('../../models/sessions');
 const FIXER_API = process.env.FIXER_API.trim();
 
 module.exports = async function (agenda) {
+  /**
+   * I need to update the Exhcnage rates from time to time. Kind obvious.
+   * I am dividing by the USD value because this API doesn't let me cahnge the base
+   * currency, which is EUR by default.
+   */
   agenda.define('update exchange rates', async (job, done) => {
-    // use node-fetch to fetch exchange rate data from fixer.io and
     try {
       const config = {
         method: 'get',
@@ -20,8 +24,6 @@ module.exports = async function (agenda) {
       );
 
       rates = await res.json();
-
-      console.log(rates);
 
       if (rates.success) {
         const currencies = [
@@ -58,6 +60,10 @@ module.exports = async function (agenda) {
     }
   });
 
+  /**
+   *  For some reason I don't know, on every page request Express Sessions creates a Session with a cookie
+   *  This quickly becomes a lot of useless sessions. I don't even use sessions like taht in the app.
+   */
   agenda.define('delete useless sessions', async (job, done) => {
     try {
       await Session.deleteMany({ 'session.user': { $exists: false } });

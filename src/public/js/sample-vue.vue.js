@@ -1,3 +1,6 @@
+/**
+ * Just a sample Vue Component. I love this.
+ */
 if (document.querySelector('#vue-app')) {
   // 0. If using a module system (e.g. via vue-cli), import Vue and VueRouter
   // and then call `Vue.use(VueRouter)`.

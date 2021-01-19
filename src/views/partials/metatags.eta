@@ -1,0 +1,49 @@
+<title><%= meta.title %></title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- meta tags -->
+<meta
+  name="title"
+  content="jumga.stores - Find Plumbers, Electricians, Generator Repairmen in Imo State"
+/>
+<meta
+  name="description"
+  content="Find Repairmen, Plumbers, Electricians, Carpenters etc in Aba, Irete, Ngor Okpala on jumga.stores"
+/>
+<meta name="keywords" content="shop, store, sell, jumga, ecommerce, online" />
+<meta name="robots" content="index, follow" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="language" content="English" />
+<meta name="image" content="<<<< REPLACE >>>>" />
+<meta
+  itemprop="name"
+  content="jumga.stores - Find Plumbers, Electricians, Generator Repairmen in Imo State"
+/>
+<meta
+  itemprop="description"
+  content="Find Repairmen, Plumbers, Electricians, Carpenters etc in Aba, Irete, Ngor Okpala on jumga.stores"
+/>
+<meta itemprop="image" content="<<<< REPLACE >>>>" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://jumga.stores/" />
+<meta
+  property="og:title"
+  content="jumga.stores - Find Plumbers, Electricians, Generator Repairmen in Imo State"
+/>
+<meta
+  property="og:description"
+  content="Find Repairmen, Plumbers, Electricians, Carpenters etc in Aba, Irete, Ngor Okpala on jumga.stores"
+/>
+<meta property="og:image" content="<<<< REPLACE >>>>" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="https://jumga.stores/" />
+<meta property="twitter:title" content="Repairs" />
+<meta
+  property="twitter:description"
+  content="Find Repairmen, Plumbers, Electricians, Carpenters etc in Aba, Irete, Ngor Okpala on jumga.stores"
+/>
+<meta property="twitter:image" content="<<<< REPLACE >>>>" />

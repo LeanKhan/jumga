@@ -13,6 +13,9 @@ const data = require('../controllers/data').router;
 const { views } = require('../controllers/views');
 
 /* Render home page */
+/** I'm doing this to check if the client requests for the Shop
+ * page or otherwise
+ */
 router.get('/', function (req, res, next) {
   if (!req.params.shop_slug) {
     return views.renderHomePage(req, res, next);
@@ -45,7 +48,6 @@ router.post(
   user.api.saveSession
 );
 
-/** Data router */
 router.use('/data', data);
 
 router.use('/shops', shops);
@@ -57,12 +59,22 @@ router.use('/riders', riders);
 router.use('/products', products);
 
 router.get('/error', function (req, res) {
+  res.locals.meta = {
+    title: `Error | ${res.locals.meta.title}`,
+    ...res.locals.meta,
+  };
+
   res.locals.route_name = 'error';
 
   res.render('error');
 });
 
 router.get('/404', function (req, res) {
+  res.locals.meta = {
+    title: `404 | ${res.locals.meta.title}`,
+    ...res.locals.meta,
+  };
+
   res.locals.route_name = '404';
 
   res.render('error');

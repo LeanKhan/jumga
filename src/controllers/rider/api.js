@@ -21,7 +21,7 @@ module.exports = (() => {
           validationErrors.push({ msg: 'First Name cannot be blank.' });
 
         if (validator.isEmpty(req.body.rider.lastname || ''))
-          validationErrors.push({ msg: 'ast Name cannot be blank' });
+          validationErrors.push({ msg: 'Last Name cannot be blank' });
 
         if (validationErrors.length) {
           validationErrors.forEach(async (err) => {
@@ -67,8 +67,7 @@ module.exports = (() => {
               if (req.xhr)
                 return res.status(400).json({
                   success: false,
-                  msg:
-                    'Missing Values! For Adding Sub account for Dispatch Rider',
+                  msg: 'Error adding Dispatch Rider account',
                   error: { msg: 'Rider with similar naem already exists!' },
                 });
 
@@ -88,9 +87,11 @@ module.exports = (() => {
             });
           });
       } catch (error) {
-        console.error('Something went wrong :/\n', error);
+        console.error('Error adding Dispatch Rider account :/\n', error);
 
-        await req.flash('error', { msg: 'Smething went wrong!' });
+        await req.flash('error', {
+          msg: 'Error adding Dispatch Rider account!',
+        });
 
         if (req.xhr)
           return res.status(400).json({
@@ -102,7 +103,7 @@ module.exports = (() => {
         return res.redirect(req.get('Referer') || '/admin/dashboard');
       }
     },
-
+    // TODO: Add Delete Rider function
     async createSubaccount(req, res) {
       try {
         if (!req.isAuthenticated()) {
@@ -132,7 +133,8 @@ module.exports = (() => {
           if (req.xhr)
             return res.status(400).json({
               success: false,
-              msg: 'Missing Values! For Adding Sub account for Dispatch Rider',
+              msg:
+                'Missing Values! Error Adding Sub account for Dispatch Rider',
               alerts: validationErrors,
             });
 

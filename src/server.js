@@ -1,4 +1,3 @@
-// require('regenerator-runtime/runtime');
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
@@ -19,7 +18,7 @@ const assert = require('assert');
 
 const router = require('./routes');
 
-/** MONGODB DATABASE CONNECTION */
+/** SETUP MONGODB DATABASE CONNECTION */
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useNewUrlParser', true);
@@ -37,10 +36,12 @@ mongoose.connection.on('error', (err) => {
   process.exit();
 });
 
+/** MAIN APP GAN */
 const app = express();
 
 const server = http.createServer(app);
 
+/** STATIC FILES */
 app.use(express.static(path.join(__dirname, 'public')));
 
 /** ETA TEMPLATE ENGINE */
@@ -60,10 +61,10 @@ app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.disable('x-powered-by');
 
-// setup agenda
+/** SETUP AGENDA */
 require('./tools/agenda');
 
-/** OTHER THINGS */
+/** SETUP MONGOSTORE */
 const store = new MongoStore({
   url: process.env.MONGO_DB_URI.trim(),
   collection: 'sessions',
@@ -83,6 +84,7 @@ function ignoreFavicon(req, res, next) {
   return next();
 }
 
+/** SETUP SESSIONS */
 app.use(
   session({
     name: 'jumga.sid',
@@ -98,31 +100,14 @@ app.use(
     touchAfter: 24 * 3600,
   })
 );
-
+/** SETUP PASSPORT */
 app.use(passport.initialize());
 app.use(passport.session());
 
 /** FLASH MESSAGES */
 app.use(flash());
 
-/**
- * Set up Passport Sessions :)
- */
-// const publicPaths = ['/signin', '/signup', '/'];
-// app.use(function (req, res, next) {
-//   console.log('public paths =>', publicPaths.includes(req.path));
-
-//   console.log('is authenticated', req.isAuthenticated());
-
-//   if (publicPaths.includes(req.path) || !req.isAuthenticated()) {
-//     next();
-//   } else {
-//     console.log('here in secured paths');
-//     next();
-//     // passport.session()(req, res, next);
-//   }
-// });
-
+/** IGNORE FAVICON */
 app.use(ignoreFavicon);
 
 // eslint-disable-next-line func-names
@@ -147,7 +132,7 @@ app.use(async function (req, res, next) {
 
   res.locals.host = req.headers.host;
 
-  res.locals.title = 'Jumga | Buy and Sell online';
+  res.locals.meta.title = 'Jumga - Buy and Sell online';
 
   res.locals.route_name = '';
 
@@ -172,18 +157,14 @@ app.use(function (req, res, next) {
     console.log('returnTo in url query => ', req.query.returnTo);
     req.session.returnTo = req.query.returnTo;
   }
-  // else {
-  //   console.log('last last return TO', req.header('Referer'));
-  //   req.session.returnTo = req.header('Referer') || '/';
-  // }
   return next();
 });
 
 /** Setup Passport sessions */
 require('./config/passport');
 
+/** MAIN ROUTER */
 app.use('/', router);
-// app.use('/users', usersRouter);
 
 const port = process.env.PORT || 3000;
 
@@ -194,7 +175,7 @@ if (process.env.NODE_ENV.trim() === 'dev') {
   // Render an actual error page here :/
   app.use((err, req, res) => {
     console.error(err);
-    res.redirect('/error?error=server_error');
+    return res.render('error', { error: err.message });
   });
 }
 
@@ -208,8 +189,6 @@ server.listen(port, () => {
 });
 
 // process
-//   .on("SIGTERM", shutdown("SIGTERM"))
-//   .on("SIGINT", shutdown("SIGINT"))
 //   .on("uncaughtException", shutdown("uncaughtException"));
 
 module.exports = { app };

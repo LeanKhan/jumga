@@ -1,7 +1,11 @@
+/**
+ * Merchant: Products-Component
+ */
 if (document.getElementById('shop-dashboard')) {
   var ProductsComponent = {
     template: '#products-component',
     props: ['shop_id', 'shop_slug', 'country'],
+    mixins: [NotificationMixin],
     data() {
       return {
         loading: false,
@@ -31,19 +35,19 @@ if (document.getElementById('shop-dashboard')) {
     methods: {
       getProducts() {
         doGet(`/products?shop=${this.shop_id}`, 'GET')
-          .then((d) => {
-            this.products = d.data;
+          .then((data) => {
+            this.showAlerts(
+              this.$buefy,
+              data,
+              null,
+              'Could not fetch Products',
+              () => {
+                this.products = data.data;
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: 'Could not fetch Products!',
-              position: 'is-top',
-              type: 'is-danger',
-              queue: false,
-            });
+            this.networkErrorAlert(this.$buefy, err);
           });
       },
       updateProduct() {
@@ -52,58 +56,19 @@ if (document.getElementById('shop-dashboard')) {
           update: this.product_form,
         })
           .then((data) => {
-            console.log(data); // JSON data parsed by `data.json()` call
             this.activeTab = 0;
-
-            if (data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: 'Product Updated Successfully!',
-                position: 'is-top',
-                type: 'is-success',
-                queue: false,
-              });
-
-              this.cancel();
-            }
-
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message:
-                  data.error || `${data.msg} \n [Could not Update Product]`,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            // this.$router.push('/');
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Product updated successfully',
+              'Could not update Product',
+              () => {
+                this.cancel();
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            if (!err.success && err.error) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || 'Error updating Product',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;
@@ -113,70 +78,19 @@ if (document.getElementById('shop-dashboard')) {
         this.loading = true;
         doGet(`/products/${this.selected_product._id}`, 'DELETE')
           .then((data) => {
-            console.log(data); // JSON data parsed by `data.json()` call
             this.activeTab = 0;
-
-            if (data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: 'Product Deleted Successfully!',
-                position: 'is-top',
-                type: 'is-success',
-                queue: false,
-              });
-
-              this.cancel();
-            }
-
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message:
-                  data.error || `${data.msg} \n [Could not Delete Product]`,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!data.success && data.alerts) {
-              data.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
-
-            // this.$router.push('/');
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Product deleted successfully',
+              'Could not delete Product',
+              () => {
+                this.cancel();
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            if (!err.success && err.error) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || 'Error deleting Product',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;
@@ -189,79 +103,20 @@ if (document.getElementById('shop-dashboard')) {
           shop_slug: this.shop_slug,
         })
           .then((data) => {
-            console.log(data); // JSON data parsed by `data.json()` call
             this.activeTab = 0;
-
-            if (data.success) {
-              this.product_form = {
-                shop_id: this.shop_id,
-                shop_slug: this.shop_slug,
-                name: '',
-                price: '',
-                description: '',
-                category: '',
-                tags: [],
-              };
-
-              this.getProducts();
-
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: 'Product added successully!',
-                position: 'is-top',
-                type: 'is-success',
-                queue: false,
-              });
-            }
-
-            if (!data.success && data.alerts) {
-              data.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
-
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: 'Error adding Product',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            this.getProducts();
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Product added successfully',
+              'Could not add Product',
+              () => {
+                this.resetForm();
+                this.getProducts();
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            if (!err.success && err.error) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || 'Error adding Product',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;
@@ -279,46 +134,25 @@ if (document.getElementById('shop-dashboard')) {
           mode: 'cors',
           body: formData,
           headers: {
-            // 'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
           },
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log('Success:', data);
-            if (data.success) {
-              this.showModal = false;
-              this.getProducts();
-
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: 'Products Uploaded Successfully!',
-                position: 'is-top',
-                type: 'is-success',
-                queue: false,
-              });
-            }
-
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message:
-                  data.error || `${data.msg} \n [Could not Upload Products]`,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
+            console.log(data);
+            this.showModal = false;
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'products uploaded successfully!',
+              'Could not upload Products',
+              () => {
+                this.getProducts();
+              }
+            );
           })
-          .catch((error) => {
-            console.error('Error:', error);
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: data.error || data.msg,
-              position: 'is-top',
-              type: 'is-danger',
-              queue: false,
-            });
+          .catch((err) => {
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;
@@ -331,6 +165,17 @@ if (document.getElementById('shop-dashboard')) {
         this.update = false;
         this.activeTab = 0;
         this.selected_product = null;
+      },
+      resetForm() {
+        this.product_form = {
+          shop_id: this.shop_id,
+          shop_slug: this.shop_slug,
+          name: '',
+          price: '',
+          description: '',
+          category: '',
+          tags: [],
+        };
       },
       goToUpdateProduct() {
         this.update = true;
@@ -347,11 +192,4 @@ if (document.getElementById('shop-dashboard')) {
       this.getProducts();
     },
   };
-
-  // const formatter = new Intl.NumberFormat('en-US', {
-  //   style: 'decimal',
-  //   minimumFractionDigits: 2,
-  // });
-
-  // Vue.filter('currency', value => `\u20A6 ${formatter.format(value)}`);
 }

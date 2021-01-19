@@ -1,7 +1,11 @@
+/**
+ * Admin: Riders Component
+ */
 /* eslint-disable no-unused-vars */
 if (document.getElementById('admin-dashboard')) {
   var RidersComponent = {
     template: '#riders-component',
+    mixins: [NotificationMixin],
     data() {
       return {
         activeTab: 0,
@@ -45,36 +49,36 @@ if (document.getElementById('admin-dashboard')) {
     methods: {
       getRiders() {
         doGet('/riders', 'GET')
-          .then((d) => {
-            this.riders = d.data;
+          .then((data) => {
+            this.showAlerts(
+              this.$buefy,
+              data,
+              null,
+              'Could not fetch Dispatch Riders',
+              () => {
+                this.riders = data.data;
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: 'Could not fetch Dispatch Riders',
-              position: 'is-top',
-              type: 'is-danger',
-              queue: false,
-            });
+            this.networkErrorAlert(this.$buefy, err);
           });
       },
       fetchRider() {
         doGet(`/riders/${this.selected_rider._id}`, 'GET')
-          .then((d) => {
-            this.rider_form = d.data;
+          .then((data) => {
+            this.showAlerts(
+              this.$buefy,
+              data,
+              null,
+              'Could not fetch Dispatch Rider',
+              () => {
+                this.rider_form = data.data;
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: 'Could not fetch Dispatch Rider',
-              position: 'is-top',
-              type: 'is-danger',
-              queue: false,
-            });
+            this.networkErrorAlert(this.$buefy, err);
           });
       },
       addRider() {
@@ -86,28 +90,18 @@ if (document.getElementById('admin-dashboard')) {
             console.log(data); // JSON data parsed by `data.json()` call
 
             this.activeTab = 0;
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Dispatch Rider Added Successfully!',
+              'Error adding Dispatch Rider',
+              () => {
+                this.getRiders();
+              }
+            );
 
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: JSON.parse(data.error).message || data.msg,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!data.success && data.alerts) {
-              data.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            // TODO: this can still be modularized so I dont have to
+            // be writing "x y'd successfully!" or "Error y-ing x"
 
             this.rider_form = {
               firstname: '',
@@ -122,42 +116,9 @@ if (document.getElementById('admin-dashboard')) {
               },
               bio: '',
             };
-
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: 'Dispatch Rider added successfully!',
-              position: 'is-top',
-              type: 'is-success',
-              queue: false,
-            });
-
-            this.getRiders();
           })
           .catch((err) => {
-            // show toast here...
-            console.error(err);
-
-            if (!err.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || err.msg,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;
@@ -169,31 +130,15 @@ if (document.getElementById('admin-dashboard')) {
 
         doPost('/riders/add-account', 'POST', { rider: this.rider_form })
           .then((data) => {
-            // show toast here...
-            console.log('bad request?');
-            console.log(data); // JSON data parsed by `data.json()` call
+            console.log(data);
 
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: JSON.parse(data.error).message || data.msg,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!data.success && data.alerts) {
-              data.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Dispatch Rider Account Added Successfully!',
+              'Error adding Dispatch Rider Account',
+              this.getRiders()
+            );
 
             this.selected_rider = null;
 
@@ -212,44 +157,9 @@ if (document.getElementById('admin-dashboard')) {
               },
               bio: '',
             };
-
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: 'Dispatch Rider Account added successfully!',
-              position: 'is-top',
-              type: 'is-success',
-              queue: false,
-            });
-
-            this.getRiders();
           })
           .catch((err) => {
-            // show toast here...
-            console.error(err);
-
-            console.log(this.$buefy.notification);
-
-            if (!err.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || err.msg,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;
@@ -262,70 +172,21 @@ if (document.getElementById('admin-dashboard')) {
           update: this.rider_form,
         })
           .then((data) => {
-            console.log(data); // JSON data parsed by `data.json()` call
+            console.log(data);
             this.activeTab = 0;
 
-            if (data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: 'Rider Updated Successfully!',
-                position: 'is-top',
-                type: 'is-success',
-                queue: false,
-              });
-
-              this.cancel();
-            }
-
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message:
-                  data.error || `${data.msg} \n [Could not Update Rider]`,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!data.success && data.alerts) {
-              data.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
-
-            // this.$router.push('/');
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Dispatch Rider Updated Successfully!',
+              'Error updating Dispatch Rider',
+              () => {
+                this.cancel();
+              }
+            );
           })
           .catch((err) => {
-            console.error(err);
-
-            if (!err.success && err.error) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || 'Error updating Rider',
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;
@@ -339,28 +200,15 @@ if (document.getElementById('admin-dashboard')) {
           .then((data) => {
             // show toast here...
             console.log(data); // JSON data parsed by `data.json()` call
-
-            if (!data.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: data.error.message || data.msg,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!data.success && data.alerts) {
-              data.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.showAlerts(
+              this.$buefy,
+              data,
+              'Dispatch Rider assigned to Shop successfully!',
+              'Error assigning Dispatch Rider to Shop',
+              () => {
+                this.getRiders();
+              }
+            );
 
             this.selected_rider = null;
 
@@ -379,44 +227,9 @@ if (document.getElementById('admin-dashboard')) {
               },
               bio: '',
             };
-
-            this.$buefy.notification.open({
-              duration: 5000,
-              message: 'Dispatch Rider assigned to Shop successfully!',
-              position: 'is-top',
-              type: 'is-success',
-              queue: false,
-            });
-
-            this.getRiders();
           })
           .catch((err) => {
-            // show toast here...
-            console.error(err);
-
-            console.log(this.$buefy.notification);
-
-            if (!err.success) {
-              this.$buefy.notification.open({
-                duration: 5000,
-                message: err.error.message || err.msg,
-                position: 'is-top',
-                type: 'is-danger',
-                queue: false,
-              });
-            }
-
-            if (!err.success && err.alerts) {
-              err.alerts.forEach((alert) => {
-                this.$buefy.notification.open({
-                  duration: 5000,
-                  message: alert.msg,
-                  position: 'is-top',
-                  type: 'is-danger',
-                  queue: false,
-                });
-              });
-            }
+            this.networkErrorAlert(this.$buefy, err);
           })
           .finally(() => {
             this.loading = false;

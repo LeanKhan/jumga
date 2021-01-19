@@ -70,14 +70,6 @@
                 {{ props.row.products.length }}
               </b-table-column>
 
-              <b-table-column
-                field="country"
-                label="Dispatch Rider"
-                v-slot="props"
-              >
-                {{ getDispatchRider(props.row.dispatch_rider).firstname }}
-              </b-table-column>
-
               <b-table-column field="actions" v-slot="props">
                 <a
                   class="button is-small is-outlined is-dark"

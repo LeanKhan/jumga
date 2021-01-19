@@ -1,4 +1,16 @@
 /* eslint-disable no-unused-vars */
+/**
+ * doPost
+ *
+ * Browser Fetch wrapper function
+ *
+ * For requests with payload (body)
+ *
+ * reason: so I don't have to be repeating stuff
+ * @param {*} url
+ * @param {*} method
+ * @param {*} _data
+ */
 async function doPost(url = '', method, _data = {}) {
   // Default options are marked with *
   const response = await fetch(url, {
@@ -18,6 +30,16 @@ async function doPost(url = '', method, _data = {}) {
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
+/**
+ * doGet
+ * Browser Fetch wrapper function
+ *
+ * For requests that don't need a payload (body)
+ *
+ * reason: so I don't have to be repeating stuff
+ * @param {*} url
+ * @param {*} method
+ */
 async function doGet(url = '', method) {
   // Default options are marked with *
   const response = await fetch(url, {

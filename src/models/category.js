@@ -1,8 +1,5 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const { Schema } = mongoose;
-
-// Define our model
 const categorySchema = new Schema(
   {
     name: String, // Fashion
@@ -14,8 +11,6 @@ const categorySchema = new Schema(
   { timestamps: true }
 );
 
-// Create the category model
-const CategoryModel = mongoose.model('Category', categorySchema);
+const CategoryModel = model('Category', categorySchema);
 
-// Export the model
 module.exports = CategoryModel;

@@ -7,30 +7,43 @@ const Transaction = require('../../models/transaction');
 
 module.exports = {
   renderHomePage(req, res, next) {
-    Shop.find({ isLive: true, hasPaidFee: true })
-      .select('name slug')
-      .lean()
-      .exec()
-      .then((shops) => {
-        res.render('home', { shops });
-      })
-      .catch((err) => {
-        return next(err);
-      });
+    try {
+      Shop.find({ isLive: true, hasPaidFee: true })
+        .limit(3)
+        .select('name slug')
+        .lean()
+        .exec()
+        .then((shops) => {
+          res.render('home', { shops });
+        })
+        .catch((err) => {
+          return next(err);
+        });
+    } catch (err) {
+      console.error('Error rendering Home Page =>\n', err);
+      return res.redirect('/error?error=rendering_page');
+    }
   },
 
   renderAdminDashboard(req, res) {
-    res.locals.route_name = 'admin-dashboard';
+    try {
+      res.locals.route_name = 'admin-dashboard';
 
-    Rider.find({})
-      .lean()
-      .exec()
-      .then((rs) => {
-        return res.render('admin/dashboard', { dispatch_riders: rs });
-      })
-      .catch((err) => {
-        console.error('Error fetching dispatch_riders =>\n', err);
-      });
+      Rider.find({})
+        .lean()
+        .exec()
+        .then((rs) => {
+          return res.render('admin/dashboard', { dispatch_riders: rs });
+        })
+        .catch((err) => {
+          console.error('Error rendering Admin Dashboard =>\n', err);
+
+          return res.redirect('/error?error=rendering_page');
+        });
+    } catch (err) {
+      console.error('Error rendering Admin Dashboard =>\n', err);
+      return res.redirect('/error?error=rendering_page');
+    }
   },
   async renderExplorePage(req, res, next) {
     try {
@@ -74,23 +87,8 @@ module.exports = {
             .exec();
         }
 
-        // if (search && req.query.category && !req.query.q) {
-        //   return Shop.find({ category: req.query.category })
-        //     .select('name slug products')
-        //     .populate('products')
-        //     .lean()
-        //     .exec();
-        // }
-
-        // if (select) {
-        //   return Shop.findById(req.params.id).select(select).lean().exec();
-        // }
-
-        // if (populate) {
-        //   return Shop.findById(req.params.id).populate(populate).lean().exec();
-        // }
-
         return Product.find({})
+          .limit(20)
           .select('name slug price description picture shop tags')
           .populate('shop', 'name slug pictures.logo')
           .lean()
@@ -150,78 +148,85 @@ module.exports = {
           return next(err);
         });
     } catch (err) {
-      console.log('Error rendering Explroe pagE!', err);
+      console.log('Error rendering explore page!', err);
+
+      return res.redirect('/error?error=rendering_page');
     }
   },
   renderOrderSuccessPage(req, res, next) {
-    res.locals.route_name = 'success';
+    try {
+      res.locals.route_name = 'success';
 
-    const { tx_ref } = req.params;
+      const { tx_ref } = req.params;
 
-    Transaction.findOne({ tx_ref, paid: true, verified: true })
-      .select('transaction')
-      .populate({
-        path: 'transaction.meta.dispatch_rider',
-        select: 'firstname lastname phonenumber',
-        model: 'Rider',
-      })
-      .lean()
-      .exec()
-      .then((tx) => {
-        console.log(tx);
-        if (!tx) return res.redirect('/404?missing=order');
-        return res.render('success', { tx });
-      })
-      .catch((err) => {
-        return next(err);
-      });
+      Transaction.findOne({ tx_ref, paid: true, verified: true })
+        .select('transaction')
+        .populate({
+          path: 'transaction.meta.dispatch_rider',
+          select: 'firstname lastname phonenumber',
+          model: 'Rider',
+        })
+        .lean()
+        .exec()
+        .then((tx) => {
+          console.log(tx);
+          if (!tx) return res.redirect('/404?missing=order');
+          return res.render('success', { tx });
+        })
+        .catch((err) => {
+          return next(err);
+        });
+    } catch (err) {
+      console.log('Error rendering Order Success Page => ', err);
+
+      return res.redirect('/error?error=rendering_page');
+    }
   },
 
   async renderRegisterPage(req, res) {
-    res.locals.route_name = 'open-shop';
+    try {
+      res.locals.route_name = 'open-shop';
 
-    req.session.allow = false;
+      req.session.allow = false;
 
-    const currentStep = req.query.step || 0;
+      const currentStep = req.query.step || 0;
 
-    if (currentStep != 2) {
-      // check if user is admin, user is merchant, or user is registered.
-      if (req.isAuthenticated() && (req.user.isAdmin || req.user.shop)) {
-        await req.flash('error', {
-          msg: "Admins or current Merchants can't create shops.",
-        });
-        return res.redirect('/');
+      if (currentStep != 2) {
+        // check if user is admin, user is merchant, or user is registered.
+        if (req.isAuthenticated() && (req.user.isAdmin || req.user.shop)) {
+          await req.flash('error', {
+            msg: "Admins or current Merchants can't create shops.",
+          });
+          return res.redirect('/');
+        }
+
+        if (req.isAuthenticated() && !req.user.isAdmin && !req.user.shop) {
+          await req.flash('info', {
+            msg: 'Already have an account, \n so just setup shop',
+          });
+        }
+
+        if (req.isAuthenticated() && !req.user.isAdmin && req.user.shop) {
+          await req.flash('info', {
+            msg: 'Add your shop account',
+          });
+        }
       }
 
-      if (req.isAuthenticated() && !req.user.isAdmin && !req.user.shop) {
-        await req.flash('info', {
-          msg: 'Already have an account, \n so just setup shop',
-        });
-      }
+      const [categories, countries] = await Promise.all([
+        Category.find({}).lean().exec(),
+        Country.find({}).lean().exec(),
+      ]);
 
-      if (req.isAuthenticated() && !req.user.isAdmin && req.user.shop) {
-        await req.flash('info', {
-          msg: 'Add your shop account',
-        });
-      }
+      return res.render('register', {
+        step: currentStep,
+        categories: JSON.stringify(categories),
+        countries: JSON.stringify(countries),
+      });
+    } catch (err) {
+      console.log('Error rendering Register page => ', err);
+
+      return res.redirect('/error?error=rendering_page');
     }
-
-    // if (!req.isAuthenticated()) {
-    //   await req.flash('error', {
-    //     msg: 'You have to have an account to open a Shop',
-    //   });
-    //   return res.redirect(`/signup?returnTo=/register?step=0`);
-    // }
-
-    const [categories, countries] = await Promise.all([
-      Category.find({}).lean().exec(),
-      Country.find({}).lean().exec(),
-    ]);
-
-    return res.render('register', {
-      step: currentStep,
-      categories: JSON.stringify(categories),
-      countries: JSON.stringify(countries),
-    });
   },
 };

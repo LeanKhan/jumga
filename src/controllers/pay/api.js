@@ -4,8 +4,6 @@ const validator = require('validator').default;
 const Shop = require('../../models/shop');
 const Rider = require('../../models/dispatch_rider');
 const Transaction = require('../../models/transaction');
-const Message = require('../../models/message');
-// const { retryRequest: retry } = require('../../tools');
 
 async function handleProductPayment(req, res, next) {
   // code here...
@@ -107,16 +105,13 @@ async function handleShopPayment(req, res, next) {
       .then(async (rider) => {
         console.log(rider);
         if (!rider) {
-          await req.flash('error', { msg: "Can't find Dispatch Rider" });
+          await req.flash('error', {
+            msg:
+              "Can't find a Dispatch Rider to assign to your Shop. Please contact the Admin.",
+          });
 
           console.log('Dispatch Rider not assigned -- send message to Admin!');
 
-          const msg = {
-            from: response.data.meta.shop_id.trim(),
-            message: `This shop does not have a Dispatch Rider! Please give them one o`,
-            message_type: 'no_dispatch_rider',
-          };
-          await Message.create(msg);
           return updateShop(response.data.meta.shop_id.trim(), null);
         }
 
@@ -361,16 +356,6 @@ module.exports = {
         response = await post(`transactions/${transaction_id}/verify`, null, {
           Authorization: `Bearer ${process.env.FW_SECRET_KEY.trim()}`,
         });
-
-        // TODO: verify amount!!!
-        //           response.data.amount != amount || get the integer part only!
-
-        // TODO: IF ANY OF THE VERIFICATION OR PAYMENT STEPS FAIL, PLEASE
-        // ALLOW THE USER TO [[ TRY AGAIN ]]
-        // console.log(
-        //   `${transaction_id}, ${tx_ref}, ${type}, ${amount}, ${currency}`
-        // );
-        // console.log(response);
 
         if (
           response.data.status != 'successful' ||

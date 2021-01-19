@@ -11,7 +11,7 @@
 <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
 
 <script src="/js/shared.js"></script>
-<script src="/js/main.js"></script>
+<script src="/js/navbar.js"></script>
 <script src="/js/mixins.vue.js"></script>
 
 <% if (route_name == 'shop-dashboard') { %>

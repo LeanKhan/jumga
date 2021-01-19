@@ -3,7 +3,6 @@ const router = require('express').Router();
 
 const api = require('./api');
 
-// get products
 router.get('/countries', api.getCountries);
 
 router.patch('/countries/set', api.setUserCountry);
@@ -14,11 +13,8 @@ router.put('/countries/:id/update', api.updateCountry);
 
 router.put('/categories/:id/update', api.updateCategory);
 
-/* GET home page. */
-// check if isAuthenticated, isAdmin, if the rider has been created before and all that. thank you Jesus!
 router.post('/countries/new', api.addCountry);
 
 router.post('/categories/new', api.addCategory);
-/** SHOP ROUTER */
 
 module.exports = router;

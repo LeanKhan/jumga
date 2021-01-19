@@ -1,8 +1,5 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const { Schema } = mongoose;
-
-// Define our model
 const userSchema = new Schema(
   {
     firstname: { type: String, lowercase: true },
@@ -41,8 +38,6 @@ userSchema.methods.comparePassword = function comparePasswords(
   return callback(null, isMatch);
 };
 
-// Create the user model
-const UserModel = mongoose.model('User', userSchema);
+const UserModel = model('User', userSchema);
 
-// Export the model
 module.exports = UserModel;

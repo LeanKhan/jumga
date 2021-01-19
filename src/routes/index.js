@@ -14,7 +14,7 @@ const { views } = require('../controllers/views');
 
 /* Render home page */
 /** I'm doing this to check if the client requests for the Shop
- * page or otherwise
+ * page or a shop.
  */
 router.get('/', function (req, res, next) {
   if (!req.params.shop_slug) {

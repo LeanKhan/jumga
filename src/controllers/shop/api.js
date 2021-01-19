@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-const validator = require('validator');
+const validator = require('validator').default;
 const { nanoid } = require('nanoid');
 const fetch = require('node-fetch');
 const Shop = require('../../models/shop');
@@ -17,7 +17,6 @@ module.exports = {
     // check if name already exists!
     // after shop has been created, then redirect to shop admin page...
     // thank you Jesus...
-    // myshop.localhost:8080/admin
 
     if (req.user.isAdmin || req.user.shop) {
       await req.flash('error', {
@@ -43,9 +42,6 @@ module.exports = {
       validationErrors.push({ msg: 'Country cannot be blank.' });
     if (validator.isEmpty(req.body.category))
       validationErrors.push({ msg: 'Category cannot be blank' });
-
-    // if (['food', 'tech', 'trash'].includes(req.body.category))
-    //   validationErrors.push({ msg: 'Invalid category!' });
 
     if (validationErrors.length) {
       validationErrors.forEach(async (err) => {
@@ -92,7 +88,6 @@ module.exports = {
             delete req.session.returnTo;
             return res.redirect(returnTo || '/register?step=1');
           }
-          // if not move on!
 
           return new Promise((resolve, reject) => {
             shop.save((err, s) => {
@@ -119,28 +114,21 @@ module.exports = {
           return next(err);
         })
     );
-
-    //   maybe create the shop first in the db then complete the payment?
-    // thank you Jesus!
-
-    // res.redirect('signin');
   },
 
   async prepareShopPayment(req, res, next) {
-    // add validation checks here... thank you Jesus!
-
     try {
       // $20 + Flutterwave Processing Fee
       const currency = 'USD';
       const amount = 20 / (1 - 3.8 / 100);
       const type = 'shop_payment';
       console.log(req.body.shop_id);
+
       const data = {
         tx_ref: `jumga-tx-${nanoid(12)}`,
         amount,
         currency: 'USD',
         redirect_url: `${req.protocol}://${req.headers.host}/payments/verify?&amount=${amount}&currency=${currency}&type=${type}`,
-        // add transaction fee to amount
         payment_options: 'card',
         meta: {
           user_id: req.user._id,
@@ -156,7 +144,7 @@ module.exports = {
         customizations: {
           title: 'Jumga Stores',
           description: 'Pay small token to setup your shop',
-          logo: 'https://assets.',
+          logo: 'https://jumga.stores/img/logo.png',
         },
       };
 
@@ -241,8 +229,6 @@ module.exports = {
           throw new Error(JSON.stringify(response));
         }
 
-        // const shopHasPaidFee = current_shop.hasPaidFee;
-
         return Shop.findOneAndUpdate(
           { _id: req.user.shop },
           {
@@ -261,7 +247,6 @@ module.exports = {
       };
 
       const payload = JSON.stringify({
-        //   get it from request body
         account_bank: '044',
         account_number: data.account_number.trim(),
         business_name: current_shop.name,
@@ -543,13 +528,11 @@ module.exports = {
       }
 
       if (req.query.populate) {
-        console.log('poppoo');
         populate = req.query.populate;
       }
 
       const getter = () => {
         if (select && populate) {
-          console.log('here in botle');
           return Shop.findById(req.params.id)
             .select(select)
             .populate(populate)
@@ -572,7 +555,7 @@ module.exports = {
         .then((shop) => {
           return res.status(200).json({
             success: true,
-            msg: 'Shop Fetched succesffuly!',
+            msg: 'Shop Fetched successfully!',
             data: shop,
           });
         })
@@ -766,11 +749,11 @@ module.exports = {
         .lean()
         .exec();
 
-      res
+      return res
         .status(200)
         .send({ success: true, msg: 'Sales fetched successfully!', data: txs });
     } catch (err) {
-      res.status(400).send({
+      return res.status(400).send({
         success: false,
         msg: 'Could not get Shop sales :/',
         error: 'Could not get shop sales :/',

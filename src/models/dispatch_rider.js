@@ -1,8 +1,5 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const { Schema } = mongoose;
-
-// Define our model
 const riderSchema = new Schema(
   {
     firstname: { type: String, lowercase: true },
@@ -28,8 +25,6 @@ const riderSchema = new Schema(
   { timestamps: true }
 );
 
-// Create the rider model
-const RiderModel = mongoose.model('Rider', riderSchema);
+const RiderModel = model('Rider', riderSchema);
 
-// Export the model
 module.exports = RiderModel;

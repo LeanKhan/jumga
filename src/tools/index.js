@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-useless-escape */
-const fetch = require('node-fetch');
 
 /**
  * Slugify string

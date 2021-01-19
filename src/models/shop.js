@@ -1,8 +1,5 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const { Schema } = mongoose;
-
-// Define our model
 const shopSchema = new Schema(
   {
     shopID: String,
@@ -48,11 +45,6 @@ const shopSchema = new Schema(
   { timestamps: true }
 );
 
-// On Save Hook, encrypt password
-// Before saving a model, run this function
+const ShopModel = model('Shop', shopSchema);
 
-// Create the shop model
-const ShopModel = mongoose.model('Shop', shopSchema);
-
-// Export the model
 module.exports = ShopModel;

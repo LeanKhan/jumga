@@ -1,8 +1,5 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const { Schema } = mongoose;
-
-// Define our model
 const transactionSchema = new Schema(
   {
     tx_id: String,
@@ -31,8 +28,6 @@ const transactionSchema = new Schema(
   { timestamps: true }
 );
 
-// Create the transaction model
-const TransactionModel = mongoose.model('transaction', transactionSchema);
+const TransactionModel = model('transaction', transactionSchema);
 
-// Export the model
 module.exports = TransactionModel;

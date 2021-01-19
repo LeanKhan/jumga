@@ -1,8 +1,5 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const { Schema } = mongoose;
-
-// Define our model
 const countrySchema = new Schema(
   {
     name: String, // Nigeria
@@ -19,8 +16,6 @@ const countrySchema = new Schema(
   { timestamps: true }
 );
 
-// Create the country model
-const CountryModel = mongoose.model('Country', countrySchema);
+const CountryModel = model('Country', countrySchema);
 
-// Export the model
 module.exports = CountryModel;

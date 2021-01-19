@@ -10,7 +10,7 @@ module.exports = {
     try {
       Shop.find({ isLive: true, hasPaidFee: true })
         .limit(3)
-        .select('name slug')
+        .select('name slug description')
         .lean()
         .exec()
         .then((shops) => {
@@ -28,6 +28,11 @@ module.exports = {
   renderAdminDashboard(req, res) {
     try {
       res.locals.route_name = 'admin-dashboard';
+
+      res.locals.meta = {
+        title: `Admin Dashboard | ${res.locals.meta.title}`,
+        ...res.locals.meta,
+      };
 
       Rider.find({})
         .lean()
@@ -59,7 +64,7 @@ module.exports = {
         ) {
           return Product.find({ $text: { $search: req.query.q } })
             .select('name slug price description picture shop tags')
-            .populate('shop', 'name slug pictures.logo')
+            .populate('shop', 'name slug pictures.logo theme_color')
             .lean()
             .exec();
         }
@@ -67,7 +72,7 @@ module.exports = {
         if (search && req.query.category != 'none' && req.query.category) {
           console.log('in shop stuff');
           return Shop.find({ category: req.query.category })
-            .select('name slug picture products')
+            .select('name slug pictures theme_color products')
             .populate('products', 'name slug price picture tags')
             .lean()
             .exec();
@@ -81,7 +86,7 @@ module.exports = {
         ) {
           console.log('in shop stuff for queries');
           return Shop.find({ category: req.query.category })
-            .select('name slug picture products')
+            .select('name slug pictures theme_color products')
             .populate('products', 'name slug price picture tags')
             .lean()
             .exec();
@@ -90,13 +95,17 @@ module.exports = {
         return Product.find({})
           .limit(20)
           .select('name slug price description picture shop tags')
-          .populate('shop', 'name slug pictures.logo')
+          .populate('shop', 'name slug pictures.logo theme_color')
           .lean()
           .exec();
       };
 
       res.locals.route_name = 'explore';
 
+      res.locals.meta = {
+        title: `Explore Shops and Products | ${res.locals.meta.title}`,
+        ...res.locals.meta,
+      };
       const [categories, cust_country] = await Promise.all([
         Category.find({}).select('name slug').lean().exec(),
         Country.findOne({
@@ -159,6 +168,10 @@ module.exports = {
 
       const { tx_ref } = req.params;
 
+      res.locals.meta = {
+        title: `Successful Order | ${res.locals.meta.title}`,
+        ...res.locals.meta,
+      };
       Transaction.findOne({ tx_ref, paid: true, verified: true })
         .select('transaction')
         .populate({
@@ -190,6 +203,11 @@ module.exports = {
       req.session.allow = false;
 
       const currentStep = req.query.step || 0;
+
+      res.locals.meta = {
+        title: `Register | ${res.locals.meta.title}`,
+        ...res.locals.meta,
+      };
 
       if (currentStep != 2) {
         // check if user is admin, user is merchant, or user is registered.

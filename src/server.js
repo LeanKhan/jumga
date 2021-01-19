@@ -132,8 +132,11 @@ app.use(async function (req, res, next) {
 
   res.locals.host = req.headers.host;
 
-  res.locals.meta.title = 'Jumga - Buy and Sell online';
-
+  if (!res.locals.meta) {
+    res.locals.meta = {
+      title: 'Jumga - Buy and Sell online',
+    };
+  }
   res.locals.route_name = '';
 
   res.locals.env = process.env.NODE_ENV.trim();

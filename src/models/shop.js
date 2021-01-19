@@ -31,10 +31,8 @@ const shopSchema = new Schema(
       default: false,
     },
     pictures: {
-      default: {
-        banner_image: { type: String, default: '' },
-        logo: { type: String, default: '' },
-      },
+      banner_image: { type: String, default: '' },
+      logo: { type: String, default: '' },
     },
     theme_color: String,
     transactions: [],

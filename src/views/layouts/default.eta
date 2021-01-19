@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head lang="en">
- 
-    <%~ E.includeFile("partials/metatags.eta", {meta}) %>
-
-    <%~ E.includeFile("partials/links.eta") %>
+    <%~ E.includeFile("partials/metatags.eta", {meta}) %> <%~
+    E.includeFile("partials/links.eta") %>
 
     <style>
       :root {
@@ -35,10 +33,10 @@
 
   <body class="body">
     <% if (route_name == 'shop' || route_name == 'shop-dashboard') { %>
-    <
+    <section
       class="jumga-top-bar"
       style="background-color: <%= shop.theme_color || '#ffcc33' %>"
-    ></>
+    ></section>
     <% } else { %>
     <div class="jumga-top-bar" style="background-color: #ffcc33"></div>
     <% } %>
@@ -47,9 +45,7 @@
       user: typeof user != 'undefined' ? user : undefined }) %>
     </header>
 
-    <section class="app-main body-content">
-      <%~ body %>
-    </section>
+    <section class="app-main body-content"><%~ body %></section>
 
     <%~ E.includeFile("partials/scripts.eta", {env, route_name}) %> <% if
     (route_name == 'shop') { %> <%~ E.includeFile("partials/shop-footer.eta") %>

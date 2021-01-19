@@ -6,7 +6,7 @@
       <div class="card-image">
         <figure class="image is-square">
           <img
-            src="https://via.placeholder.com/640x640"
+            src="<%= product.picture || 'https://via.placeholder.com/640x640' %>"
             alt="Rental Rates and Rental Prices in Phoenix, AZ"
             style="border-radius: 10px"
           />
@@ -36,8 +36,10 @@
           <figure class="image is-32x32">
             <img
               class="is-rounded"
-              src="https://via.placeholder.com/32x32"
-              alt="Image"
+              src="<%= product.shop.pictures.logo || 'https://icongr.am/feather/shopping-bag.svg?size=30&color=' + product.shop.theme_color.substring(1) %>"
+              alt="<%= product.shop.name %> | logo"
+              title="<%= product.shop.name %>"
+              style="width: 32px !important; height: auto !important"
             />
           </figure>
         </div>

@@ -144,7 +144,8 @@ module.exports = {
         customizations: {
           title: 'Jumga Stores',
           description: 'Pay small token to setup your shop',
-          logo: 'https://jumga.stores/img/logo.png',
+          logo:
+            'https://res.cloudinary.com/repairs-ng/image/upload/v1611086269/jumga/android-chrome-512x512_cq8xco.png',
         },
       };
 

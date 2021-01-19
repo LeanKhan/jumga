@@ -41,7 +41,7 @@ if (document.getElementById('shop-dashboard')) {
               'Shop updated successfully!',
               'Could not update Shop',
               () => {
-                this.$router.push();
+                window.location.reload();
               }
             );
           })

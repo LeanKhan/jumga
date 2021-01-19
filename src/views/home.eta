@@ -9,13 +9,13 @@
           data-aos="fade-down"
         >
           <h1 class="title titled is-2 mb-6 brand-title">
-            Wahala for who no get Shop
+            Buy and Sell online
           </h1>
           <h2
             class="subtitled subtitle has-text-grey is-4 has-text-weight-normal is-family-sans-serif"
           >
-            Fulfil your New Year resolutions and open a shop on Jumga. Jumga is
-            where you find the best shops.
+            Whether you want to open a shop or find a shop that speaks to you,
+            we have it all here on Jumga.
           </h2>
           <div class="buttons">
             <a
@@ -159,20 +159,27 @@
             <div class="media-left">
               <figure class="image is-rounded">
                 <img
-                  src="https://via.placeholder.com/120x120"
-                  alt="Rental Rates and Rental Prices in Phoenix, AZ"
-                  style="border-radius: 10px"
+                  src="http://www.radfaces.com/images/avatars/amanda-bynes.jpg"
+                  alt="Bolu | Jumga Testimony"
+                  width="120px"
+                  style="
+                    border-radius: 10px;
+                    width: 120px !important;
+                    height: auto !important;
+                  "
                 />
               </figure>
             </div>
             <div class="media-content">
               <div class="content">
-                <p>
-                  <strong>Adedoja Rahman</strong>
+                <div>
+                  <strong class="is-size-5 brand-title">Bolu C.</strong>
                   <br />
-                  I moved from [redacted] and it is the best thing I did for my
-                  business.
-                </p>
+                  <p class="has-text-weight-medium">
+                    "I am huge in the biro industry because of Jumga :))"
+                  </p>
+                  <p>Bolus Biros</p>
+                </div>
               </div>
             </div>
           </article>
@@ -184,20 +191,29 @@
             <div class="media-left">
               <figure class="image is-rounded">
                 <img
-                  src="https://via.placeholder.com/120x120"
-                  alt="Rental Rates and Rental Prices in Phoenix, AZ"
-                  style="border-radius: 10px"
+                  src="http://www.radfaces.com/images/avatars/david-bowie.jpg"
+                  alt="Ahmed | Jumga Testimony"
+                  width="120px"
+                  style="
+                    border-radius: 10px;
+                    width: 120px !important;
+                    height: auto !important;
+                  "
                 />
               </figure>
             </div>
             <div class="media-content">
               <div class="content">
-                <p>
-                  <strong>Theresa Meyers</strong>
+                <div>
+                  <strong class="is-size-5 brand-title">Ahmed M.</strong>
                   <br />
-                  "I loveeee Jumga! I made my first million Naira on Jumga.
-                  That's right."
-                </p>
+                  <p class="has-text-weight-medium">
+                    "I loveeee Jumga! I made my first million Naira on Jumga.
+                    That's right."
+                  </p>
+
+                  <p>Ahmeds Stardust</p>
+                </div>
               </div>
             </div>
           </article>

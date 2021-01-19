@@ -312,7 +312,8 @@ module.exports = {
         customizations: {
           title: ` ${shop.name} | Jumga`,
           description: `Pay for 1 ${req.body.product_name}`,
-          logo: shop.pictures.logo || '[jumga logo here]',
+          logo:
+            'https://res.cloudinary.com/repairs-ng/image/upload/v1611086269/jumga/android-chrome-512x512_cq8xco.png',
         },
       };
 

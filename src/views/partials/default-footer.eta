@@ -1,7 +1,7 @@
 <hr class="m-0" />
 <footer class="section has-background-white">
   <div class="container">
-    <div class="columns">
+    <div class="columns has-text-warning-dark">
       <div class="column is-4 has-text-centered is-hidden-tablet">
         <a class="title is-4" href="/#features">Features</a>
       </div>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="column is-4 has-text-centered is-hidden-mobile brand-title">
-        <a class="title is-4" href="/">Jumga</a>
+        <a class="title is-4 has-text-dark" href="/">Jumga</a>
       </div>
       <div class="column is-4 has-text-right">
         <div class="level">

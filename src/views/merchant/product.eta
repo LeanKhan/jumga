@@ -5,6 +5,18 @@
     <section class="hero is-bold">
       <div class="hero-body p-3">
         <div class="container has-text-centered">
+          <figure class="image is-flex is-justify-content-center">
+            <img
+            class="is-rounded"
+              src="<%= shop.pictures.logo || 'https://icongr.am/feather/shopping-bag.svg?size=75&color=' + shop.theme_color.substring(1) %> "
+              alt="<%= shop.name %> | logo"
+              title="<%= shop.name %>"
+              style="
+                width: 75px !important;
+                height: auto !important;
+              "
+            />
+          </figure>
           <h1 class="is-size-5 brand-title is-size-5-mobile is-size-2-desktop">
             <a class="has-text-dark" href="/<%= product.shop.slug %>"
               ><%= product.shop.name %></a
@@ -25,8 +37,9 @@
       style="z-index: 0"
     >
       <div class="navbar-start">
-        <% if ( typeof user != 'undefined' && user.isAdmin || typeof user !=
-        'undefined' && user.shop == shop._id) { %>
+        <% if ((typeof user != 'undefined' && user.isAdmin) || ( typeof user !=
+        'undefined' && typeof user.shop != 'undefined' && user.shop.toString()
+        == product.shop._id.toString())) { %>
         <div class="navbar-item">
           <a class="button is-light" href="/shops/dashboard">
             <img
@@ -72,8 +85,9 @@
                 <div class="card-image">
                   <figure class="image is-16by9">
                     <img
-                      src="https://via.placeholder.com/640x360"
-                      alt="Rental Rates and Rental Prices in Phoenix, AZ"
+                    src="<%= product.picture || 'https://via.placeholder.com/640x640' %>"
+                      alt="<%= product.name %>"
+                      title="Buy <%= product.name %>"
                     />
                   </figure>
                 </div>
@@ -158,13 +172,13 @@
                   <p>
                     <small
                       >These figures may change.
-                    >
+                    
                   </p>
 
-                  <% if (typeof user != 'undefined' && user.shop == product.shop) { %>
+                  <% if (typeof user != 'undefined' && user.shop == product.shop._id.toString()) { %>
                     <p class="has-text-weight-medium is-text-danger has-text-danger">
-                    <small
-                      >You want to buy your own product? Weird... No wahala</small
+                    <b
+                      >You want to buy your own product? Weird... No wahala</b
                     >
                   </p>
                   <% } %>

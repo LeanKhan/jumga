@@ -16,6 +16,11 @@ module.exports = {
 
     const id = req.user.shop;
 
+    res.locals.meta = {
+      title: `Pay for Shop| ${res.locals.meta.title}`,
+      ...res.locals.meta,
+    };
+
     Shop.findById(id)
       .select('name _id')
       .lean()
@@ -34,11 +39,20 @@ module.exports = {
   },
 
   renderAddAccount(req, res) {
+    res.locals.meta = {
+      title: `Add Shop Account | ${res.locals.meta.title}`,
+      ...res.locals.meta,
+    };
     res.render('merchant/add-account');
   },
 
   renderShopAdmin(req, res) {
     const id = req.user.shop;
+
+    res.locals.meta = {
+      title: `Shop Dashboard | ${res.locals.meta.title}`,
+      ...res.locals.meta,
+    };
 
     res.locals.route_name = 'shop-dashboard';
 
@@ -84,6 +98,11 @@ module.exports = {
         })
           .lean()
           .exec();
+
+        res.locals.meta = {
+          title: `${s.name} | ${res.locals.meta.title}`,
+          ...res.locals.meta,
+        };
 
         res.render('merchant/shop', {
           shop: s,
@@ -165,6 +184,11 @@ module.exports = {
 
         processing_fee =
           Math.round((processing_fee + Number.EPSILON) * 100) / 100;
+
+        res.locals.meta = {
+          title: `Buy ${p.name} from ${p.shop.name} | ${res.locals.meta.title}`,
+          ...res.locals.meta,
+        };
 
         res.render('merchant/product', {
           product: p,

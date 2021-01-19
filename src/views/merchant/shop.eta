@@ -5,6 +5,15 @@
     <section class="hero is-bold">
       <div class="hero-body p-3">
         <div class="container has-text-centered">
+          <figure class="image is-flex is-justify-content-center">
+            <img
+              class="is-rounded"
+              src="<%= shop.pictures.logo || 'https://icongr.am/feather/shopping-bag.svg?size=75&color=' + shop.theme_color.substring(1) %> "
+              alt="<%= shop.name %> | logo"
+              title="<%= shop.name %>"
+              style="width: 75px !important; height: auto !important"
+            />
+          </figure>
           <h1 class="is-size-5 brand-title is-size-5-mobile is-size-2-desktop">
             <a class="has-text-dark" href="/<%= shop.slug %>"
               ><%= shop.name %></a

@@ -2,7 +2,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <!-- meta tags -->
-<meta name="title" content="jumga.stores - Buy and Sell Online" />
+<meta name="title" content="jumga.store - Buy and Sell Online" />
 <meta name="description" content="Open a Shop instantly on Jumga" />
 <meta
   name="keywords"
@@ -12,20 +12,20 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="language" content="English" />
 <meta name="image" content="<<<< REPLACE >>>>" />
-<meta itemprop="name" content="jumga.stores - Buy and Sell Online" />
+<meta itemprop="name" content="jumga.store - Buy and Sell Online" />
 <meta itemprop="description" content="Open a Shop instantly on Jumga" />
 <meta itemprop="image" content="<<<< REPLACE >>>>" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://jumga.stores/" />
-<meta property="og:title" content="Jumga.stores - Buy and Sell Online" />
+<meta property="og:url" content="https://jumga.store/" />
+<meta property="og:title" content="jumga.store - Buy and Sell Online" />
 <meta property="og:description" content="Open a Shop instantly on Jumga" />
 <meta property="og:image" content="<<<< REPLACE >>>>" />
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content="https://jumga.stores/" />
+<meta property="twitter:url" content="https://jumga.store/" />
 <meta property="twitter:title" content="Jumga" />
 <meta property="twitter:description" content="Open a Shop instantly on Jumga" />
 <meta property="twitter:image" content="<<<< REPLACE >>>>" />

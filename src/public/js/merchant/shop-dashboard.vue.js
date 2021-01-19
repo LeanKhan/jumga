@@ -39,6 +39,8 @@ if (document.getElementById('shop-dashboard')) {
             });
 
             this.isLive = data.isLive;
+
+            window.location.reload();
           }
 
           if (!data.success && data.alerts) {

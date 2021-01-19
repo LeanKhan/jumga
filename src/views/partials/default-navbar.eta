@@ -101,8 +101,11 @@
           <a class="navbar-item" href="/signup">signup</a>
           <a class="navbar-item" href="/signout">signout</a>
           <hr class="dropdown-divider" />
+          <% if (user.hasShop || user.shop) { %>
           <a class="navbar-item" href="/shops/dashboard">shop admin</a>
+          <% } %> <% if (user.isAdmin) { %>
           <a class="navbar-item" href="/admin/dashboard">admin</a>
+          <% } %>
         </div>
         <% } %>
       </div>

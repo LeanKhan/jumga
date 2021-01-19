@@ -28,12 +28,12 @@ body {
 
 .underlined {
   text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-decoration-style: wavy;
+  text-decoration-thickness: 1px;
+  text-decoration-style: solid;
 }
 
 .underlined.underline-green {
-  text-decoration-color: darkseagreen;
+  text-decoration-color: inherit;
 }
 
 .navbar-link:not(.is-arrowless)::after {

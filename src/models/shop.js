@@ -34,7 +34,7 @@ const shopSchema = new Schema(
       banner_image: { type: String, default: '' },
       logo: { type: String, default: '' },
     },
-    theme_color: String,
+    theme_color: { type: String, default: '#000000' },
     transactions: [],
     dispatch_rider: { type: Schema.Types.ObjectId, ref: 'Rider' },
     products: [{ type: Schema.Types.ObjectId, ref: 'Product' }],

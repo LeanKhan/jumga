@@ -11,7 +11,7 @@
 
         <article class="panel is-shadowless is-primary">
           <div class="panel-heading">
-            <span>All Shop Categories</span>
+            <span class="brand-title">All Shop Categories</span>
             <span>
               <button
                 class="button is-pulled-right is-small is-success"

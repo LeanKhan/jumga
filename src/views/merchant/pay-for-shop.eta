@@ -5,7 +5,7 @@
     <div class="column mt-6 is-full register">
       <div class="columns is-justify-content-center">
         <div class="column is-half right has-text-centered">
-          <p class="subtitle">Pay for your shop <%= shop.name %> .</p>
+          <p class="subtitle">Pay for your shop <%= shop.name %></p>
           <form method="POST">
             <input
               class="hidden"
@@ -15,23 +15,9 @@
               hidden
             />
 
-            <!-- <div class="field">
-              <div class="control">
-                <label class="label has-text-left" for="password"
-                  >Password</label
-                >
-
-                <input
-                  class="input"
-                  name="password"
-                  type="password"
-                  placeholder="password"
-                  required
-                />
-              </div>
-            </div> -->
+            <h5 class="brand-title has-text-centerde"><%= price %></h5>
             <button class="button is-block is-success is-fullwidth is-medium">
-              Pay $20 Now
+              Pay Now
             </button>
             <br />
             <small

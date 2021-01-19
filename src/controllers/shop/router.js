@@ -40,6 +40,10 @@ router.get('/', api.getShops);
 
 router.get('/:id', api.fetchShop);
 
+router.get('/:id/sales', isAuthenticated, api.getSales);
+
+router.delete('/:id', isAuthenticated, api.deleteShop, relogin);
+
 /** SINGLE SHOP VIEWS ROUTER - THANK YOU JESUS */
 
 shop_router.get('/products/:product_slug', views.renderProduct);

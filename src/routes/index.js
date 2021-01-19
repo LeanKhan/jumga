@@ -11,7 +11,6 @@ const riders = require('../controllers/rider').router;
 const products = require('../controllers/product').router;
 const data = require('../controllers/data').router;
 const { views } = require('../controllers/views');
-const Rider = require('../models/dispatch_rider');
 
 /* Render home page */
 router.get('/', function (req, res, next) {
@@ -22,19 +21,7 @@ router.get('/', function (req, res, next) {
   return next('router');
 });
 
-router.get('/admin/dashboard', function (req, res) {
-  res.locals.route_name = 'admin-dashboard';
-
-  Rider.find({})
-    .lean()
-    .exec()
-    .then((rs) => {
-      return res.render('admin/dashboard', { dispatch_riders: rs });
-    })
-    .catch((err) => {
-      console.error('Error fetching dispatch_riders =>\n', err);
-    });
-});
+router.get('/admin/dashboard', user.api.isAdmin, views.renderAdminDashboard);
 
 router.get('/explore', views.renderExplorePage);
 

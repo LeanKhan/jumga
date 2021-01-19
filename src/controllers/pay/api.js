@@ -22,9 +22,9 @@ async function handleProductPayment(req, res, next) {
 
     await req.flash('success', { msg: 'Product Paid for successfully!' });
 
-    const { returnTo } = req.session;
+    // const { returnTo } = req.session;
     delete req.session.returnTo;
-    return res.redirect(returnTo || `/success/${response.data.tx_ref}`);
+    return res.redirect(`/success/${response.data.tx_ref}`);
   } catch (err) {
     // yooooo
     return next(err);

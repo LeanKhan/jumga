@@ -24,8 +24,9 @@
       style="z-index: 0"
     >
       <div class="navbar-start">
-        <% if ( typeof user != 'undefined' && user.isAdmin || typeof user !=
-        'undefined' && user.shop == shop._id) { %>
+        <% if ((typeof user != 'undefined' && user.isAdmin) || ( typeof user !=
+        'undefined' && typeof user.shop != 'undefined' && user.shop.toString()
+        == shop._id.toString())) { %>
         <div class="navbar-item">
           <a class="button is-light" href="/shops/dashboard">
             <img
@@ -72,62 +73,9 @@
       <div class="container">
         <% if (products.length) { %>
         <div class="columns is-multiline">
-          <% products.forEach(product => { %>
-          <div class="column is-one-third">
-            <div class="card rb-card">
-              <div class="card-image">
-                <figure class="image is-16by9">
-                  <img
-                    src="https://via.placeholder.com/640x360"
-                    alt="Rental Rates and Rental Prices in Phoenix, AZ"
-                  />
-                </figure>
-              </div>
-              <div
-                class="card-content is-flex is-justify-content-space-between"
-                style="
-                  border-top: 2px solid <%= shop.theme_color || '#ffdd57' %>;
-                "
-              >
-                <div class="has-text-justified">
-                  <h3 class="title is-size-4 ellipsis is-ellipsis-1">
-                    <a class="has-text-dark"> <%= product.name %> </a>
-                  </h3>
-                  <h4 class="subtitle is-size-5 has-text-success">
-                    <%= cust_country.currency_code || '$' %> <%= product.price *
-                    parseFloat(cust_country.dollar_exchange_rate) %>
-                  </h4>
-                </div>
-
-                <div>
-                  <a
-                    href="/<%= shop.slug %>/products/<%= product.slug %>"
-                    style="
-                      color: <%= shop.theme_color || '#ffdd57' %>;
-                      border: 2px solid <%= shop.theme_color || '#ffdd57' %>;
-                    "
-                    class="button has-text-weight-bold"
-                  >
-                    BUY
-                  </a>
-                </div>
-              </div>
-
-              <div class="card-footer has-background-light p-1">
-                <div class="tags">
-                  <% product.tags.forEach(tag => { %>
-                  <a
-                    href="/<%= shop.slug %>/search?q=<%= tag %>"
-                    class="tag has-background-warning-light is-light"
-                  >
-                    <%= tag %>
-                  </a>
-                  <% }) %>
-                </div>
-              </div>
-            </div>
-          </div>
-          <% }) %>
+          <% products.forEach(product => { %> <%~
+          E.includeFile('components/product.eta', {product, cust_country,
+          shop_slug: shop.slug, route_name}) %> <% }) %>
         </div>
         <% } else if(route.query.q) { %>
         <div class="notification is-light">

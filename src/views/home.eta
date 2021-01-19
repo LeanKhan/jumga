@@ -21,9 +21,13 @@
             <a
               href="/register"
               class="button is-dark jumga-yellow-text has-text-weight-bold"
-              >Open</a
+              >I want to Sell</a
             >
-            <a class="button is-outlined is-warning" href="/explore">Explore</a>
+            <a
+              href="/explore"
+              class="button is-dark jumga-yellow-text has-text-weight-bold"
+              >I want to Buy</a
+            >
           </div>
         </div>
         <div

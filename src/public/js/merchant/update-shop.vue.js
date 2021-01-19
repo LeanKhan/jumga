@@ -44,7 +44,7 @@ if (document.getElementById('shop-dashboard')) {
             if (!data.success) {
               this.$buefy.notification.open({
                 duration: 5000,
-                message: data.msg || `${data.error} \n [Could not Update shop]`,
+                message: data.error || `${data.msg} \n [Could not Update shop]`,
                 position: 'is-top',
                 type: 'is-danger',
                 queue: false,

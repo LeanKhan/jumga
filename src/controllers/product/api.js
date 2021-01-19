@@ -1,6 +1,8 @@
 // const fetch = require('node-fetch');
+const { parseFile } = require('fast-csv');
 const validator = require('validator').default;
 const { nanoid } = require('nanoid');
+const { unlinkSync } = require('fs');
 const { slugify } = require('../../tools');
 const Product = require('../../models/product');
 const Shop = require('../../models/shop');
@@ -296,6 +298,10 @@ module.exports = (() => {
             shop_id: shop._id,
             product_price: price / exchange_rate,
             dispatch_rider: shop.dispatch_rider._id,
+            shop_money:
+              price / exchange_rate - product_commision / exchange_rate,
+            dispatch_rider_money:
+              delivery_fee - delivery_commision / exchange_rate,
             delivery_fee,
             currency,
           },
@@ -303,6 +309,7 @@ module.exports = (() => {
             email: req.body.email,
             phone_number: req.body.phonenumber,
             name: req.body.name,
+            address: req.body.address,
           },
           subaccounts: [
             {
@@ -319,9 +326,9 @@ module.exports = (() => {
             },
           ],
           customizations: {
-            title: 'Jumga Stores',
+            title: ` ${shop.name} | Jumga`,
             description: `Pay for 1 ${req.body.product_name}`,
-            logo: 'https://assets',
+            logo: shop.pictures.logo || '[jumga logo here]',
           },
         };
 
@@ -452,6 +459,121 @@ module.exports = (() => {
           msg: 'Something went wrong while trying to delete Product :/',
           error: err.message,
         });
+      }
+    },
+    async batchUpload(req, res) {
+      // yii, thank you Jesus!
+      try {
+        const { shop_id } = req.params;
+
+        if (!shop_id) {
+          // shop id not present
+
+          return res.status(404).send({
+            success: false,
+            msg: `Error performing batch upload. Shop ID not sent!`,
+          });
+        }
+
+        const validationErrors = [];
+
+        // if (validator.isEmpty(req.body.shop_slug))
+        // validationErrors.push({ msg: 'Shop Slug Missing!' });
+
+        if (!validator.isMongoId(req.params.shop_id.toString()))
+          validationErrors.push({ msg: 'Invalid Shop id' });
+
+        if (validationErrors.length) {
+          validationErrors.forEach(async (err) => {
+            await req.flash('error', err);
+          });
+
+          return res.status(400).send({
+            success: false,
+            msg: 'Something went wrong while trying to upload Products :/',
+            alerts: validationErrors,
+          });
+        }
+
+        const shop = await Shop.findById(shop_id)
+          .select('name slug')
+          .lean()
+          .exec();
+
+        if (!shop) {
+          //  shop does not exist!
+
+          return res.status(404).send({
+            success: false,
+            msg: `Error performing batch upload. Shop does not exist`,
+          });
+        }
+
+        const data = [];
+        parseFile(req.file.path, { headers: true })
+          .on('error', (error) => {
+            console.log('Error parsing .csv file :(', error);
+            return res.status(400).send({
+              success: false,
+              msg: `Error parsing .csv file ${error.message}`,
+              error: error.message,
+            });
+          })
+          .on('data', (row) => {
+            // convert to object and push to array...
+            if (!row.name || !row.description || !row.price) {
+              throw new Error('Missing .csv Headers!');
+            }
+            data.push({
+              ...row,
+              slug: slugify(row.name),
+              shop_slug: shop.slug,
+              shop: shop._id,
+              tags: row.tags.split(','),
+            });
+          })
+          .on('end', async () => {
+            unlinkSync(req.file.path);
+            // Here perform Save to db alot! :) lol
+            try {
+              await req.flash('success', { msg: 'Batch Upload succssful!' });
+
+              const inserted = await Product.insertMany(data, {
+                ordered: true,
+              });
+
+              await Shop.findByIdAndUpdate(shop._id, {
+                $addToSet: { products: { $each: inserted } },
+              });
+
+              return res.status(200).send({
+                success: true,
+                msg: 'Batch Upload successful',
+                data: {},
+              });
+            } catch (error) {
+              return res.status(400).send({
+                success: false,
+                msg: `Error performing batch upload${error}`,
+                error: error.message,
+              });
+            }
+          });
+      } catch (err) {
+        await req.flash('error', { msg: 'Could not upload .csv file' });
+        console.error(
+          'Something went wrong while uploading Product batch file :/\n',
+          err
+        );
+        if (req.xhr)
+          return res.status(400).send({
+            success: false,
+            msg:
+              'Something went wrong while trying to upload Product batch file :/',
+            error: err.message,
+          });
+
+        return res.redirect('/error?error=uploading_file');
       }
     },
   };

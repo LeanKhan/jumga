@@ -1,0 +1,69 @@
+<div class="column is-3">
+  <div class="card is-shadowless">
+    <a
+      href="/<%= product.shop.slug || shop_slug %>/products/<%= product.slug || shop_slug %>"
+    >
+      <div class="card-image">
+        <figure class="image is-square">
+          <img
+            src="https://via.placeholder.com/640x640"
+            alt="Rental Rates and Rental Prices in Phoenix, AZ"
+            style="border-radius: 10px"
+          />
+        </figure>
+      </div>
+    </a>
+
+    <div class="card-content is-justify-content-space-between py-1 px-2">
+      <div class="has-text-justified">
+        <h3 class="title is-size-4 ellipsis is-ellipsis-1">
+          <a
+            class="has-text-dark"
+            href="/<%= product.shop.slug || shop_slug %>/products/<%= product.slug || shop_slug %>"
+          >
+            <%= product.name %>
+          </a>
+        </h3>
+        <h4 class="subtitle is-size-5 has-text-primary">
+          <%= cust_country.currency_code %> <%= product.price *
+          cust_country.dollar_exchange_rate %>
+        </h4>
+      </div>
+
+      <% if (product.shop.name) { %>
+      <article class="media mt-2">
+        <div class="media-left">
+          <figure class="image is-32x32">
+            <img
+              class="is-rounded"
+              src="https://via.placeholder.com/32x32"
+              alt="Image"
+            />
+          </figure>
+        </div>
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <a href="/<%= product.shop.slug %>"> <%= product.shop.name %> </a>
+            </p>
+          </div>
+        </div>
+      </article>
+      <% } %>
+    </div>
+
+    <div class="card-footer p-1" style="border-top: none">
+      <div class="tags">
+        <% if (product.tags.length) { %> <% product.tags.forEach(function (tag)
+        { %>
+        <a
+          href=" <%= route_name == 'explore' ? '/explore?search=true&' : '/' + (product.shop.slug || shop_slug) + '/search?' %>q=<%= tag %>"
+          class="tag has-background-warning-light is-light"
+        >
+          <%= tag %>
+        </a>
+        <% }) %> <% } %>
+      </div>
+    </div>
+  </div>
+</div>

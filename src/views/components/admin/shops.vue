@@ -79,7 +79,17 @@
               </b-table-column>
 
               <b-table-column field="actions" v-slot="props">
-                <a class="button is-small" :href="`/${props.row.slug}`">view</a>
+                <a
+                  class="button is-small is-outlined is-dark"
+                  :href="`/${props.row.slug}`"
+                  >view</a
+                >
+                <button
+                  class="button is-small is-outlined is-danger"
+                  @click="deleteShop"
+                >
+                  delete
+                </button>
               </b-table-column>
             </b-table>
 

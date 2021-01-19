@@ -2,11 +2,12 @@ const Shop = require('../../models/shop');
 const Product = require('../../models/product');
 const Category = require('../../models/category');
 const Country = require('../../models/country');
+const Rider = require('../../models/dispatch_rider');
 const Transaction = require('../../models/transaction');
 
 module.exports = {
   renderHomePage(req, res, next) {
-    Shop.find({})
+    Shop.find({ isLive: true, hasPaidFee: true })
       .select('name slug')
       .lean()
       .exec()
@@ -17,22 +18,69 @@ module.exports = {
         return next(err);
       });
   },
+
+  renderAdminDashboard(req, res) {
+    res.locals.route_name = 'admin-dashboard';
+
+    Rider.find({})
+      .lean()
+      .exec()
+      .then((rs) => {
+        return res.render('admin/dashboard', { dispatch_riders: rs });
+      })
+      .catch((err) => {
+        console.error('Error fetching dispatch_riders =>\n', err);
+      });
+  },
   async renderExplorePage(req, res, next) {
     try {
       let search;
       if (req.query.search) {
-        console.log('Select these!', req.query.select);
         search = true;
       }
 
       const getter = () => {
-        if (search) {
+        if (
+          (search && !req.query.category) ||
+          (search && req.query.category == 'none')
+        ) {
           return Product.find({ $text: { $search: req.query.q } })
-            .select('name slug price description shop tags')
+            .select('name slug price description picture shop tags')
             .populate('shop', 'name slug pictures.logo')
             .lean()
             .exec();
         }
+
+        if (search && req.query.category != 'none' && req.query.category) {
+          console.log('in shop stuff');
+          return Shop.find({ category: req.query.category })
+            .select('name slug picture products')
+            .populate('products', 'name slug price picture tags')
+            .lean()
+            .exec();
+        }
+
+        if (
+          search &&
+          req.query.category != 'none' &&
+          req.query.category &&
+          req.query.q
+        ) {
+          console.log('in shop stuff for queries');
+          return Shop.find({ category: req.query.category })
+            .select('name slug picture products')
+            .populate('products', 'name slug price picture tags')
+            .lean()
+            .exec();
+        }
+
+        // if (search && req.query.category && !req.query.q) {
+        //   return Shop.find({ category: req.query.category })
+        //     .select('name slug products')
+        //     .populate('products')
+        //     .lean()
+        //     .exec();
+        // }
 
         // if (select) {
         //   return Shop.findById(req.params.id).select(select).lean().exec();
@@ -43,7 +91,7 @@ module.exports = {
         // }
 
         return Product.find({})
-          .select('name slug price description shop tags')
+          .select('name slug price description picture shop tags')
           .populate('shop', 'name slug pictures.logo')
           .lean()
           .exec();
@@ -56,15 +104,44 @@ module.exports = {
         Country.findOne({
           short_code: req.session.country || 'NG',
         })
-          .select('currency_code')
+          .select('currency_code dollar_exchange_rate')
           .lean()
           .exec(),
       ]);
 
       getter()
         .then((p) => {
+          if (!req.query.category || req.query.category == 'none') {
+            return res.render('explore', {
+              products: p,
+              categories,
+              cust_country,
+            });
+          }
+
+          // first compile products...
+          let products;
+          if (p) {
+            products = p.map((shop) => {
+              return shop.products.map((product) => {
+                return {
+                  ...product,
+                  shop: {
+                    name: shop.name,
+                    slug: shop.slug,
+                    pictures: shop.pictures,
+                  },
+                };
+              });
+            });
+          }
+
+          // TO flatten the array from [[a], [b]] -> [a, b]
+          // https://stackoverflow.com/a/60677733/10382407
+          products = [].concat(...products);
+
           return res.render('explore', {
-            products: p,
+            products: products || [],
             categories,
             cust_country,
           });
@@ -120,14 +197,12 @@ module.exports = {
         await req.flash('info', {
           msg: 'Already have an account, \n so just setup shop',
         });
-
       }
 
       if (req.isAuthenticated() && !req.user.isAdmin && req.user.shop) {
         await req.flash('info', {
           msg: 'Add your shop account',
         });
-
       }
     }
 

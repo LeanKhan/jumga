@@ -6,10 +6,25 @@ if (document.getElementById('shop-dashboard')) {
 
   // Vue.filter('currency', value => `\u20A6 ${formatter.format(value)}`);
 
+  // register modal component
+  Vue.component('modal', ModalComponent);
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+  });
+
+  /**
+   * \u20A6  is the unicode for Naira symbol
+   */
+
+  Vue.filter('currency', (value) => `${formatter.format(value)}`);
+
   const data = {
     activeTab: 0,
     showBooks: false,
     isLive: false,
+    showModal: false,
   };
 
   const methods = {

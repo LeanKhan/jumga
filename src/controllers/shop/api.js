@@ -5,7 +5,9 @@ const fetch = require('node-fetch');
 const Shop = require('../../models/shop');
 const User = require('../../models/user');
 const Product = require('../../models/product');
+const Rider = require('../../models/dispatch_rider');
 const Country = require('../../models/country');
+const Transaction = require('../../models/transaction');
 const { slugify } = require('../../tools');
 
 module.exports = {
@@ -128,13 +130,14 @@ module.exports = {
     // add validation checks here... thank you Jesus!
 
     try {
+      // $20 + Flutterwave Processing Fee
       const currency = 'USD';
-      const amount = '20';
+      const amount = 20 / (1 - 3.8 / 100);
       const type = 'shop_payment';
       console.log(req.body.shop_id);
       const data = {
         tx_ref: `jumga-tx-${nanoid(12)}`,
-        amount: '20',
+        amount,
         currency: 'USD',
         redirect_url: `${req.protocol}://${req.headers.host}/payments/verify?&amount=${amount}&currency=${currency}&type=${type}`,
         // add transaction fee to amount
@@ -244,6 +247,10 @@ module.exports = {
           { _id: req.user.shop },
           {
             'account.subaccount_id': response.data.subaccount_id,
+            'account.subaccount_code': response.data.id,
+            'account.account_number': response.data.account_number,
+            'account.bank': response.data.account_bank,
+            'account.account_id': response.data.account_id,
             'account.full_name': response.data.full_name,
             isApproved: current_shop.hasPaidFee,
           },
@@ -496,6 +503,8 @@ module.exports = {
         query = {};
       }
 
+      if (!req.xhr) return res.redirect('/?hehe');
+
       Shop.find(query)
         .lean()
         .exec()
@@ -579,6 +588,192 @@ module.exports = {
         success: false,
         msg: 'Could not fetch Shop',
         error: err.message,
+      });
+    }
+  },
+
+  async deleteShop(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      /**
+       * 1. Remove Subaccount
+       * 2. Remove Products
+       * 3. Update User
+       * 4. Update Dispatch Rider
+       * 5. Delete Shop
+       */
+
+      res.locals.route_name = 'delete_shop';
+
+      let shop;
+
+      const validationErrors = [];
+
+      if (!id)
+        return res.status(404).send({
+          success: false,
+          msg: 'MISSING DATA - CANNOT DELETE SHOP!',
+          error: 'Shop ID missing',
+        });
+
+      if (!validator.isMongoId(req.params.id.toString()))
+        validationErrors.push({ msg: 'Invalid Shop id' });
+
+      if (validationErrors.length) {
+        validationErrors.forEach(async (err) => {
+          await req.flash('error', err);
+        });
+
+        return res.status(400).send({
+          success: false,
+          msg: 'MISSING DATA - CANNOT DELETE SHOP!',
+          alerts: validationErrors,
+        });
+      }
+
+      console.log(req.user.shop == id);
+
+      console.log(req.user.shop, id);
+
+      // User has shop and is not admin, or user is admin and does not have shop
+      if (
+        (req.user.shop && req.user.shop.toString() != id.toString()) ||
+        (!req.user.shop && !req.user.isAdmin)
+      )
+        return res.status(401).send({
+          success: false,
+          msg: 'UNAUTHORIZED - NOT YOUR SHOP OR NOT ADMIN!',
+          error: 'This shop is not yours doe',
+        });
+
+      try {
+        shop = await Shop.findById(id).lean().exec();
+
+        if (!shop || !shop.account.subaccount_code) {
+          await req.flash('error', {
+            msg: 'Shop does not exist!',
+          });
+          return res.status(404).send({
+            success: false,
+            msg: 'Cannot delete Shop that does not exist!',
+            error: 'Shop does not exist!',
+          });
+        }
+      } catch (err) {
+        console.error('Error deleting Shop =>\n', err);
+        return res.status(404).send({
+          success: false,
+          msg: 'Error deleting Shop',
+          error: err.message,
+        });
+      }
+
+      const deleteSubaccount = (s) => {
+        return fetch(
+          `https://api.flutterwave.com/v3/subaccounts/${s.account.subaccount_code}`,
+          {
+            method: 'delete',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${process.env.FW_SECRET_KEY.trim()}`,
+            },
+          }
+        ).then((res) => res.json());
+      };
+
+      const removeProducts = (response) => {
+        console.log('Response from deleteSubaccount => ', response);
+        return Product.deleteMany({ shop: shop._id }).lean().exec();
+      };
+
+      const updateUser = (response) => {
+        console.log('Response from removeProducts => ', response);
+
+        return User.findByIdAndUpdate(
+          shop.owner,
+          {
+            hasShop: false,
+            $unset: { shop: 1 },
+          },
+          { new: true }
+        )
+          .lean()
+          .exec();
+      };
+
+      const updateRider = (response) => {
+        console.log('Response from updateUser => ', response);
+
+        return Rider.findByIdAndUpdate(
+          shop.dispatch_rider,
+          {
+            employed: false,
+            $unset: { shop: 1 },
+          },
+          { new: true }
+        )
+          .lean()
+          .exec();
+      };
+
+      const deleteShop = (response) => {
+        console.log('Response from updateRider => ', response);
+
+        return Shop.findByIdAndDelete(id).lean().exec();
+      };
+
+      deleteSubaccount(shop)
+        .then(removeProducts)
+        .then(updateUser)
+        .then(updateRider)
+        .then(deleteShop)
+        .then(async (response) => {
+          await req.flash('success', {
+            msg: 'Shop Deleted Successfully!',
+          });
+          console.log(
+            'Shop deleted successfully! - response from deleteShop',
+            response
+          );
+
+          return next();
+        });
+    } catch (err) {
+      await req.flash('error', {
+        msg: 'An Error occured while deleting Shop',
+      });
+      return res.status(400).send({
+        success: false,
+        msg: 'Error deleting shop!',
+        error: 'Shop does not exist!',
+      });
+    }
+  },
+
+  async getSales(req, res) {
+    try {
+      const id = req.params.id || req.user.shop;
+
+      const txs = await Transaction.find({
+        verified: true,
+        paid: true,
+        'transaction.meta.shop_id': id,
+        'transaction.status': 'successful',
+        'transaction.meta.shop_money': { $exists: true },
+      })
+        .select('transaction')
+        .lean()
+        .exec();
+
+      res
+        .status(200)
+        .send({ success: true, msg: 'Sales fetched successfully!', data: txs });
+    } catch (err) {
+      res.status(400).send({
+        success: false,
+        msg: 'Could not get Shop sales :/',
+        error: 'Could not get shop sales :/',
       });
     }
   },

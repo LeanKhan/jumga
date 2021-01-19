@@ -26,6 +26,16 @@ body {
   /*background-color: #ffcc33;*/
 }
 
+.underlined {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-style: wavy;
+}
+
+.underlined.underline-green {
+  text-decoration-color: darkseagreen;
+}
+
 .navbar-link:not(.is-arrowless)::after {
   border-color: #ffcc35 !important;
 }

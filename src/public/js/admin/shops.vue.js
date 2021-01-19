@@ -12,7 +12,6 @@ if (document.getElementById('admin-dashboard')) {
     },
     methods: {
       getShops() {
-        const q = new URLSearchParams({}).toString();
         doGet(`/shops?query={}`, 'GET')
           .then((data) => {
             if (data.success) {
@@ -74,6 +73,29 @@ if (document.getElementById('admin-dashboard')) {
               type: 'is-danger',
               queue: false,
             });
+          });
+      },
+      deleteShop() {
+        this.loading = true;
+
+        doGet(`/shops/${this.selected_shop._id}`, 'DELETE')
+          .then((data) => {
+            if (data.success) {
+              this.getShops();
+            } else {
+              console.error(data.error);
+
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: data.error || 'Shop could not be deleted :/',
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+          })
+          .finally(() => {
+            this.loading = false;
           });
       },
     },

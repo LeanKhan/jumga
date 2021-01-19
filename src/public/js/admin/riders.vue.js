@@ -281,7 +281,7 @@ if (document.getElementById('admin-dashboard')) {
               this.$buefy.notification.open({
                 duration: 5000,
                 message:
-                  data.msg || `${data.error} \n [Could not Update Rider]`,
+                  data.error || `${data.msg} \n [Could not Update Rider]`,
                 position: 'is-top',
                 type: 'is-danger',
                 queue: false,

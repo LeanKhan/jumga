@@ -215,7 +215,9 @@
           >
             Create Shop and Pay $20*
           </button>
-          <p class="has-text-grey"><small>*Shop opening fee</small></p>
+          <p class="has-text-grey">
+            <small>*Shop opening fee excluding Processing fee</small>
+          </p>
           <br />
           <small>
             <button

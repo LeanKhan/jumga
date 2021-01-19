@@ -40,8 +40,8 @@ if (document.getElementById('admin-dashboard')) {
           payment_methods: [],
           fw_processing_fees: {
             local: '',
-            international: ''
-          }
+            international: '',
+          },
         },
       };
     },
@@ -161,7 +161,7 @@ if (document.getElementById('admin-dashboard')) {
               this.$buefy.notification.open({
                 duration: 5000,
                 message:
-                  data.msg || `${data.error} \n [Could not Update Country]`,
+                  data.error || `${data.msg} \n [Could not Update Country]`,
                 position: 'is-top',
                 type: 'is-danger',
                 queue: false,

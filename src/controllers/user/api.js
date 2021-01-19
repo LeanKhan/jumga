@@ -168,7 +168,57 @@ module.exports = (() => {
           msg: 'You need to be signed in first',
         });
 
+        if (req.xhr)
+          return res.status(401).json({
+            success: false,
+            msg: 'Cannot access this resource! You are not Authenticated!',
+            error: 'You are not Authenticated!',
+            alerts: [{ msg: 'You are not authenticated' }],
+          });
+
         return res.redirect(`/signin?returnTo=${req.originalUrl}`);
+      }
+
+      return next();
+    },
+
+    async isAdmin(req, res, next) {
+      if (!req.isAuthenticated() || !req.user.isAdmin) {
+        await req.flash('error', {
+          msg: 'You are not admin!',
+        });
+
+        if (req.xhr)
+          return res.status(401).json({
+            success: false,
+            msg:
+              'Cannot access this resource! You are not Authenticated! For Admins only :)',
+            error: 'You are not Authenticated!',
+            alerts: [{ msg: 'You are not authenticated' }],
+          });
+
+        return res.redirect(`/`);
+      }
+
+      return next();
+    },
+
+    async isShopOwner(req, res, next) {
+      if (!req.isAuthenticated() || !req.user.shop) {
+        await req.flash('error', {
+          msg: 'You are not a Merchant!',
+        });
+
+        if (req.xhr)
+          return res.status(401).json({
+            success: false,
+            msg:
+              'Cannot access this resource! You are not Authenticated! For Merchants only!',
+            error: 'You are not Authenticated!',
+            alerts: [{ msg: 'You are not authenticated' }],
+          });
+
+        return res.redirect(`/`);
       }
 
       return next();
@@ -194,6 +244,12 @@ module.exports = (() => {
 
         const { returnTo } = req.session;
         delete req.session.returnTo;
+
+        if (req.xhr)
+          return res.status(400).json({
+            success: false,
+            msg: 'No User ID provided',
+          });
         return res.redirect(returnTo || '/');
       }
 
@@ -211,6 +267,12 @@ module.exports = (() => {
             const { returnTo } = req.session;
             delete req.session.returnTo;
 
+            if (req.xhr)
+              return res.status(404).json({
+                success: false,
+                msg: 'User not found!',
+              });
+
             return res.redirect(returnTo || '/');
           }
 
@@ -223,6 +285,14 @@ module.exports = (() => {
 
               const { returnTo } = req.session;
               delete req.session.returnTo;
+
+              if (req.xhr)
+                return res.status(400).json({
+                  success: false,
+                  msg: 'Error carrying out operation',
+                  error: err.message,
+                });
+
               return res.redirect(returnTo || '/');
             }
 
@@ -238,7 +308,29 @@ module.exports = (() => {
                   "You can't do much without paying for your shop and adding an account... :p capitalism yunno",
               });
 
+              if (req.xhr)
+                return res.status(400).json({
+                  success: false,
+                  msg: 'Error carrying out operation',
+                });
+
+              delete req.session.returnTo;
               return res.redirect('/shops/dashboard');
+            }
+
+            if (res.locals.route_name == 'delete_shop') {
+              await req.flash('success', {
+                msg: 'Shop deleted succesfully!',
+              });
+
+              if (req.xhr)
+                return res.status(200).json({
+                  success: true,
+                  msg: 'Shop deleted successfuly!',
+                });
+
+              delete req.session.returnTo;
+              return res.redirect('/');
             }
 
             return next();

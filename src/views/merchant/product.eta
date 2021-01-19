@@ -157,10 +157,18 @@
 
                   <p>
                     <small
-                      >These figures may be slightly wrong, but the final charge
-                      will be accurate</small
+                      >These figures may change.
                     >
                   </p>
+
+                  <% if (typeof user != 'undefined' && user.shop == product.shop) { %>
+                    <p class="has-text-weight-medium is-text-danger has-text-danger">
+                    <small
+                      >You want to buy your own product? Weird... No wahala</small
+                    >
+                  </p>
+                  <% } %>
+
                 </div>
 
                 <div class="field">
@@ -180,6 +188,18 @@
                   <div class="control">
                     <input
                       name="phonenumber"
+                      class="input"
+                      type="text"
+                      required
+                    />
+                  </div>
+                </div>
+
+                 <div class="field">
+                  <label class="label">Address</label>
+                  <div class="control">
+                    <input
+                      name="address"
                       class="input"
                       type="text"
                       required

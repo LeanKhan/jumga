@@ -60,6 +60,9 @@ app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.disable('x-powered-by');
 
+// setup agenda
+require('./tools/agenda');
+
 /** OTHER THINGS */
 const store = new MongoStore({
   url: process.env.MONGO_DB_URI.trim(),
@@ -176,12 +179,6 @@ app.use(function (req, res, next) {
   return next();
 });
 
-// app.use(function (req, res, next) {
-//   if (req.session.pageCount) req.session.pageCount++;
-//   else req.session.pageCount = 1;
-//   next();
-// });
-
 /** Setup Passport sessions */
 require('./config/passport');
 
@@ -201,7 +198,7 @@ if (process.env.NODE_ENV.trim() === 'dev') {
   });
 }
 
-app.get('*', (req, res) => {
+app.all('*', (req, res) => {
   res.locals.route_name = '404';
   res.render('error');
 });
@@ -215,4 +212,4 @@ server.listen(port, () => {
 //   .on("SIGINT", shutdown("SIGINT"))
 //   .on("uncaughtException", shutdown("uncaughtException"));
 
-module.exports = app;
+module.exports = { app };

@@ -5,13 +5,15 @@ if (document.getElementById('shop-dashboard')) {
     data() {
       return {
         loading: false,
+        showModal: false,
         activeTab: 0,
+        file: null,
         products: [], // list of products :) thank you Jesus!
         update: false,
         selected_product: null,
         product_form: {
           name: '',
-          price: '',
+          price: 0,
           description: '',
           picture: '',
           tags: [],
@@ -69,7 +71,7 @@ if (document.getElementById('shop-dashboard')) {
               this.$buefy.notification.open({
                 duration: 5000,
                 message:
-                  data.msg || `${data.error} \n [Could not Update Product]`,
+                  data.error || `${data.msg} \n [Could not Update Product]`,
                 position: 'is-top',
                 type: 'is-danger',
                 queue: false,
@@ -130,7 +132,7 @@ if (document.getElementById('shop-dashboard')) {
               this.$buefy.notification.open({
                 duration: 5000,
                 message:
-                  data.msg || `${data.error} \n [Could not Delete Product]`,
+                  data.error || `${data.msg} \n [Could not Delete Product]`,
                 position: 'is-top',
                 type: 'is-danger',
                 queue: false,
@@ -201,6 +203,8 @@ if (document.getElementById('shop-dashboard')) {
                 tags: [],
               };
 
+              this.getProducts();
+
               this.$buefy.notification.open({
                 duration: 5000,
                 message: 'Product added successully!',
@@ -262,6 +266,62 @@ if (document.getElementById('shop-dashboard')) {
           .finally(() => {
             this.loading = false;
             this.isOpen = false;
+          });
+      },
+      submitBatchUpload() {
+        this.loading = true;
+        const formData = new FormData();
+
+        formData.append('csv', this.file);
+
+        fetch(`/products/${this.shop_id}/batch-upload`, {
+          method: 'POST',
+          mode: 'cors',
+          body: formData,
+          headers: {
+            // 'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Success:', data);
+            if (data.success) {
+              this.showModal = false;
+              this.getProducts();
+
+              this.$buefy.notification.open({
+                duration: 5000,
+                message: 'Products Uploaded Successfully!',
+                position: 'is-top',
+                type: 'is-success',
+                queue: false,
+              });
+            }
+
+            if (!data.success) {
+              this.$buefy.notification.open({
+                duration: 5000,
+                message:
+                  data.error || `${data.msg} \n [Could not Upload Products]`,
+                position: 'is-top',
+                type: 'is-danger',
+                queue: false,
+              });
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            this.$buefy.notification.open({
+              duration: 5000,
+              message: data.error || data.msg,
+              position: 'is-top',
+              type: 'is-danger',
+              queue: false,
+            });
+          })
+          .finally(() => {
+            this.loading = false;
           });
       },
       goToAddProduct() {

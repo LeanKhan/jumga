@@ -11,7 +11,7 @@
 
         <article class="panel is-shadowless is-info">
           <div class="panel-heading">
-            <span>Countries</span>
+            <span class="brand-title">Countries</span>
             <span>
               <button
                 class="button is-pulled-right is-small is-success"

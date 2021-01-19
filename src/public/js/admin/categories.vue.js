@@ -143,7 +143,7 @@ if (document.getElementById('admin-dashboard')) {
               this.$buefy.notification.open({
                 duration: 5000,
                 message:
-                  data.msg || `${data.error} \n [Could not Update Category]`,
+                  data.error || `${data.msg} \n [Could not Update Category]`,
                 position: 'is-top',
                 type: 'is-danger',
                 queue: false,

@@ -5,13 +5,13 @@
 Jumga is an e-commerce platform where people can open shops online and sell their goods.
 Jumga utilises [Flutterwave](https://flutterwave.com) to process payments.
 
-### live site: [jumga.store](https://jumga.store)
+### live site: _currently offline :(_
 
 ## How it works
 
 _here's a scenario..._
 
-Bolu wants to open an online Biro shop, because why not, so she goes to [Jumga](https://jumga.store) because that's where it's at yo.
+Bolu wants to open an online Biro shop, because why not, so she goes to the Jumga website because that's where it's at yo.
 
 ![Open Shop](https://res.cloudinary.com/repairs-ng/image/upload/v1611093871/jumga/screenshots/open-shop-button_kq3s5g.png)
 
